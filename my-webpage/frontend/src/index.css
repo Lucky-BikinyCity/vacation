@@ -16,8 +16,20 @@
     강력한 새로고침이라고 이전에 있던 캐시들을 지우는 것인데, 이전에 있던 캐시들 때문에 css가 바로 적용되지 않는 현상을 해결
 */
 
+
 /*charset*/
 @charset "utf-8";
+
+/*글꼴 추가 League Gothic*/
+@import url('https://fonts.googleapis.com/css2?family=League+Gothic&display=swap');
+/*글꼴 적용*/
+* {
+    font-family: "League Gothic", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:"wdth" 100;
+}
 
 /*
 미디어 쿼리문 : 설정된 크기 값에 맞춰 css를 변경함.
