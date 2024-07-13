@@ -9,5 +9,5 @@
 디스코드
 김태희 - nyongann
 이성민 - kfoteej
-최미령 - 
+최미령 - ggiggoggiggo
 김성빈 - eating2
