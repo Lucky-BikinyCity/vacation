@@ -14,6 +14,35 @@
 
     중요! 페이지 새로고침할때는 shift + F5로 새로고침하기.
     강력한 새로고침이라고 이전에 있던 캐시들을 지우는 것인데, 이전에 있던 캐시들 때문에 css가 바로 적용되지 않는 현상을 해결
+
+    
+
+    &의 의미
+
+    &의 뒤에 공백이 있는 경우
+    .class1 { 
+        & .class2 { 
+            ... 
+        } 
+    } 
+
+    //아래와 같다.
+    .class1 .class2 { 
+    ... 
+    }
+
+
+    &의 뒤에 공백이 없는 경우
+    .class1 { 
+        &.class2 { 
+            ... 
+        } 
+    } 
+
+    //아래와 같이 컴파일된다.
+    .class1.class2 { 
+    ... 
+    }
 */
 
 
@@ -57,6 +86,9 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .logoInMain{
         margin-left: 30px !important;
     }
+    .loginSignUp{
+        margin-right: 20px !important;
+    }
 }
 
 @media(max-width : 400px){
@@ -68,6 +100,9 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     }
     .logoInMain{
         margin-left: 0px !important;
+    }
+    .loginSignUp{
+        margin-right: 0px !important;
     }
 }
 
@@ -84,6 +119,7 @@ html,body {
     margin:0;
     padding:0;
     font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
 }
 
 #loginBody {
@@ -92,7 +128,6 @@ html,body {
     align-items: center;
     height: 100vh;
     box-sizing: border-box;
-    background-color: #f8f8f8;
 }
 
 .loginPageContainer {
@@ -105,6 +140,12 @@ html,body {
     width: 100px;
     height: auto;
     margin-bottom: 20px;
+}
+
+/*a 태그 밑줄 및 기본 css 효과 제거*/
+.delDefaultATagCss{
+    color:black;
+    text-decoration: none;
 }
 
 /*로그인페이지의 로고 위치 수정*/
@@ -134,12 +175,8 @@ html,body {
     align-items: center;
 }
 
-<<<<<<< HEAD
 
-/*로그인 회원가입페이지 input ss*/
-=======
 /*로그인 회원가입페이지 input css*/
->>>>>>> 7557a114d8c0d64dc49ad0d08b1b743bf637ac15
 .inputField {
     width: 67%;
     padding: 10px;
@@ -180,9 +217,11 @@ html,body {
     text-decoration: none;
     font-size: 0.9em;
     /*링크css의 hover 효과*/
-    :hover {
+    &:hover {
         text-decoration: underline;
-    } /*가독성을 높이기 위해 안에 넣었음*/
+    } /*가독성을 높이기 위해 안에 넣었음
+    + 보아 하니 &을 안써주면 적용이 안됨
+    */
 }
 
 
@@ -202,11 +241,17 @@ html,body {
     width:80px;
 }
 
+/*헤더파일 내에 있는 로그인 회원가입 이동버튼*/
+.loginSignUp{
+    font-size: 1.2em;
+    margin-right: 40px;
+}
+
 /*메인페이지의 main태그*/
 .mainHtmlMain {
     display: flex;
     width:100%;
-    height: 100%;
+    height: auto;
 }
 
 /*메인페이지 그룹추가 버튼 wrapper*/
