@@ -20,8 +20,9 @@
 /*charset*/
 @charset "utf-8";
 
-/*글꼴 추가 League Gothic*/
+/*글꼴 추가 League Gothic, Jua*/
 @import url('https://fonts.googleapis.com/css2?family=League+Gothic&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=League+Gothic&display=swap');
 /*글꼴 적용*/
 * {
     font-family: "League Gothic", sans-serif;
@@ -29,6 +30,12 @@
     font-weight: 400;
     font-style: normal;
     font-variation-settings:"wdth" 100;
+}
+
+/*한국어 글꼴 적용*/
+.loginPagePhrase, .loginPagePhrase>span, .linkCss {
+    font-family: "Jua", sans-serif;
+    font-weight: 400;
 }
 
 /*
@@ -44,11 +51,23 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .loginPagePhrase{
         font-size: 2em !important;
     }
+    .logoInLoginPage{
+        width:150px !important;
+    }
+    .logoInMain{
+        margin-left: 30px !important;
+    }
 }
 
 @media(max-width : 400px){
     .loginPagePhrase{
         font-size: 1.5em !important;
+    }
+    .logoInLoginPage{
+        width:100px !important;
+    }
+    .logoInMain{
+        margin-left: 0px !important;
     }
 }
 
@@ -78,7 +97,7 @@ html,body {
 
 .loginPageContainer {
     position:relative;
-    top:-50px;
+    top:-70px;
     text-align: center;
 }
 
@@ -88,12 +107,25 @@ html,body {
     margin-bottom: 20px;
 }
 
+/*로그인페이지의 로고 위치 수정*/
+.logoInLoginPage{
+    position: relative;
+    top:-30px;
+    width: 200px;
+}
+
 /*로그인 페이지의 h1태그*/
 .loginPagePhrase {
-    font-weight: bold;
+    font-family: "Jua", sans-serif;
+    font-weight: 400;
     font-size: 2.5em;
-    color: #333;
+    color: #7c7c7c;
     margin-bottom: 20px;
+    span {
+        font-family: "Jua", sans-serif;
+        font-weight: 400;
+        color: #3b3b3b;
+    }
 }
 
 .loginForm {
@@ -102,9 +134,14 @@ html,body {
     align-items: center;
 }
 
+<<<<<<< HEAD
+
 /*로그인 회원가입페이지 input ss*/
+=======
+/*로그인 회원가입페이지 input css*/
+>>>>>>> 7557a114d8c0d64dc49ad0d08b1b743bf637ac15
 .inputField {
-    width: 80%;
+    width: 67%;
     padding: 10px;
     margin: 10px 0;
     border:0;
@@ -113,35 +150,93 @@ html,body {
     font-size: 1em;
 }
 
+.inputField:focus{
+    box-shadow: 3px 3px 3px #333;
+}
+
 /*로그인 회원가입 버튼*/
 .submitButton {
-    width: 85%;
+    width: 72%;
     padding: 10px;
     margin-top: 10px;
-    background-color: #333;
+    background-color: #454545;
     color: #fff;
     border: none;
     border-radius: 5px;
     font-size: 1em;
     cursor: pointer;
     transition: all 0.35s; /*이 태그와 관련된 all(모든 효과를) 0.35초에 걸쳐 전환한다*/
+    &:hover {
+        background-color: #acacac;
+    }
 }
 
-.submitButton:hover {
-    background-color: #666666;
-}
 
 /*링크에 쓰여질 css*/
 .linkCss {
     display: block;
     margin-top: 10px;
-    color: #333;
+    color: #7c7c7c;
     text-decoration: none;
     font-size: 0.9em;
+    /*링크css의 hover 효과*/
+    :hover {
+        text-decoration: underline;
+    } /*가독성을 높이기 위해 안에 넣었음*/
 }
 
-/*링크css의 hover 효과*/
-.linkCss:hover {
-    text-decoration: underline;
+
+/*메인페이지의 header태그*/
+.mainHtmlHeader {
+    box-shadow: 1px 2px 1px #cccccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #ffffff;
 }
 
+.logoInMain{
+    margin: 0;
+    margin-left: 50px;
+    width:80px;
+}
+
+/*메인페이지의 main태그*/
+.mainHtmlMain {
+    display: flex;
+    width:100%;
+    height: 100%;
+}
+
+/*메인페이지 그룹추가 버튼 wrapper*/
+.addGroup{
+    padding:0;
+    background: 0;
+    border:0;
+    display: block;
+    position: absolute;
+    width:100px;
+    height:auto;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    cursor: pointer;
+    transition:all 0.25s;
+}
+
+.addGroup:hover{
+    width:110px;
+}
+
+/*그룹추가 버튼 + 로고*/
+.addCircle{
+    width: 100%;
+    height: auto;
+}
+
+/*그룹추가 문구*/
+.addGroupPhrase{
+    font-weight: bold;
+    color:#cacaca;
+}
