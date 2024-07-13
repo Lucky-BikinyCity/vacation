@@ -1,3 +1,14 @@
+<!--
+추가 해야 하는 기능
+
+input 오른쪽에 입력된 값을 지우는 x버튼 만들고 배치 시키기
+
+비밀번호를 볼 수 있는 버튼 만들기
+
+반응형 웹
+
+문구 손보기
+-->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,13 +17,13 @@
     <title>로그인</title>
     <link rel="stylesheet" href="../src/index.css">
 </head>
-<body>
-    <div class="container">
+<body id="loginBody">
+    <div class="loginPageContainer">
         <img src="logo.png" alt="Logo" class="logo">
-        <h1>로그인 해서 친구들과 함께 블로그 관리를 해보세요 :-)</h1>
-        <form class="login-form">
-            <input type="text" placeholder="username" class="input-field">
-            <input type="password" placeholder="password" class="input-field">
+        <div class="loginPagePhrase">로그인 해서 친구들과 함께<br>블로그 관리를 해보세요 :-)</div>
+        <form class="loginForm">
+            <input type="text" placeholder="username" class="inputField">
+            <input type="password" placeholder="password" class="inputField">
             <button type="button" class="submitButton" onclick="login()">로그인</button>
             <a href="#" class="linkCss">회원가입</a>
         </form>
