@@ -1,29 +1,72 @@
+/*
+    #은 id태그, .은 class태그
+
+    css 적용 순서
+    1. 속성 값 뒤에 !important 를 붙인 속성
+    2. HTML에서 style을 직접 지정한 속성
+    3. #id 로 지정한 속성
+    4. .클래스, :추상클래스 로 지정한 속성
+    5. 태그이름 으로 지정한 속성
+    6. 상위 객체에 의해 상속된 속성
+
+    !important : css 적용순서 우선순위 무시 -> 사용하면 미리 말하거나 주석으로 설명 꼭 붙이기
+    ex) .compulsion{ color: black !important }
+
+    중요! 페이지 새로고침할때는 shift + F5로 새로고침하기.
+    강력한 새로고침이라고 이전에 있던 캐시들을 지우는 것인데, 이전에 있던 캐시들 때문에 css가 바로 적용되지 않는 현상을 해결
+*/
+
 /*charset*/
 @charset "utf-8";
 
-@media (max-width: 600px) {
-    .input-field, .login-button {
-        width: 90%;
-        max-width: none;
+/*
+미디어 쿼리문 : 설정된 크기 값에 맞춰 css를 변경함.
+반응형 웹을 만들기 위해 필요.
+
+min : ~이상, max : ~이하
+ex) 900px 이상 600px 이하 @media(max-width : 900px) and (min-width:500px) {}
+id로 해야 적용이 되고 
+class로 하면 뒤에 !important를 붙여야 적용이 됨
+*/
+@media(max-width : 900px){
+    .loginPagePhrase{
+        font-size: 2em !important;
     }
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@media(max-width : 400px){
+    .loginPagePhrase{
+        font-size: 1.5em !important;
+    }
+}
+
+html{ /*글꼴 크기 자동 조절 막음*/
+    -webkit-text-size-adjust: none; /*Chrome, Safari, newer versions of Opera*/
+    -moz-text-size-adjust: none; /*Firefox*/
+    -ms-text-size-adjust: none;  /*Ie*/
+    -o-text-size-adjust: none; /*old versions of Opera*/
+}
+
+html,body {
+    height:100%;
+    width:100%;
+    margin:0;
+    padding:0;
     font-family: Arial, sans-serif;
 }
 
-body {
+#loginBody {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    box-sizing: border-box;
     background-color: #f8f8f8;
 }
 
-.container {
+.loginPageContainer {
+    position:relative;
+    top:-50px;
     text-align: center;
 }
 
@@ -33,21 +76,23 @@ body {
     margin-bottom: 20px;
 }
 
-h1 {
-    font-size: 1.5em;
+/*로그인 페이지의 h1태그*/
+.loginPagePhrase {
+    font-weight: bold;
+    font-size: 2.5em;
     color: #333;
     margin-bottom: 20px;
 }
 
-.login-form {
+.loginForm {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.input-field {
+/*로그인 회원가입페이지 input ss*/
+.inputField {
     width: 80%;
-    max-width: 300px;
     padding: 10px;
     margin: 10px 0;
     border:0;
@@ -56,9 +101,9 @@ h1 {
     font-size: 1em;
 }
 
+/*로그인 회원가입 버튼*/
 .submitButton {
-    width: 84%;
-    max-width: 308px;
+    width: 85%;
     padding: 10px;
     margin-top: 10px;
     background-color: #333;
@@ -67,8 +112,14 @@ h1 {
     border-radius: 5px;
     font-size: 1em;
     cursor: pointer;
+    transition: all 0.35s; /*이 태그와 관련된 all(모든 효과를) 0.35초에 걸쳐 전환한다*/
 }
 
+.submitButton:hover {
+    background-color: #666666;
+}
+
+/*링크에 쓰여질 css*/
 .linkCss {
     display: block;
     margin-top: 10px;
@@ -77,6 +128,7 @@ h1 {
     font-size: 0.9em;
 }
 
+/*링크css의 hover 효과*/
 .linkCss:hover {
     text-decoration: underline;
 }
