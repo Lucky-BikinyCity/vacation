@@ -20,8 +20,9 @@
 /*charset*/
 @charset "utf-8";
 
-/*글꼴 추가 League Gothic*/
+/*글꼴 추가 League Gothic, Jua*/
 @import url('https://fonts.googleapis.com/css2?family=League+Gothic&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=League+Gothic&display=swap');
 /*글꼴 적용*/
 * {
     font-family: "League Gothic", sans-serif;
@@ -29,6 +30,12 @@
     font-weight: 400;
     font-style: normal;
     font-variation-settings:"wdth" 100;
+}
+
+/*한국어 글꼴 적용*/
+.loginPagePhrase, .loginPagePhrase>span, .linkCss {
+    font-family: "Jua", sans-serif;
+    font-weight: 400;
 }
 
 /*
@@ -90,10 +97,16 @@ html,body {
 
 /*로그인 페이지의 h1태그*/
 .loginPagePhrase {
-    font-weight: bold;
+    font-family: "Jua", sans-serif;
+    font-weight: 400;
     font-size: 2.5em;
-    color: #333;
+    color: #7c7c7c;
     margin-bottom: 20px;
+    span {
+        font-family: "Jua", sans-serif;
+        font-weight: 400;
+        color: #3b3b3b;
+    }
 }
 
 .loginForm {
@@ -102,7 +115,7 @@ html,body {
     align-items: center;
 }
 
-/*로그인 회원가입페이지 input ss*/
+/*로그인 회원가입페이지 input css*/
 .inputField {
     width: 80%;
     padding: 10px;
@@ -118,30 +131,30 @@ html,body {
     width: 85%;
     padding: 10px;
     margin-top: 10px;
-    background-color: #333;
+    background-color: #454545;
     color: #fff;
     border: none;
     border-radius: 5px;
     font-size: 1em;
     cursor: pointer;
     transition: all 0.35s; /*이 태그와 관련된 all(모든 효과를) 0.35초에 걸쳐 전환한다*/
+    &:hover {
+        background-color: #acacac;
+    }
 }
 
-.submitButton:hover {
-    background-color: #666666;
-}
 
 /*링크에 쓰여질 css*/
 .linkCss {
     display: block;
     margin-top: 10px;
-    color: #333;
+    color: #7c7c7c;
     text-decoration: none;
     font-size: 0.9em;
+    /*링크css의 hover 효과*/
+    :hover {
+        text-decoration: underline;
+    } /*가독성을 높이기 위해 안에 넣었음*/
 }
 
-/*링크css의 hover 효과*/
-.linkCss:hover {
-    text-decoration: underline;
-}
 
