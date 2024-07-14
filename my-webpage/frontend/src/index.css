@@ -90,7 +90,7 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .logoInMain{
         margin-left: 30px !important;
     }
-    .loginSignUp{
+    .profileWrapper{
         margin-right: 20px !important;
     }
 }
@@ -105,7 +105,7 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .logoInMain{
         margin-left: 0px !important;
     }
-    .loginSignUp{
+    .profileWrapper{
         margin-right: 0px !important;
     }
 }
@@ -247,8 +247,10 @@ html,body {
     width:80px;
 }
 
-/*헤더파일 내에 있는 로그인 회원가입 이동버튼*/
-.loginSignUp{
+/*헤더파일 내에 있는 profileWrapper*/
+.profileWrapper{
+    display: flex;
+    align-items: center;
     font-size: 1.2em;
     margin-right: 40px;
 }
@@ -291,4 +293,16 @@ html,body {
 .addGroupPhrase{
     font-weight: bold;
     color:#cacaca;
+}
+
+/*유저 프로파일 이미지 img*/
+.profileImg{
+    width: 25px;
+    height: auto;
+    margin-right:10px;
+}
+
+/*유저 프로파일 이름*/
+.profileName{
+    margin-bottom: 3px;
 }
