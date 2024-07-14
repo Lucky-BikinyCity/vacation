@@ -302,26 +302,26 @@ html,body {
 /*메인페이지의 header태그*/
 .mainHtmlHeader {
     position: relative;
-    box-shadow: 1px 2px 1px #cccccc;
+    /* box-shadow: 1px 2px 1px #cccccc; */
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #ffffff;
+    background-color: #EFEBE5;
     z-index: 1; /* 화면에 보여지는 우선순위 */
 }
 
 .logoInMain{
     margin: 0;
     margin-left: 50px;
-    width:80px;
+    width: 92px;
 }
 
 /*헤더파일 내에 있는 profileWrapper*/
 .profileWrapper{
     display: flex;
     align-items: center;
-    font-size: 1.2em;
+    font-size: 1.4em;
     margin-right: 40px;
     padding:5px;
     border-radius: 5px;
@@ -374,7 +374,7 @@ html,body {
 .profileImg{
     width: 25px;
     height: auto;
-    margin-right:10px;
+    margin-right:16px;
 }
 
 /*유저 프로파일 이름*/
