@@ -43,6 +43,10 @@
     .class1.class2 { 
     ... 
     }
+
+    z-index에 대해
+    z-index 값은 position 프로퍼티가 기본값인 static이 아닌 다른 값인 relative, absolute, fixed, sticky 중 하나를 할당받았을 때 사용할 수 있는 값이다.
+    z-index는 이들끼리 화면에 올라올 순서를 결정한다
 */
 
 
@@ -122,7 +126,7 @@ html,body {
     background-color: #f8f8f8;
 }
 
-#loginBody {
+#loginBody, #signUpBody {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -227,12 +231,14 @@ html,body {
 
 /*메인페이지의 header태그*/
 .mainHtmlHeader {
+    position: relative;
     box-shadow: 1px 2px 1px #cccccc;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
     background-color: #ffffff;
+    z-index: 1; /* 화면에 보여지는 우선순위 */
 }
 
 .logoInMain{
@@ -268,6 +274,7 @@ html,body {
     transform:translate(-50%,-50%);
     cursor: pointer;
     transition:all 0.25s;
+    z-index: 0;
 }
 
 .addGroup:hover{
