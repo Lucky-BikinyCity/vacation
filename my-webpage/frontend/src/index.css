@@ -130,7 +130,7 @@ html,body {
     margin:0;
     padding:0;
     font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
+    background-color: #ffffff;
 }
 
 /*이 클래스를 쓰면 드래그가 안됨*/
@@ -199,7 +199,7 @@ html,body {
 .inputWrapper {
     position: relative;
     width: 250px;
-    height:10px;
+    height:16px;
     padding: 10px;
     margin: 10px 0;
     border:0;
@@ -208,21 +208,22 @@ html,body {
     font-size: 1em;
     &>input{ /*inputwrapper 내에 있는 input태그*/
         position: absolute;
-        padding-top: 2px;
+        margin-left: 8px;
+        padding-top: 7px;
         top:0;
         left:25px;
         width: 210px;
         height: 25px;
         border:0;
-        background-color: #f8f8f8;
+        background-color: #ffffff;
         outline: none;
     }
     &>img:first-child{ /*내에 있는 img태그 중 첫번째*/
         top:6px;
         left:4px;
         position:absolute;
-        width:17px;
-        height:17px;
+        width:22px;
+        /* height:17px; 굳이 지정안해도 됨*/
     }
     &>img:last-child{ /*내에 있는 img태그 중 마지막*/
         top:7px;
@@ -256,11 +257,12 @@ html,body {
 
 .labelOfshowPwdInSignUp{
     &>img{
+        margin: 2px;
         top:7px;
         right:7px;
         position:absolute;
-        width:15px;
-        height:15px;
+        width:17px;
+        /* height:15px; */
         cursor: pointer;
     }
 }
