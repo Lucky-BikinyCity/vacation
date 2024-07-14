@@ -66,7 +66,8 @@
 }
 
 /*한국어 글꼴 적용*/
-.loginPagePhrase, .loginPagePhrase>span, .linkCss {
+/*앞으로 .koreanFont를 이용해서 한국어 폰트 적용*/
+.koreanFont {
     font-family: "Jua", sans-serif;
     font-weight: 400;
 }
@@ -92,6 +93,12 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     }
     .profileWrapper{
         margin-right: 20px !important;
+    }
+    .inputWrapper{
+        width:200px !important;
+        &>input{
+            width: 150px !important;
+        }
     }
 }
 
@@ -124,6 +131,14 @@ html,body {
     padding:0;
     font-family: Arial, sans-serif;
     background-color: #f8f8f8;
+}
+
+/*이 클래스를 쓰면 드래그가 안됨*/
+.dragUnable{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none
 }
 
 #loginBody, #signUpBody {
@@ -181,23 +196,78 @@ html,body {
 
 
 /*로그인 회원가입페이지 input css*/
-.inputField {
-    width: 67%;
+.inputWrapper {
+    position: relative;
+    width: 250px;
+    height:10px;
     padding: 10px;
     margin: 10px 0;
     border:0;
     outline: 2px solid #424242;
     border-radius: 5px;
     font-size: 1em;
+    &>input{ /*inputwrapper 내에 있는 input태그*/
+        position: absolute;
+        padding-top: 2px;
+        top:0;
+        left:25px;
+        width: 210px;
+        height: 25px;
+        border:0;
+        background-color: #f8f8f8;
+        outline: none;
+    }
+    &>img:first-child{ /*내에 있는 img태그 중 첫번째*/
+        top:6px;
+        left:4px;
+        position:absolute;
+        width:17px;
+        height:17px;
+    }
+    &>img:last-child{ /*내에 있는 img태그 중 마지막*/
+        top:7px;
+        right:7px;
+        position:absolute;
+        width:15px;
+        height:15px;
+        cursor: pointer;
+    }
 }
 
-.inputField:focus{
-    box-shadow: 3px 3px 3px #333;
+.showPwdWrapper{
+    position: relative;
+    display: flex;
+    align-items: center;
+    top:-5px;
+    left:-95px;
+    &>input{
+        cursor: pointer;
+    }
+    &>label{
+        font-size: 0.7em;
+        cursor: pointer;
+    }
+}
+
+/*회원가입 페이지에서 비밀번호 표시 css*/
+#showPwdInSignUp{
+    display: none;
+}
+
+.labelOfshowPwdInSignUp{
+    &>img{
+        top:7px;
+        right:7px;
+        position:absolute;
+        width:15px;
+        height:15px;
+        cursor: pointer;
+    }
 }
 
 /*로그인 회원가입 버튼*/
 .submitButton {
-    width: 72%;
+    width: 70%;
     padding: 10px;
     margin-top: 10px;
     background-color: #454545;
@@ -224,7 +294,7 @@ html,body {
     &:hover {
         text-decoration: underline;
     } /*가독성을 높이기 위해 안에 넣었음
-    + 보아 하니 &을 안써주면 적용이 안됨
+        + 보아 하니 &을 안써주면 적용이 안됨
     */
 }
 
@@ -253,6 +323,12 @@ html,body {
     align-items: center;
     font-size: 1.2em;
     margin-right: 40px;
+    padding:5px;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover{
+        background-color: #f5f5f5;
+    }
 }
 
 /*메인페이지의 main태그*/
@@ -291,7 +367,6 @@ html,body {
 
 /*그룹추가 문구*/
 .addGroupPhrase{
-    font-weight: bold;
     color:#cacaca;
 }
 

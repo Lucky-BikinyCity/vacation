@@ -1,11 +1,7 @@
 <!--
 추가 해야 하는 기능
 
-input 오른쪽에 입력된 값을 지우는 x버튼 만들고 배치 시키기
-
 비밀번호를 볼 수 있는 버튼 만들기
-
-문구 손보기
 -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -15,15 +11,28 @@ input 오른쪽에 입력된 값을 지우는 x버튼 만들고 배치 시키기
     <title>회원가입</title>
     <link rel="stylesheet" href="../src/index.css">
 </head>
-<body id="signUpBody">
+<body id="signUpBody" class="dragUnable">
     <div class="loginPageContainer">
         <img src="../imgs/web-icons/logo1-B.png" alt="Logo" class="logo">
-        <div class="loginPagePhrase"><span>로그인</span> 해서 친구들과 함께<br><span>블로그 관리</span>를 해보세요</div>
+        <div class="loginPagePhrase"><span>로그인</span>해서 친구들과 함께<br><span>블로그 관리</span>를 해보세요</div>
         <form class="loginForm">
-            <input type="text" placeholder="name" class="inputField">
-            <input type="text" placeholder="username" class="inputField">
-            <input type="password" placeholder="password" class="inputField">
-            <button type="button" class="submitButton" onclick="login()">sign-up</button>
+            <div class="inputWrapper">
+                <img src="../imgs/icon/my-icon.png"alt="">
+                <input type="text" placeholder="아이디" class="koreanFont">
+            </div>
+            <div class="inputWrapper">
+                <img src="../imgs/icon/lock.png" alt="">
+                <input id="password" type="password" placeholder="비밀번호" class="koreanFont">
+                <input id="showPwdInSignUp" type="checkbox">
+                <label class="labelOfshowPwdInSignUp" for="showPwdInSignUp">
+                    <img id="imgOfLabelOfshowPwdInSignUp" src="../imgs/icon/hideCode.png" alt="">
+                </label>
+            </div>
+            <div class="inputWrapper">
+                <img src="../imgs/icon/nickname.png"alt="">
+                <input type="text" placeholder="닉네임" class="koreanFont">
+            </div>
+            <button type="button" class="submitButton koreanFont" onclick="login()">회원가입</button>
         </form>
     </div>
     <script src="../src/index.js"></script>
