@@ -31,11 +31,11 @@ db.connect(err => {
 });
 
 // 정적 파일 제공 설정
-app.use(express.static(path.join(__dirname, 'frontend', 'public')));
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // 기본 라우트에서 /login.html 파일로 리디렉션
 app.get('/', (req, res) => {
-    res.redirect('/login.html');
+    res.sendFile(path.join(__dirname, 'frontend', 'public', 'login.html'));
 });
 
 //회원가입
