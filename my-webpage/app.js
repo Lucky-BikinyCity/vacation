@@ -123,7 +123,8 @@ app.post('/login', (req, res) => {
       // 세션 할당
       req.session.user = { id: user.user_ID, username: user.user_name };
 
-      res.json({ message: '로그인 성공' });
+      // main.html로 리디렉션
+      res.redirect('/main.html');
     });
   });
 });
