@@ -17,9 +17,33 @@
     <main class="mainHtmlMain">
         <!--맨 아래그룹추가 버튼이 눌리면 아래 div가 보여지고 맨 아래 그룹추가버튼은 display none으로 가려버림-->
         <div id="groupBoxes" class="groupBoxes">
+
+            <!--그룹 박스-->
+            <div id="groupBox" class="groupBox existGroup">
+                <div class="imgWrapper">
+                    <img src="" alt="">
+                    <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
+                </div>
+                <div class="groupInfoContainer">
+                    <div class="groupInfo">
+                        <div class="namingGroup koreanFont">[그룹 이름]</div>
+                        <div class="numberingMember">
+                            <img src="../imgs/icon/group.png" alt="">
+                            <span>3</span>
+                        </div>
+                    </div>
+                    <div class="buttonWrapper">
+                        <button class="koreanFont" id="delGroup">
+                            <img src="../imgs/icon/exit.png" alt="">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!--그룹 추가 박스-->
             <div id="createGroup" class="groupBox createGroup">
                 <div id="imgWrapper" class="imgWrapper">
-                    <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="Logo">
+                    <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
                 </div>
                 <div id="groupSetting" class="groupSetting">
                     <div class="groupInfo">
@@ -27,10 +51,13 @@
                             <input type="text" placeholder="group name">
                         </div>
                         <div class="numberingMember">
-                            <span class="icon">👥</span>
-                            <button id="decrement" class="arrow">-</button>
-                            <input type="number" id="member-count" value="1" min="1">
-                            <button id="increment" class="arrow">+</button>
+                            <img src="../imgs/icon/group.png" alt="">
+                            <span>member</span>
+                            <div class="member-count-container">
+                                <button class="minus" onclick="handleMemberCount(-1)">-</button>
+                                <input type="number" id="member-count" value="2" min="2" />
+                                <button class="plus" onclick="handleMemberCount(1)">+</button>
+                            </div>
                         </div>
                     </div>
                     <div class="buttonWrapper">
@@ -38,11 +65,15 @@
                     </div>
                 </div>
             </div>
+
+            <!--boxes활성화 상태시 그룹 추가 버튼-->
             <button id="addGroupInBoxes" class="addGroupInGroupBox">
                 <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
                 <div class="addGroupPhrase koreanFont">그룹 추가</div>
             </button>
         </div>
+
+        <!--boxes 비활성화 상태시 그룹 추가 버튼-->
         <button id="addGroupOnMain" class="addGroup">
             <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
             <div class="addGroupPhrase koreanFont">그룹 추가</div>
