@@ -15,18 +15,24 @@
                 <span class="profileName">username</span>
             </div>
             <div class="profileInfo">
+
                 <div class="containerInProfileInfo">
-                    <img src="" alt="">
+                    <img src="../imgs/icon/group-B.png" alt="">
                     <div>그룹</div>
-                    <span id="group_count" class="count">0</span>
+                    <div></div> <!--그냥 더미-->
+                    <span id="group_count" class="count">0</span> <!--그룹 갯수-->
                 </div>
+
                 <div class="containerInProfileInfo">
-                    <img src="" alt="">
+                    <img src="../imgs/icon/heart_fill.png" alt="">
                     <div>좋아요</div>
-                    <span id="like_count" class="count">0</span>
+                    <div></div> <!--그냥 더미-->
+                    <span id="like_count" class="count">0</span> <!--좋아요 갯수-->
                 </div>
+
+                <!--로그아웃 버튼-->
                 <button id="logout" class="logoutInProfile">
-                    <img src="../imgs/icon/exit.png" alt="">
+                    <img src="../imgs/icon/exit-b.png" alt="">
                     로그아웃
                 </button>
             </div>
@@ -39,7 +45,7 @@
             <!--그룹 박스-->
             <div id="groupBox" class="groupBox existGroup">
                 <div class="imgWrapper">
-                    <img src="" alt="">
+                    <img id="thumbnail" class="thumbnail" src="" alt="" onerror="this.style.display='none'"> <!--썸네일 이미지 공간 onerror를 이용해서 이미지 주소가 없을 때 display none으로 아예 감춰버림-->
                     <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
                 </div>
                 <div class="groupInfoContainer">
