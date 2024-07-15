@@ -1,118 +1,60 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
+// index.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
 
 const app = express();
-const PORT = 5000;
+const port = 3000;
 
-app.use(cors());
-app.use(express.json());
+// Body Parser Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose
-  .connect("mongodb://localhost:27017/my-webpage", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("MongoDB 연결 성공");
-  })
-  .catch((err) => {
-    console.error("MongoDB 연결 실패", err);
-  });
-
-// User 및 Content 모델 임포트
-const User = require("./models/User");
-const Content = require("./models/Content");
-
-app.get("/api/contents", async (req, res) => {
-  const contents = await Content.find();
-  res.json(contents);
+// MySQL Connection
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '12345678',
+    database: 'test_db' // 사용하려는 데이터베이스 이름
 });
 
-app.post("/api/signup", async (req, res) => {
-  const { email, password } = req.body;
-  const user = new User({ email, password });
-  await user.save();
-  res.json({ message: "회원가입 성공" });
-});
-
-app.post("/api/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email, password });
-  if (user) {
-    res.json({ message: "로그인 성공", user });
-  } else {
-    res.status(401).json({ message: "로그인 실패" });
-  }
-});
-
-app.post("/api/addToFavorites", async (req, res) => {
-  const { email, contentIds } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
-  }
-
-  contentIds.forEach((contentId) => {
-    if (!user.favorites.some((fav) => fav.contentId.toString() === contentId)) {
-      user.favorites.push({
-        contentId: new mongoose.Types.ObjectId(contentId),
-      });
+db.connect(err => {
+    if (err) {
+        console.error('Database connection failed: ' + err.stack);
+        return;
     }
-  });
-
-  await user.save();
-
-  res.json({ message: "찜한 콘텐츠에 추가되었습니다." });
+    console.log('Connected to database.');
 });
 
-app.get("/api/search", async (req, res) => {
-  const { q } = req.query;
-  const results = await Content.find({ title: { $regex: q, $options: "i" } });
-  res.json(results);
+// Sample Route
+app.get('/', (req, res) => {
+    res.send('Hello World!');
 });
 
-app.get("/api/contents/:id", async (req, res) => {
-  const { id } = req.params;
-  const content = await Content.findById(id);
-  res.json(content);
+// Fetch all users
+app.get('/users', (req, res) => {
+    const sql = 'SELECT * FROM users';
+    db.query(sql, (err, results) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.json(results);
+    });
 });
 
-app.get("/api/my/history", async (req, res) => {
-  const { email } = req.query;
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
-  }
-  const history = await Content.find({
-    _id: { $in: user.history.map((item) => item.contentId) },
-  });
-  res.json(history);
+// Add a new user
+app.post('/users', (req, res) => {
+    const { name, email } = req.body;
+    const sql = 'INSERT INTO users (name, email) VALUES (?, ?)';
+    db.query(sql, [name, email], (err, results) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        res.json({ id: results.insertId, name, email });
+    });
 });
 
-app.get("/api/my/favorites", async (req, res) => {
-  const { email } = req.query;
-  const user = await User.findOne({ email });
-  if (!user) {
-    return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
-  }
-  const favorites = await Content.find({
-    _id: { $in: user.favorites.map((item) => item.contentId) },
-  });
-  res.json(favorites);
-});
-
-// 모든 사용자 조회 API 엔드포인트 추가
-app.get("/api/users", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    console.error("Error fetching users", error);
-    res.status(500).json({ message: "Error fetching users" });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Start Server
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
