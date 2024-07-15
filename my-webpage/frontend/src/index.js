@@ -121,3 +121,10 @@ function AddGroup(){
         buttonInBoxes.style.display="none";
     })
 }
+
+function handleMemberCount(delta) {
+    let val = Number(document.querySelector(".createGroup #member-count").value);
+    if (!(delta < 0 && val <= 2)) {
+        document.querySelector(".createGroup #member-count").value = val + delta;
+    }
+}
