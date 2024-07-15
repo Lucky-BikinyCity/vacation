@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const session = require('express-session');
 const path = require('path');
 require('dotenv').config();
 
@@ -38,7 +39,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'public', 'login.html'));
 });
 
-//회원가입
+// 세션 설정
+app.use(session({
+  secret: 'your-secret-key',  // 세션 암호화를 위한 비밀 키
+  resave: false,              // 세션을 항상 저장할지 여부
+  saveUninitialized: true,    // 초기화되지 않은 세션을 저장할지 여부
+  cookie: { secure: false }   // HTTPS를 사용할 경우 true로 설정
+}));
+
+// 회원가입
 app.post('/signup', async (req, res) => {
   const { ID, PW, USERNAME } = req.body;
 
@@ -82,7 +91,7 @@ app.post('/signup', async (req, res) => {
   }
 });
 
-//로그인
+// 로그인 처리
 app.post('/login', (req, res) => {
   const { ID, PW } = req.body;
 
@@ -102,7 +111,7 @@ app.post('/login', (req, res) => {
 
     const user = results[0];
 
-    bcrypt.compare(PW, user.PW, (err, isMatch) => {
+    bcrypt.compare(PW, user.password, (err, isMatch) => {
       if (err) {
         return res.status(500).json({ message: '서버 오류' });
       }
@@ -111,15 +120,22 @@ app.post('/login', (req, res) => {
         return res.status(401).json({ message: 'ID 또는 PW가 잘못되었습니다' });
       }
 
-      const token = jwt.sign({ id: user.ID }, 'your_jwt_secret', {
-        expiresIn: '1h'
-      });
+      // 세션 할당
+      req.session.user = { id: user.user_ID, username: user.user_name };
 
-      res.json({ message: '로그인 성공', token });
+      res.json({ message: '로그인 성공' });
     });
   });
 });
-  
+
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error logging out' });
+    }
+    res.redirect('/login');
+  });
+});
 
 //서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
