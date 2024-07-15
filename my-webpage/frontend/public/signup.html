@@ -13,7 +13,7 @@
         <form class="signupForm">
             <div class="inputWrapper">
                 <img src="../imgs/icon/my-icon.png"alt="">
-                <input type="text" placeholder="아이디" class="koreanFont">
+                <input id="uid" type="text" placeholder="아이디" class="koreanFont">
             </div>
             <div class="inputWrapper">
                 <img src="../imgs/icon/lock.png" alt="">
@@ -25,11 +25,31 @@
             </div>
             <div class="inputWrapper">
                 <img src="../imgs/icon/nickname.png"alt="">
-                <input type="text" placeholder="닉네임" class="koreanFont">
+                <input id="username" type="text" placeholder="닉네임" class="koreanFont">
             </div>
-            <button type="button" class="submitButton koreanFont" onclick="login()">회원가입</button>
+            <button type="submit" class="submitButton koreanFont" onclick="login()">회원가입</button>
         </form>
     </div>
-    <script src="../src/index.js"></script>
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const ID = document.getElementById('uid').value;
+            const PW = document.getElementById('password').value;
+            const USERNAME = document.getElementById('username').value;
+
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ID, PW, USERNAME })
+            });
+
+            const result = await response.json();
+
+            document.getElementById('message').textContent = result.message;
+        });
+    </script>
 </body>
 </html>
