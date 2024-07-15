@@ -38,6 +38,25 @@ input 오른쪽에 입력된 값을 지우는 x버튼 만들고 배치 시키기
             <a href="./signup.html" class="linkCss koreanFont">회원가입</a>
         </form>
     </div>
-    <script src="../src/index.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const ID = document.getElementById('uid').value;
+            const PW = document.getElementById('password').value;
+
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ID, PW })
+            });
+
+            const result = await response.json();
+
+            document.getElementById('message').textContent = result.message;
+        });
+    </script>
 </body>
 </html>

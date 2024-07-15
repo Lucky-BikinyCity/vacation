@@ -6,16 +6,16 @@ const mysql = require('mysql2');
 const app = express();
 const port = 3000;
 
-// Body Parser Middleware
+// Body Parser 미들웨어
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MySQL Connection
+// MySQL
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '12345678',
-    database: 'test_db' // 사용하려는 데이터베이스 이름
+    database: 'project'
 });
 
 db.connect(err => {
@@ -33,19 +33,9 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname,'public','login.html'));
 });
 
-// Fetch all users
-app.get('/users', (req, res) => {
-    const sql = 'SELECT * FROM users';
-    db.query(sql, (err, results) => {
-        if (err) {
-            return res.status(500).send(err);
-        }
-        res.json(results);
-    });
-});
-
+//회원가입
 app.post('/signup', (req, res) => {
-    const { ID, PW, name} = req.body;
+    const { ID, PW, name } = req.body;
     const sql = 'INSERT INTO users (ID, PW, name) VALUES (?, ?, ?)';
     db.query(sql, [ID, PW, name], (err, results) =>{
         if(err){
@@ -55,11 +45,7 @@ app.post('/signup', (req, res) => {
     });
 });
 
-app.post('/login', (req, res) => {
-    const { ID, PW } = req.body;
-    const sql = 'SELECT (PW) from users where ID = ?';
-})
-
+//로그인
 app.post('/login', (req, res) => {
     const { ID, PW } = req.body;
   
@@ -98,7 +84,7 @@ app.post('/login', (req, res) => {
   });
   
 
-// Start Server
+//서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
