@@ -378,7 +378,7 @@ html,body {
         transform: scale(1.0333);
     }
     &>div:first-child{
-        background-color: #ececec;
+        background-color: #eeeeee;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         position: relative;
@@ -401,8 +401,23 @@ html,body {
     display: none;
 }
 
-.groupSetting{
+.imgWrapper{
+    position: relative;
+    &>img{
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+        margin:0;
+        width: 92px;
+    }
+}
+
+/*createGroup 내에 하단에 위치한 영역*/
+/* .groupSetting{
     display: flex;
+    border:1px solid black;
+    background-color: red;
     &>div:first-child{
         display: block;
     }
@@ -412,6 +427,68 @@ html,body {
             background-color: 0;
         }
     }
+} */
+.groupSetting {
+    position: relative;
+    width:100%;
+    height:100%;
+    padding: 10px;
+}
+
+.groupInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.namingGroup {
+    margin-bottom: 20px;
+    width: 80%;
+}
+
+.namingGroup input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.numberingMember {
+    display: flex;
+    align-items: center;
+}
+
+.arrow {
+    background-color: #ddd;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#member-count {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.buttonWrapper {
+    margin-top: 20px;
+}
+
+#add-button {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#add-button:hover {
+    background-color: #555;
 }
 
 /*그룹 박스 모음 내부의 그룹 추가 버튼*/

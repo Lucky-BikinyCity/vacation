@@ -18,14 +18,23 @@
         <!--맨 아래그룹추가 버튼이 눌리면 아래 div가 보여지고 맨 아래 그룹추가버튼은 display none으로 가려버림-->
         <div id="groupBoxes" class="groupBoxes">
             <div id="createGroup" class="groupBox createGroup">
-                <div id="imgWrapper" class="imgWrapper"></div>
+                <div id="imgWrapper" class="imgWrapper">
+                    <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="Logo">
+                </div>
                 <div id="groupSetting" class="groupSetting">
                     <div class="groupInfo">
-                        <div class="namingGroup">dd</div>
-                        <div class="numberingMember">aa</div>
+                        <div class="namingGroup">
+                            <input type="text" placeholder="group name">
+                        </div>
+                        <div class="numberingMember">
+                            <span class="icon">👥</span>
+                            <button id="decrement" class="arrow">-</button>
+                            <input type="number" id="member-count" value="1" min="1">
+                            <button id="increment" class="arrow">+</button>
+                        </div>
                     </div>
                     <div class="buttonWrapper">
-                        <button class="koreanFont">추가</button>
+                        <button class="koreanFont" id="add-button">추가</button>
                     </div>
                 </div>
             </div>
