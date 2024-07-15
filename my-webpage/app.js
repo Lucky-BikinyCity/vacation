@@ -24,7 +24,7 @@ const db = mysql.createConnection({
 });
 
 db.connect(err => {
-    if (err) {
+    if (err) {a
         console.error('Database connection failed: ' + err.stack);
         return;
     }
@@ -41,13 +41,13 @@ app.get('/', (req, res) => {
 
 // 세션 설정
 app.use(session({
-  secret: 'your-secret-key',  // 세션 암호화를 위한 비밀 키
+  secret: process.env.SESSION_SECRET,  // 환경 변수에서 비밀 키를 가져옴
   resave: false,              // 세션을 항상 저장할지 여부
   saveUninitialized: true,    // 초기화되지 않은 세션을 저장할지 여부
   cookie: { secure: false }   // HTTPS를 사용할 경우 true로 설정
 }));
 
-// 회원가입
+//ghldnjsrkd;lq
 app.post('/signup', async (req, res) => {
   const { ID, PW, USERNAME } = req.body;
 
@@ -56,7 +56,6 @@ app.post('/signup', async (req, res) => {
   }
 
   try {
-    // 아이디 중복 체크
     const checkSql = 'SELECT * FROM User WHERE user_ID = ?';
     db.query(checkSql, [ID], (err, results) => {
       if (err) {
@@ -68,7 +67,6 @@ app.post('/signup', async (req, res) => {
         return res.status(409).json({ message: '아이디가 존재합니다.' });
       }
 
-      // 아이디가 중복되지 않으면 회원가입 진행
       bcrypt.hash(PW, 10, (err, hashedPassword) => {
         if (err) {
           console.error('해시 처리 오류:', err);
@@ -124,11 +122,12 @@ app.post('/login', (req, res) => {
       req.session.user = { id: user.user_ID, username: user.user_name };
 
       // main.html로 리디렉션
-      res.redirect('/main.html');
+      res.json({ message: '로그인 성공' });
     });
   });
 });
 
+// 로그아웃 처리
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -137,6 +136,29 @@ app.get('/logout', (req, res) => {
     res.redirect('/login');
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {

@@ -12,54 +12,57 @@
         <div class="loginPagePhrase"><span>로그인</span>해서 친구들과 함께<br><span>블로그 관리</span>를 해보세요</div>
         <form class="loginForm">
             <div class="inputWrapper">
-                <img src="../imgs/icon/my-icon.png" alt="">
-                <input id="uid" type="text" placeholder="아이디" class="koreanFont">
+                <img src="../imgs/icon/my-icon.png"alt="">
+                <input id="uid" type="text" placeholder="아이디" class="koreanFont" required>
                 <img id="delIdInputContent" src="../imgs/icon/X.png" alt="">
             </div>
             <div class="inputWrapper">
                 <img src="../imgs/icon/lock.png" alt="">
-                <input id="password" type="password" placeholder="비밀번호" class="koreanFont">
+                <input id="password" type="password" placeholder="비밀번호" class="koreanFont" required>
                 <img id="delPwdInputContent" src="../imgs/icon/X.png" alt="">
             </div>
             <div class="showPwdWrapper">
                 <input id="showPwd" class="showPwd" type="checkbox">
                 <label for="showPwd" class="koreanFont">비밀번호 보기</label>
             </div>
-            <button type="submit" class="submitButton koreanFont" onclick="login()">로그인</button>
-            <a href="../public/signup.html" class="linkCss koreanFont">회원가입</a>
+            <button type="submit" class="submitButton koreanFont">로그인</button>
+            <a href="./signup.html" class="linkCss koreanFont">회원가입</a>
         </form>
-        <div id="message"></div> <!-- 메시지를 표시할 요소 추가 -->
+        <p id="message" class="koreanFont"></p> <!-- 메세지를 출력할 요소 추가 -->
     </div>
     <script src="../src/index.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('.loginForm').addEventListener('submit', async function(event) {
-                event.preventDefault();
-
-                const ID = document.getElementById('uid').value;
-                const PW = document.getElementById('password').value;
-
-                try {
-                    const response = await fetch('http://localhost:3000/login', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ ID, PW })
-                    });
-
-                    const result = await response.json();
-
-                    if (!response.ok) {
-                        throw new Error(result.message || '서버 오류 발생');
-                    }
-
-                    document.getElementById('message').textContent = result.message;
-                } catch (error) {
-                    console.error('Error:', error);
-                    document.getElementById('message').textContent = error.message;
+        document.querySelector('.loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const ID = document.getElementById('uid').value;
+            const PW = document.getElementById('password').value;
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ID, PW })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.message || '서버 오류 발생');
                 }
-            });
+                // 로그인 성공 시 main.html로 리디렉션
+                window.location.href = './public/main.html';
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = error.message;
+            }
+        });
+        // 비밀번호 보기 기능 추가
+        document.getElementById('showPwd').addEventListener('change', function() {
+            const passwordField = document.getElementById('password');
+            if (this.checked) {
+                passwordField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+            }
         });
     </script>
 </body>
