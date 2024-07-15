@@ -47,16 +47,37 @@ app.post('/signup', async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(PW, 10);
-
-    const sql = 'INSERT INTO User (user_ID, password, user_name) VALUES (?, ?, ?)';
-    db.query(sql, [ID, hashedPassword, USERNAME], (err, results) => {
+    // 아이디 중복 체크
+    const checkSql = 'SELECT * FROM User WHERE user_ID = ?';
+    db.query(checkSql, [ID], (err, results) => {
       if (err) {
-        return res.status(500).json({ message: '서버 오류', error: err });
+        console.error('데이터베이스 쿼리 오류:', err);
+        return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
       }
-      res.json({ id: results.insertId, USERNAME, message: '회원가입 성공' });
+
+      if (results.length > 0) {
+        return res.status(409).json({ message: '아이디가 존재합니다.' });
+      }
+
+      // 아이디가 중복되지 않으면 회원가입 진행
+      bcrypt.hash(PW, 10, (err, hashedPassword) => {
+        if (err) {
+          console.error('해시 처리 오류:', err);
+          return res.status(500).json({ message: '해시 처리 오류', error: err });
+        }
+
+        const sql = 'INSERT INTO User (user_ID, password, user_name, group_count, like_count) VALUES (?, ?, ?, 0, 0)';
+        db.query(sql, [ID, hashedPassword, USERNAME], (err, results) => {
+          if (err) {
+            console.error('데이터베이스 쿼리 오류:', err);
+            return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
+          }
+          res.json({ id: results.insertId, USERNAME, message: '회원가입 성공' });
+        });
+      });
     });
   } catch (error) {
+    console.error('서버 오류:', error);
     res.status(500).json({ message: '서버 오류', error });
   }
 });
