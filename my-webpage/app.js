@@ -24,7 +24,7 @@ const db = mysql.createConnection({
 });
 
 db.connect(err => {
-    if (err) {a
+    if (err) {
         console.error('Database connection failed: ' + err.stack);
         return;
     }
