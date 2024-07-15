@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function(){
         LoginBody();
     }else if(document.body.id==='signUpBody'){
         SignUpBody();
+    }else if(document.body.id==='mainBody'){
+        MainBody();
     }
 });
 
@@ -11,21 +13,29 @@ document.addEventListener('DOMContentLoaded', function(){
 
     //로그인 페이지
 function LoginBody(){
-    showPwdInLogin();
+    ShowPwdInLogin();
 
-    delInputContent();
+    DelInputContent();
 
-    inputFocusCss();
+    InputFocusCss();
 }
 
+    //회원가입 페이지
 function SignUpBody(){
-    showPwdInSignUp();
+    ShowPwdInSignUp();
 
-    inputFocusCss();
+    InputFocusCss();
 }
+
+    //메인 페이지
+function MainBody(){
+    AddGroup();
+}
+
+//이 아래서부턴 필요한 js함수 작성
 
     //로그인 페이지에서 비밀번호 표시 on/off 기능
-function showPwdInLogin(){
+function ShowPwdInLogin(){
     var checkbox = document.getElementById("showPwd");
     var pwd = document.getElementById("password");
 
@@ -39,7 +49,7 @@ function showPwdInLogin(){
 }
 
     //로그인 input 내용 지우기 기능
-function delInputContent(){
+function DelInputContent(){
     var delIdInputContent = document.getElementById('delIdInputContent');
     var delPwdInputContent = document.getElementById('delPwdInputContent');
     var idInput = document.getElementById('uid');
@@ -54,8 +64,8 @@ function delInputContent(){
     })
 }
 
-/*로그인 회원가입 input 테두리 focus 효과*/
-function inputFocusCss(){
+    //로그인 회원가입 input 테두리 focus 효과
+function InputFocusCss(){
     const inputWrappers = document.querySelectorAll('.inputWrapper');
     
     inputWrappers.forEach(wrapper => {
@@ -75,7 +85,7 @@ function inputFocusCss(){
 }
 
     //회원가입 페이지에서 비밀번호 표시 on/off 기능
-function showPwdInSignUp(){
+function ShowPwdInSignUp(){
     var checkbox = document.getElementById("showPwdInSignUp");
     var img = document.getElementById("imgOfLabelOfshowPwdInSignUp");
     var pwd = document.getElementById("password");
@@ -91,5 +101,23 @@ function showPwdInSignUp(){
     });
 }
 
+    //메인페이지 그룹box 내에 있는 그룹생성 버튼 hover 효과
+function AddGroup(){
+    //mainbutton을 누르면 mainbutton은 모습을 감추고 숨겨져 있던 boxes가 모습을 들어냄
+    var mainButton = document.getElementById("addGroupOnMain"); //메인 페이지 한 가운데에 있는 그룹 추가 버튼
+    var buttonInBoxes = document.getElementById("addGroupInBoxes"); //그룹 boxes 내에 있는 그룹 추가 버튼
+    var boxes = document.getElementById("groupBoxes");
+    var createGroup = document.getElementById("createGroup");
 
-//이 아래서부턴 필요한 js함수 작성
+    mainButton.addEventListener("click",function(){
+        mainButton.style.display="none";
+        buttonInBoxes.style.display="none";
+        createGroup.style.display="block";
+        boxes.style.display="flex";
+    });
+
+    buttonInBoxes.addEventListener("click",function(){
+        createGroup.style.display="block";
+        buttonInBoxes.style.display="none";
+    })
+}
