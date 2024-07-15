@@ -42,17 +42,59 @@ app.get('/users', (req, res) => {
     });
 });
 
-// Add a new user
-app.post('/users', (req, res) => {
-    const { name, email } = req.body;
-    const sql = 'INSERT INTO users (name, email) VALUES (?, ?)';
-    db.query(sql, [name, email], (err, results) => {
-        if (err) {
+app.post('/signup', (req, res) => {
+    const { ID, PW, name} = req.body;
+    const sql = 'INSERT INTO users (ID, PW, name) VALUES (?, ?, ?)';
+    db.query(sql, [ID, PW, name], (err, results) =>{
+        if(err){
             return res.status(500).send(err);
         }
-        res.json({ id: results.insertId, name, email });
+        res.json({ id: results.insertId, name, email});
     });
 });
+
+app.post('/login', (req, res) => {
+    const { ID, PW } = req.body;
+    const sql = 'SELECT (PW) from users where ID = ?';
+})
+
+app.post('/login', (req, res) => {
+    const { ID, PW } = req.body;
+  
+    if (!ID || !PW) {
+      return res.status(400).json({ message: 'ID와 PW를 입력해주세요' });
+    }
+  
+    const query = 'SELECT * FROM users WHERE ID = ?';
+    db.query(query, [ID], (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: '서버 오류' });
+      }
+  
+      if (results.length === 0) {
+        return res.status(401).json({ message: 'ID 또는 PW가 잘못되었습니다' });
+      }
+  
+      const user = results[0];
+  
+      bcrypt.compare(PW, user.PW, (err, isMatch) => {
+        if (err) {
+          return res.status(500).json({ message: '서버 오류' });
+        }
+  
+        if (!isMatch) {
+          return res.status(401).json({ message: 'ID 또는 PW가 잘못되었습니다' });
+        }
+  
+        const token = jwt.sign({ id: user.ID }, 'your_jwt_secret', {
+          expiresIn: '1h'
+        });
+  
+        res.json({ message: '로그인 성공', token });
+      });
+    });
+  });
+  
 
 // Start Server
 app.listen(port, () => {
