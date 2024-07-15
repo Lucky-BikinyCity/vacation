@@ -47,6 +47,8 @@
     z-index에 대해
     z-index 값은 position 프로퍼티가 기본값인 static이 아닌 다른 값인 relative, absolute, fixed, sticky 중 하나를 할당받았을 때 사용할 수 있는 값이다.
     z-index는 이들끼리 화면에 올라올 순서를 결정한다
+
+    -> z-index는 렌더링 속도를 느리게할 수 있어서 그냥 tag간 순서를 바꾸는 걸 더 추천 드려여 -정훈-
 */
 
 
@@ -58,7 +60,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Jua&family=League+Gothic&display=swap');
 /*글꼴 적용*/
 * {
-    font-family: "League Gothic", sans-serif;
+    font-family: "League Gothic", "Jua", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
@@ -378,7 +380,7 @@ html,body {
         transform: scale(1.0333);
     }
     &>div:first-child{
-        background-color: #ececec;
+        background-color: #eeeeee;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         position: relative;
@@ -396,13 +398,44 @@ html,body {
     }
 }
 
+.existGroup{
+    &>.groupInfoContainer{
+        color:#4e4e4e;
+        display: flex;
+        position: relative;
+        &>div:first-child{
+            display: block;
+        }
+        &>div:last-child{
+            &>button{
+                border:0;
+                background-color: 0;
+            }
+        }
+    }
+}
+
 /*그룹 생성하는 그룹 박스*/
 .createGroup{
     display: none;
 }
 
+.imgWrapper{
+    position: relative;
+    &>img{
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+        margin:0;
+        width: 92px;
+    }
+}
+
+/*createGroup 내에 하단에 위치한 영역*/
 .groupSetting{
     display: flex;
+    position: relative;
     &>div:first-child{
         display: block;
     }
@@ -412,6 +445,160 @@ html,body {
             background-color: 0;
         }
     }
+}
+
+.groupInfo {
+    position: relative;
+    width: 60%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.namingGroup {
+    position: absolute;
+    top:20px;
+    left:15px;
+    display: flex;
+    align-items: center;
+    width: 80%;
+    height:30px;
+    border-bottom: 1px solid #424242;
+}
+
+.namingGroup input {
+    border:0;
+    position: absolute;
+    width: 95%;
+    height: 80%;
+    &:focus{
+        outline: none;
+    }
+}
+
+.numberingMember {
+    border-bottom: 1px solid #424242;
+    position: absolute;
+    top:70px;
+    left:15px;
+    width: 80%;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    /* justify-content: space-between; */
+    align-items: center;
+    height:auto;
+    color:#424242;
+    &>img{
+        filter: invert(71%) sepia(0%) saturate(0%) hue-rotate(20deg) brightness(88%) contrast(90%);
+        width:20px;
+    }
+}
+
+.groupBox.existGroup {
+    & .namingGroup, & .numberingMember {
+        border-bottom: 0;
+    }
+
+    & .namingGroup {
+        font-size: 20px;
+    }
+}
+
+.arrow {
+    background-color: #ddd;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+#member-count {
+    width: 24px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 2px;
+    &:focus{
+        outline: none;
+    }
+
+    /** 넘버 인풋 옆에 스핀 버튼 제거 */
+    &::-webkit-inner-spin-button {
+        appearance: none;
+    }
+}
+
+.member-count-container {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+
+    margin-left: 8px;
+
+    & button.plus, & button.minus {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        width: 20px;
+        height: 20px;
+        padding: 0 2px 2px 0;
+        
+        border-radius: 4px;
+        border: 0;
+        
+        font-family: consolas;
+        font-size: 16px;
+        font-weight: bold;
+        
+        background: #cacaca;
+        color: white;
+
+        cursor: pointer;
+
+        &:hover {
+            background-color: #808080;
+        }
+    }
+}
+
+#delGroup{
+    position: absolute;
+    right:10px;
+    bottom:5px;
+    border:0;
+    background:0;
+    width: auto;
+    height: auto;
+    &>img{
+        width:24px;
+        height:24px;
+    }
+}
+
+.buttonWrapper {
+    position: relative;
+    width:40%;
+    height: 100%;
+}
+
+#add-button {
+    position: absolute;
+    right:15px;
+    bottom:10px;
+    width:100px;
+    height:30px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+#add-button:hover {
+    background-color: #555;
 }
 
 /*그룹 박스 모음 내부의 그룹 추가 버튼*/

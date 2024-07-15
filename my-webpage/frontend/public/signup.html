@@ -12,7 +12,7 @@
         <div class="loginPagePhrase"><span>로그인</span>해서 친구들과 함께<br><span>블로그 관리</span>를 해보세요</div>
         <form class="signupForm">
             <div class="inputWrapper">
-                <img src="../imgs/icon/my-icon.png"alt="">
+                <img src="../imgs/icon/my-icon.png" alt="">
                 <input id="uid" type="text" placeholder="아이디" class="koreanFont">
             </div>
             <div class="inputWrapper">
@@ -24,32 +24,44 @@
                 </label>
             </div>
             <div class="inputWrapper">
-                <img src="../imgs/icon/nickname.png"alt="">
+                <img src="../imgs/icon/nickname.png" alt="">
                 <input id="username" type="text" placeholder="닉네임" class="koreanFont">
             </div>
-            <button type="submit" class="submitButton koreanFont" onclick="login()">회원가입</button>
+            <button type="submit" class="submitButton koreanFont">회원가입</button>
         </form>
+        <div id="message"></div> <!-- 메시지를 표시할 요소 추가 -->
     </div>
     <script src="../src/index.js"></script>
     <script>
-        document.getElementById('signupForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.signupForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
 
-            const ID = document.getElementById('uid').value;
-            const PW = document.getElementById('password').value;
-            const USERNAME = document.getElementById('username').value;
+                const ID = document.getElementById('uid').value;
+                const PW = document.getElementById('password').value;
+                const USERNAME = document.getElementById('username').value;
 
-            const response = await fetch('/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ ID, PW, USERNAME })
+                try {
+                    const response = await fetch('http://localhost:3000/signup', { // URL 절대 경로로 수정
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ ID, PW, USERNAME })
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(result.message || '서버 오류 발생');
+                    }
+
+                    document.getElementById('message').textContent = result.message;
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('message').textContent = error.message;
+                }
             });
-
-            const result = await response.json();
-
-            document.getElementById('message').textContent = result.message;
         });
     </script>
 </body>

@@ -1,19 +1,10 @@
-<!--
-추가 해야 하는 기능
-
-input 오른쪽에 입력된 값을 지우는 x버튼 만들고 배치 시키기
-
-비밀번호를 볼 수 있는 버튼 만들기
-
-문구 손보기
--->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
-    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" href="../src/index.css">
 </head>
 <body id="loginBody" class="dragUnable">
     <div class="loginPageContainer">
@@ -22,41 +13,56 @@ input 오른쪽에 입력된 값을 지우는 x버튼 만들고 배치 시키기
         <form class="loginForm">
             <div class="inputWrapper">
                 <img src="../imgs/icon/my-icon.png"alt="">
-                <input id="uid" type="text" placeholder="아이디" class="koreanFont">
+                <input id="uid" type="text" placeholder="아이디" class="koreanFont" required>
                 <img id="delIdInputContent" src="../imgs/icon/X.png" alt="">
             </div>
             <div class="inputWrapper">
                 <img src="../imgs/icon/lock.png" alt="">
-                <input id="password" type="password" placeholder="비밀번호" class="koreanFont">
+                <input id="password" type="password" placeholder="비밀번호" class="koreanFont" required>
                 <img id="delPwdInputContent" src="../imgs/icon/X.png" alt="">
             </div>
             <div class="showPwdWrapper">
-                <input id="showPwd" class="showPwd" type="checkbox" >
+                <input id="showPwd" class="showPwd" type="checkbox">
                 <label for="showPwd" class="koreanFont">비밀번호 보기</label>
             </div>
-            <button type="submit" class="submitButton koreanFont" onclick="login()">로그인</button>
+            <button type="submit" class="submitButton koreanFont">로그인</button>
             <a href="./signup.html" class="linkCss koreanFont">회원가입</a>
         </form>
+        <p id="message" class="koreanFont"></p> <!-- 메세지를 출력할 요소 추가 -->
     </div>
     <script src="../src/index.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        document.querySelector('.loginForm').addEventListener('submit', async function(event) {
             event.preventDefault();
-
             const ID = document.getElementById('uid').value;
             const PW = document.getElementById('password').value;
-
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ ID, PW })
-            });
-
-            const result = await response.json();
-
-            document.getElementById('message').textContent = result.message;
+            try {
+                const response = await fetch('http://localhost:3000/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ID, PW })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.message || '서버 오류 발생');
+                }
+                // 로그인 성공 시 main.html로 리디렉션
+                window.location.href = './public/main.html';
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = error.message;
+            }
+        });
+        // 비밀번호 보기 기능 추가
+        document.getElementById('showPwd').addEventListener('change', function() {
+            const passwordField = document.getElementById('password');
+            if (this.checked) {
+                passwordField.type = 'text';
+            } else {
+                passwordField.type = 'password';
+            }
         });
     </script>
 </body>

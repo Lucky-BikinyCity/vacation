@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const session = require('express-session');
 const path = require('path');
 require('dotenv').config();
 
@@ -38,7 +39,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'public', 'login.html'));
 });
 
-//회원가입
+// 세션 설정
+app.use(session({
+  secret: process.env.SESSION_SECRET,  // 환경 변수에서 비밀 키를 가져옴
+  resave: false,              // 세션을 항상 저장할지 여부
+  saveUninitialized: true,    // 초기화되지 않은 세션을 저장할지 여부
+  cookie: { secure: false }   // HTTPS를 사용할 경우 true로 설정
+}));
+
+//ghldnjsrkd;lq
 app.post('/signup', async (req, res) => {
   const { ID, PW, USERNAME } = req.body;
 
@@ -47,21 +56,40 @@ app.post('/signup', async (req, res) => {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(PW, 10);
-
-    const sql = 'INSERT INTO User (user_ID, password, user_name) VALUES (?, ?, ?)';
-    db.query(sql, [ID, hashedPassword, USERNAME], (err, results) => {
+    const checkSql = 'SELECT * FROM User WHERE user_ID = ?';
+    db.query(checkSql, [ID], (err, results) => {
       if (err) {
-        return res.status(500).json({ message: '서버 오류', error: err });
+        console.error('데이터베이스 쿼리 오류:', err);
+        return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
       }
-      res.json({ id: results.insertId, USERNAME, message: '회원가입 성공' });
+
+      if (results.length > 0) {
+        return res.status(409).json({ message: '아이디가 존재합니다.' });
+      }
+
+      bcrypt.hash(PW, 10, (err, hashedPassword) => {
+        if (err) {
+          console.error('해시 처리 오류:', err);
+          return res.status(500).json({ message: '해시 처리 오류', error: err });
+        }
+
+        const sql = 'INSERT INTO User (user_ID, password, user_name, group_count, like_count) VALUES (?, ?, ?, 0, 0)';
+        db.query(sql, [ID, hashedPassword, USERNAME], (err, results) => {
+          if (err) {
+            console.error('데이터베이스 쿼리 오류:', err);
+            return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
+          }
+          res.json({ id: results.insertId, USERNAME, message: '회원가입 성공' });
+        });
+      });
     });
   } catch (error) {
+    console.error('서버 오류:', error);
     res.status(500).json({ message: '서버 오류', error });
   }
 });
 
-//로그인
+// 로그인 처리
 app.post('/login', (req, res) => {
   const { ID, PW } = req.body;
 
@@ -81,7 +109,7 @@ app.post('/login', (req, res) => {
 
     const user = results[0];
 
-    bcrypt.compare(PW, user.PW, (err, isMatch) => {
+    bcrypt.compare(PW, user.password, (err, isMatch) => {
       if (err) {
         return res.status(500).json({ message: '서버 오류' });
       }
@@ -90,15 +118,47 @@ app.post('/login', (req, res) => {
         return res.status(401).json({ message: 'ID 또는 PW가 잘못되었습니다' });
       }
 
-      const token = jwt.sign({ id: user.ID }, 'your_jwt_secret', {
-        expiresIn: '1h'
-      });
+      // 세션 할당
+      req.session.user = { id: user.user_ID, username: user.user_name };
 
-      res.json({ message: '로그인 성공', token });
+      // main.html로 리디렉션
+      res.json({ message: '로그인 성공' });
     });
   });
 });
-  
+
+// 로그아웃 처리
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error logging out' });
+    }
+    res.redirect('/login');
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
