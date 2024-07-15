@@ -13,11 +13,15 @@ document.addEventListener('DOMContentLoaded', function(){
 function LoginBody(){
     showPwdInLogin();
 
-    delInputContent()
+    delInputContent();
+
+    inputFocusCss();
 }
 
 function SignUpBody(){
     showPwdInSignUp();
+
+    inputFocusCss();
 }
 
     //로그인 페이지에서 비밀번호 표시 on/off 기능
@@ -48,6 +52,26 @@ function delInputContent(){
     delPwdInputContent.addEventListener('click',function(){
         pwdInput.value='';
     })
+}
+
+/*로그인 회원가입 input 테두리 focus 효과*/
+function inputFocusCss(){
+    const inputWrappers = document.querySelectorAll('.inputWrapper');
+    
+    inputWrappers.forEach(wrapper => {
+        const input = wrapper.querySelector('input');
+        const img = wrapper.querySelector('img');
+
+        input.addEventListener('focus', function() {
+            wrapper.style.borderColor = '#424242';
+            img.style.filter = 'invert(16%) sepia(0%) saturate(3726%) hue-rotate(315deg) brightness(108%) contrast(73%)';
+        });
+
+        input.addEventListener('blur', function() {
+            wrapper.style.borderColor = '#9c9c9c'; // 초기 상태로 되돌림
+            img.style.filter = ''; // 초기 상태로 되돌림
+        });
+    });
 }
 
     //회원가입 페이지에서 비밀번호 표시 on/off 기능

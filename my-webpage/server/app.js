@@ -26,9 +26,11 @@ db.connect(err => {
     console.log('Connected to database.');
 });
 
-// Sample Route
+app.use(express.static(path.join(__dirname, 'public')));
+
+//기본 라우트에서 login.html 파일을 응답합니다.
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.sendFile(path.join(__dirname,'public','login.html'));
 });
 
 // Fetch all users
