@@ -6,7 +6,7 @@
     <title>메인</title>
     <link rel="stylesheet" href="../src/index.css">
 </head>
-<body id="mainBody">
+<body id="mainBody" class="dragUnable">
     <header class="mainHtmlHeader">
         <img src="../imgs/web-icons/logo2-B.png" alt="Logo" class="logo logoInMain">
         <div class="profileWrapper">
@@ -15,7 +15,26 @@
         </div>
     </header>
     <main class="mainHtmlMain">
-        <button class="addGroup" onclick="addGroup()">
+        <!--맨 아래그룹추가 버튼이 눌리면 아래 div가 보여지고 맨 아래 그룹추가버튼은 display none으로 가려버림-->
+        <div id="groupBoxes" class="groupBoxes">
+            <div id="createGroup" class="groupBox createGroup">
+                <div id="imgWrapper" class="imgWrapper"></div>
+                <div id="groupSetting" class="groupSetting">
+                    <div class="groupInfo">
+                        <div class="namingGroup">dd</div>
+                        <div class="numberingMember">aa</div>
+                    </div>
+                    <div class="buttonWrapper">
+                        <button class="koreanFont">추가</button>
+                    </div>
+                </div>
+            </div>
+            <button id="addGroupInBoxes" class="addGroupInGroupBox">
+                <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
+                <div class="addGroupPhrase koreanFont">그룹 추가</div>
+            </button>
+        </div>
+        <button id="addGroupOnMain" class="addGroup">
             <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
             <div class="addGroupPhrase koreanFont">그룹 추가</div>
         </button>
