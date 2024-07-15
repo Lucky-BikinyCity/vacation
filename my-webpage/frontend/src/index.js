@@ -30,6 +30,8 @@ function SignUpBody(){
     //메인 페이지
 function MainBody(){
     AddGroup();
+
+    ShowProfile();
 }
 
 //이 아래서부턴 필요한 js함수 작성
@@ -122,9 +124,34 @@ function AddGroup(){
     })
 }
 
+    //그룹 생성 박스 멤버 숫자 조절, html 태그 내에 삽입
 function handleMemberCount(delta) {
     let val = Number(document.querySelector(".createGroup #member-count").value);
     if (!(delta < 0 && val <= 2)) {
         document.querySelector(".createGroup #member-count").value = val + delta;
     }
+}
+
+    //프로필 호버효과
+function ShowProfile(){
+    // Get elements
+    const profileNameWrapper = document.querySelector('.profileNameWrapper');
+    const profileInfo = document.querySelector('.profileInfo');
+    const profileWrapper = document.querySelector('.profileWrapper');
+
+    // Add event listener for mouseenter
+    profileWrapper.addEventListener('mouseenter', () => {
+        profileInfo.style.display = 'block';
+        profileWrapper.style.backgroundColor = 'white';
+        profileWrapper.style.boxShadow = '1px 4px 4px #c4c4c4';
+        profileNameWrapper.style.borderBottom='0.5px solid #d8d8d8';
+    });
+
+    // Add event listener for mouseleave
+    profileWrapper.addEventListener('mouseleave', () => {
+        profileInfo.style.display = 'none';
+        profileWrapper.style.backgroundColor = '';
+        profileWrapper.style.boxShadow = '';
+        profileNameWrapper.style.border='';
+    });
 }

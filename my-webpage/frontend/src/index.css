@@ -94,7 +94,7 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
         margin-left: 30px !important;
     }
     .profileWrapper{
-        margin-right: 20px !important;
+        right: 20px !important;
     }
     .inputWrapper{
         width:200px !important;
@@ -118,7 +118,7 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
         margin-left: 0px !important;
     }
     .profileWrapper{
-        margin-right: 0px !important;
+        right: 10px !important;
     }
     .showPwdWrapper{
         left:-73px !important;
@@ -332,17 +332,70 @@ html,body {
     width: 92px;
 }
 
-/*헤더파일 내에 있는 profileWrapper*/
 .profileWrapper{
+    position: absolute;
+    top:20px;
+    right:50px;
+    width:auto;
+    height: auto;
+    background-color: none;
+    /* box-shadow: 1px 4px 4px #c4c4c4; */
+}
+
+/*헤더파일 내에 있는 profileNameWrapper*/
+.profileNameWrapper{
+    position: relative;
+    width:165px;
     display: flex;
     align-items: center;
     font-size: 1.4em;
-    margin-right: 40px;
-    padding:5px;
-    border-radius: 5px;
     cursor: pointer;
-    &:hover{
-        background-color: #ececec;
+    &>img{
+        margin-top: 10px;
+        margin-left:15px;
+        margin-bottom: 10px;
+    }
+     &>.profileName{
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+}
+
+.profileInfo{
+    display: none;
+    position: relative;
+    width:165px;
+    height:auto;
+    &>.containerInProfileInfo{
+        display: flex;
+        margin:15px;
+        margin-top:10px;
+    }
+    &>.logoutInProfile{
+        position: relative;
+        color:#3b3b3b;
+        font-size: 1em;
+        width:100%;
+        height:50px;
+        padding:0;
+        border: none;
+        border-top: 1px solid #424242;
+        background: none;
+        &:hover{
+            color: white;
+            transition: all 0.25s;
+            background-color: rgb(214, 109, 109);
+            &>img {
+                filter: brightness(0) invert();
+            }
+        }
+        &>img{
+            position: absolute;
+            top:15px;
+            left:15px;
+            width:20px;
+            transition: all 0.25s;
+        }
     }
 }
 
@@ -515,7 +568,7 @@ html,body {
 }
 
 #member-count {
-    width: 24px;
+    width: 20px;
     text-align: center;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -542,7 +595,7 @@ html,body {
         justify-content: center;
         align-items: center;
 
-        width: 20px;
+        width: 17px;
         height: 20px;
         padding: 0 2px 2px 0;
         
@@ -573,8 +626,12 @@ html,body {
     width: auto;
     height: auto;
     &>img{
+        cursor: pointer;
         width:24px;
         height:24px;
+    }
+    &>img:hover{
+        filter: invert(71%) sepia(0%) saturate(0%) hue-rotate(20deg) brightness(88%) contrast(90%);
     }
 }
 
