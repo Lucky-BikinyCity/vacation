@@ -1,9 +1,7 @@
-// index.js
 const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const path = require('path');
 require('dotenv').config();
@@ -31,14 +29,6 @@ db.connect(err => {
     console.log('Connected to database.');
 });
 
-// 정적 파일 제공 설정
-app.use(express.static(path.join(__dirname, 'frontend')));
-
-// 기본 라우트에서 /login.html 파일로 리디렉션
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'public', 'login.html'));
-});
-
 // 세션 설정
 app.use(session({
   secret: process.env.SESSION_SECRET,  // 환경 변수에서 비밀 키를 가져옴
@@ -47,16 +37,24 @@ app.use(session({
   cookie: { secure: false }   // HTTPS를 사용할 경우 true로 설정
 }));
 
+// 정적 파일 제공 설정
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// 기본 라우트에서 /login.html 파일로 리디렉션
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'public', 'login.html'));
+});
+
 // 인증 미들웨어
 function isAuthenticated(req, res, next) {
   if (req.session && req.session.user) {
     return next();
   } else {
-    res.redirect('./public/login.html');
+    res.redirect('/');  // 로그인 페이지로 리디렉션
   }
 }
 
-//ghldnjsrkd;lq
+// 회원가입 처리
 app.post('/signup', async (req, res) => {
   const { ID, PW, USERNAME } = req.body;
 
@@ -130,8 +128,8 @@ app.post('/login', (req, res) => {
       // 세션 할당
       req.session.user = { id: user.user_ID, username: user.user_name };
 
-      // main.html로 리디렉션
-      res.redirect('/main');
+      // 로그인 성공 응답
+      res.json({ success: true, message: '로그인 성공', user: { id: user.user_ID, username: user.user_name } });
     });
   });
 });
@@ -140,9 +138,9 @@ app.post('/login', (req, res) => {
 app.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ message: 'Error logging out' });
+      return res.status(500).json({ message: '로그아웃 중 오류가 발생했습니다.' });
     }
-    res.redirect('/login');
+    res.json({ success: true, message: '로그아웃 성공' });
   });
 });
 
@@ -151,30 +149,29 @@ app.get('/main', isAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'public', 'main.html'));
 });
 
+app.get('/api/main', isAuthenticated, (req, res) => {
+  const userId = req.session.user.id;
 
+  const query = 'SELECT user_name, group_count, like_count FROM User WHERE user_ID = ?';
+  db.query(query, [userId], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: '서버 오류', error: err });
+    }
 
+    if (results.length === 0) {
+      return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
+    }
 
+    const user = results[0];
+    res.json({
+      user_name: user.user_name,
+      group_count: user.group_count,
+      like_count: user.like_count
+    });
+  });
+});
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
+// 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });

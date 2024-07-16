@@ -12,22 +12,21 @@
         <div class="profileWrapper">
             <div class="profileNameWrapper">
                 <img src="../imgs/icon/user_circle.png" class="profileImg" alt="">
-                <span class="profileName">username</span>
+                <span id="profileName" class="profileName"></span>
             </div>
             <div class="profileInfo">
-
                 <div class="containerInProfileInfo">
                     <img src="../imgs/icon/group-B.png" alt="">
                     <div>그룹</div>
                     <div></div> <!--그냥 더미-->
-                    <span id="group_count" class="count">0</span> <!--그룹 갯수-->
+                    <span id="group_count" class="count"></span> <!--그룹 갯수-->
                 </div>
 
                 <div class="containerInProfileInfo">
                     <img src="../imgs/icon/heart_fill.png" alt="">
                     <div>좋아요</div>
                     <div></div> <!--그냥 더미-->
-                    <span id="like_count" class="count">0</span> <!--좋아요 갯수-->
+                    <span id="like_count" class="count"></span> <!--좋아요 갯수-->
                 </div>
 
                 <!--로그아웃 버튼-->
@@ -108,5 +107,42 @@
         </button>
     </main>
     <script src="../src/index.js"></script>
+    <script>
+        // 페이지 로드 시 사용자 정보 가져오기
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/api/main');
+                if (!response.ok) {
+                    throw new Error('사용자 정보를 가져오지 못했습니다.');
+                }
+                const data = await response.json();
+                document.getElementById('profileName').textContent = data.user_name;
+                document.getElementById('group_count').textContent = data.group_count;
+                document.getElementById('like_count').textContent = data.like_count;
+            } catch (error) {
+                console.error('Error:', error);
+                // 세션이 없을 경우 로그인 페이지로 리디렉션
+                window.location.href = '/';
+            }
+        });
+
+        // 로그아웃 버튼 클릭 시 로그아웃 처리
+        document.getElementById('logout').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/logout');
+                if (!response.ok) {
+                    throw new Error('로그아웃에 실패했습니다.');
+                }
+                const result = await response.json();
+                if (result.success) {
+                    window.location.href = '/';
+                } else {
+                    throw new Error('로그아웃에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
 </body>
 </html>
