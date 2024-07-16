@@ -657,7 +657,7 @@ html,body {
     }
 }
 
-#delGroup{
+#delGroup,#exitGroup{
     position: absolute;
     right:10px;
     bottom:5px;
@@ -772,12 +772,21 @@ html,body {
     width:300px;
     height:100%;
     background-color: #F7F7F5;
-    &>.logoInMain{
-        margin:0;
+    &>.titleContainer{
         position: relative;
-        top:2%;
-        left:50%;
-        transform: translateX(-60%);
+        display: flex;
+        &>.logoInMain{
+            margin:0;
+            position: relative;
+            width:50px;
+            height:auto;
+            top:2%;
+            left:50%;
+            transform: translateX(-60%);
+        }
+        &>.title{
+            position: relative;
+        }
     }
     &>.memberListContainer{
         position: relative;
