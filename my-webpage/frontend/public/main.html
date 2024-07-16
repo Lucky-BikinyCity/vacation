@@ -80,44 +80,44 @@
     <script src="../src/index.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        // 사용자 정보 가져오기
-        const userInfoResponse = await fetch('/api/main');
-        console.log('User info response:', userInfoResponse);  // 응답 로그
+            try {
+                const userInfoResponse = await fetch('/api/main');
+                if (!userInfoResponse.ok) {
+                    throw new Error('사용자 정보를 가져오지 못했습니다.');
+                }
 
-        if (!userInfoResponse.ok) {
-            throw new Error('사용자 정보를 가져오지 못했습니다.');
-        }
+                const userInfo = await userInfoResponse.json();
+                const userId = userInfo.user_id; // 세션에서 사용자 ID를 가져옵니다.
+                document.getElementById('profileName').textContent = userInfo.user_name;
+                document.getElementById('group_count').textContent = userInfo.group_count;
+                document.getElementById('like_count').textContent = userInfo.like_count;
 
-        const userInfo = await userInfoResponse.json();
-        console.log('User info data:', userInfo);  // 사용자 정보 로그
+                const groupResponse = await fetch('/api/user-groups');
+                if (!groupResponse.ok) {
+                    throw new Error('그룹 정보를 가져오지 못했습니다.');
+                }
 
-        const userId = userInfo.user_id;  // 사용자 ID
-        document.getElementById('profileName').textContent = userInfo.user_name;
-        document.getElementById('group_count').textContent = userInfo.group_count;
-        document.getElementById('like_count').textContent = userInfo.like_count;
+                const groupData = await groupResponse.json();
+                const groupBoxes = document.getElementById('groupBoxes');
 
-        // 그룹 정보 가져오기
-        const groupResponse = await fetch('/api/user-groups');
-        console.log('Group response:', groupResponse);  // 응답 로그
+                if (groupData.groups.length > 0) {
+                    groupData.groups.forEach(group => {
+                        const groupBox = document.createElement('a');
+                        groupBox.href = '../public/group.html';
+                        groupBox.className = 'groupBox existGroup';
 
-        if (!groupResponse.ok) {
-            throw new Error('그룹 정보를 가져오지 못했습니다.');
-        }
-
-        const groupData = await groupResponse.json();
-        console.log('Group data:', groupData);  // 그룹 정보 로그
-
-        const groupBoxes = document.getElementById('groupBoxes');
-
-        if (groupData.groups.length > 0) {
-            // 그룹이 있을 때
-            groupData.groups.forEach(group => {
-                console.log('Group:', group);  // 각 그룹 정보 로그
-
-                const groupBox = document.createElement('a');
-                groupBox.href = '../public/group.html';
-                groupBox.className = 'groupBox existGroup';
+                        let buttonHtml;
+                        if (userId === group.group_king) {
+                            buttonHtml = `
+                                <button class="koreanFont" id="delGroup" data-group-id="${group.group_ID}" data-action="delete" onclick="preventLink(event)">
+                                    <img src="../imgs/icon/exit.png" alt="">
+                                </button>`;
+                        } else {
+                            buttonHtml = `
+                                <button class="koreanFont" id="exitGroup" data-group-id="${group.group_ID}" data-action="exit" onclick="preventLink(event)">
+                                    <img src="../imgs/icon/delete.png" alt="">
+                                </button>`;
+                        }
 
                         groupBox.innerHTML = `
                             <div class="imgWrapper">
@@ -133,79 +133,79 @@
                                     </div>
                                 </div>
                                 <div class="buttonWrapper">
-                                    <button class="koreanFont" id="delGroup">
-                                        <img src="../imgs/icon/exit.png" alt="">
-                                    </button>
-                                    <button class="koreanFont" id="exitGroup">
-                                        <img src="../imgs/icon/delete.png" alt="">
-                                    </button>
+                                    ${buttonHtml}
                                 </div>
                             </div>
                         `;
 
-                groupBoxes.appendChild(groupBox);
-            });
-            document.getElementById('groupBoxes').style.display = 'flex';
-            document.getElementById('addGroupInBoxes').style.display = 'block';
+                        groupBoxes.appendChild(groupBox);
+                    });
+                    document.getElementById('groupBoxes').style.display = 'flex';
+                    document.getElementById('addGroupInBoxes').style.display = 'block';
+                } else {
+                    document.getElementById('addGroupOnMain').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('정보를 가져오는 중 오류가 발생했습니다.');
+            }
+        });
 
-            // 그룹 삭제 및 탈퇴 버튼 이벤트 추가
-            document.querySelectorAll('.delGroup').forEach(button => {
-                button.addEventListener('click', async function(event) {
-                    const groupId = event.currentTarget.getAttribute('data-group-id');
-                    try {
-                        const response = await fetch(`/api/delete-group/${groupId}`, { method: 'DELETE' });
-                        if (response.ok) {
-                            alert('그룹이 삭제되었습니다.');
-                            window.location.reload(); // 페이지 새로고침
-                        } else {
-                            alert('그룹 삭제에 실패했습니다.');
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('그룹 삭제 중 오류가 발생했습니다.');
-                    }
-                });
-            });
+        async function preventLink(event) {
+            event.preventDefault();
 
-            document.querySelectorAll('.exitGroup').forEach(button => {
-                button.addEventListener('click', async function(event) {
-                    const groupId = event.currentTarget.getAttribute('data-group-id');
-                    try {
-                        const response = await fetch(`/api/exit-group/${groupId}`, { method: 'POST' });
-                        if (response.ok) {
-                            alert('그룹에서 탈퇴하였습니다.');
-                            window.location.reload(); // 페이지 새로고침
-                        } else {
-                            alert('그룹 탈퇴에 실패했습니다.');
+            const target = event.currentTarget;
+            const groupId = target.getAttribute('data-group-id');
+            const action = target.getAttribute('data-action');
+
+            if (!groupId || !action) {
+                console.error('Group ID or action not specified');
+                return;
+            }
+
+            console.log(`Group ID: ${groupId}, Action: ${action}`); // 디버깅용 로그
+
+            try {
+                let response;
+                if (action === 'delete') {
+                    response = await fetch(`/api/delete-group/${groupId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('그룹 탈퇴 중 오류가 발생했습니다.');
-                    }
-                });
-            });
-        } else {
-            // 그룹이 없을 때
-            document.getElementById('addGroupOnMain').style.display = 'block';
+                    });
+                } else if (action === 'exit') {
+                    response = await fetch(`/api/exit-group/${groupId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+
+                const result = await response.json();
+                if (!response.ok) {
+                    console.error(result.message || 'Action failed');
+                    alert(result.message || 'Action failed');
+                    return;
+                }
+
+                alert(result.message || 'Action completed successfully');
+                window.location.reload(); // 페이지 새로고침
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing your request.');
+            }
         }
-    } catch (error) {
-        console.error('Error:', error);
-        alert('정보를 가져오는 중 오류가 발생했습니다.');
-    }
-});
-        // 로그아웃 버튼 클릭 시 로그아웃 처리
+
         document.getElementById('logout').addEventListener('click', async function() {
             try {
                 const response = await fetch('/logout');
-                console.log('Logout response:', response);  // 응답 로그
-
                 if (!response.ok) {
                     throw new Error('로그아웃에 실패했습니다.');
                 }
 
                 const result = await response.json();
-                console.log('Logout result:', result);  // 로그아웃 결과 로그
-
                 if (result.success) {
                     window.location.href = '/';
                 } else {
@@ -216,7 +216,6 @@
             }
         });
 
-        // 그룹 추가 버튼 클릭 시 createGroup 표시
         document.getElementById('addGroupOnMain').addEventListener('click', function() {
             document.getElementById('createGroup').style.display = 'block';
             this.style.display = 'none';
@@ -227,7 +226,6 @@
             this.style.display = 'none';
         });
 
-        // 멤버 수 조절 버튼 기능
         function handleMemberCount(change) {
             const input = document.getElementById('input_member_number');
             if (input) {
@@ -239,7 +237,6 @@
             }
         }
 
-        // 그룹 추가 버튼 클릭 시 입력 값을 서버로 전송
         document.getElementById('add-button').addEventListener('click', async function() {
             const groupNameElement = document.getElementById('input_group_name');
             const maxMembersElement = document.getElementById('input_member_number');
@@ -265,14 +262,12 @@
                     },
                     body: JSON.stringify({ groupName, maxMembers })
                 });
-                console.log('Create group response:', response);  // 응답 로그
 
                 if (response.ok) {
                     alert('그룹이 생성되었습니다.');
                     window.location.reload(); // 페이지 새로고침
                 } else {
                     const result = await response.json();
-                    console.log('Create group result:', result);  // 결과 로그
                     alert(result.message || '그룹 생성에 실패했습니다.');
                 }
             } catch (error) {
@@ -280,12 +275,6 @@
                 alert('그룹 생성 중 오류가 발생했습니다.');
             }
         });
-
-        function preventLink(event) {
-            event.preventDefault();
-
-            //여기에 삭제나 그룹탈퇴 버튼 기능 작성
-        }
     </script>
 </body>
 </html>

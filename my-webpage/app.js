@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const path = require('path');
@@ -13,21 +13,27 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// 데이터베이스 연결 설정
-const db = mysql.createConnection({
+// MySQL 연결 설정
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
+  database: process.env.DB_NAME,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-db.connect(err => {
-    if (err) {
-        console.error('Database connection failed: ' + err.stack);
-        return;
-    }
-    console.log('Connected to database.');
-});
+// MySQL 연결 테스트
+(async function testDBConnection() {
+  try {
+      const connection = await pool.getConnection();
+      console.log('Connected to MySQL database.');
+      connection.release();
+  } catch (error) {
+      console.error('Failed to connect to MySQL database:', error);
+  }
+})();
 
 // 세션 설정
 app.use(session({
@@ -64,32 +70,17 @@ app.post('/signup', async (req, res) => {
 
   try {
     const checkSql = 'SELECT * FROM User WHERE user_ID = ?';
-    db.query(checkSql, [ID], (err, results) => {
-      if (err) {
-        console.error('데이터베이스 쿼리 오류:', err);
-        return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
-      }
+    const [results] = await pool.query(checkSql, [ID]);
+    
+    if (results.length > 0) {
+      return res.status(409).json({ message: '아이디가 존재합니다.' });
+    }
 
-      if (results.length > 0) {
-        return res.status(409).json({ message: '아이디가 존재합니다.' });
-      }
-
-      bcrypt.hash(PW, 10, (err, hashedPassword) => {
-        if (err) {
-          console.error('해시 처리 오류:', err);
-          return res.status(500).json({ message: '해시 처리 오류', error: err });
-        }
-
-        const sql = 'INSERT INTO User (user_ID, password, user_name, group_count, like_count) VALUES (?, ?, ?, 0, 0)';
-        db.query(sql, [ID, hashedPassword, USERNAME], (err, results) => {
-          if (err) {
-            console.error('데이터베이스 쿼리 오류:', err);
-            return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
-          }
-          res.json({ id: results.insertId, USERNAME, message: '회원가입 성공' });
-        });
-      });
-    });
+    const hashedPassword = await bcrypt.hash(PW, 10);
+    const sql = 'INSERT INTO User (user_ID, password, user_name, group_count, like_count) VALUES (?, ?, ?, 0, 0)';
+    const [insertResult] = await pool.query(sql, [ID, hashedPassword, USERNAME]);
+    res.json({ id: insertResult.insertId, USERNAME, message: '회원가입 성공' });
+    
   } catch (error) {
     console.error('서버 오류:', error);
     res.status(500).json({ message: '서버 오류', error });
@@ -97,41 +88,38 @@ app.post('/signup', async (req, res) => {
 });
 
 // 로그인 처리
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
   const { ID, PW } = req.body;
 
   if (!ID || !PW) {
     return res.status(400).json({ message: 'ID와 PW를 입력해주세요' });
   }
 
-  const query = 'SELECT * FROM User WHERE user_ID = ?';
-  db.query(query, [ID], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: '서버 오류' });
-    }
-
+  try {
+    const query = 'SELECT * FROM User WHERE user_ID = ?';
+    const [results] = await pool.query(query, [ID]);
+    
     if (results.length === 0) {
       return res.status(401).json({ message: 'ID 또는 PW가 잘못되었습니다' });
     }
 
     const user = results[0];
+    const isMatch = await bcrypt.compare(PW, user.password);
+    
+    if (!isMatch) {
+      return res.status(401).json({ message: 'ID 또는 PW가 잘못되었습니다' });
+    }
 
-    bcrypt.compare(PW, user.password, (err, isMatch) => {
-      if (err) {
-        return res.status(500).json({ message: '서버 오류' });
-      }
+    // 세션 할당
+    req.session.user = { id: user.user_ID, username: user.user_name };
 
-      if (!isMatch) {
-        return res.status(401).json({ message: 'ID 또는 PW가 잘못되었습니다' });
-      }
+    // 로그인 성공 응답
+    res.json({ success: true, message: '로그인 성공', user: { id: user.user_ID, username: user.user_name } });
 
-      // 세션 할당
-      req.session.user = { id: user.user_ID, username: user.user_name };
-
-      // 로그인 성공 응답
-      res.json({ success: true, message: '로그인 성공', user: { id: user.user_ID, username: user.user_name } });
-    });
-  });
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).json({ message: '서버 오류', error });
+  }
 });
 
 // 로그아웃 처리
@@ -149,14 +137,12 @@ app.get('/main', isAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'public', 'main.html'));
 });
 
-app.get('/api/main', isAuthenticated, (req, res) => {
+app.get('/api/main', isAuthenticated, async (req, res) => {
   const userId = req.session.user.id;
 
-  const query = 'SELECT user_name, group_count, like_count FROM User WHERE user_ID = ?';
-  db.query(query, [userId], (err, results) => {
-    if (err) {
-      return res.status(500).json({ message: '서버 오류', error: err });
-    }
+  try {
+    const query = 'SELECT user_name, group_count, like_count FROM User WHERE user_ID = ?';
+    const [results] = await pool.query(query, [userId]);
 
     if (results.length === 0) {
       return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
@@ -168,11 +154,15 @@ app.get('/api/main', isAuthenticated, (req, res) => {
       group_count: user.group_count,
       like_count: user.like_count
     });
-  });
+
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).json({ message: '서버 오류', error });
+  }
 });
 
 // 그룹 생성 처리
-app.post('/api/create-group', isAuthenticated, (req, res) => {
+app.post('/api/create-group', isAuthenticated, async (req, res) => {
   const { groupName, maxMembers } = req.body;
   const userId = req.session.user.id;
 
@@ -180,28 +170,24 @@ app.post('/api/create-group', isAuthenticated, (req, res) => {
     return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
   }
 
-  const createGroupQuery = 'INSERT INTO `Group` (group_name, max_members, current_members, user_ID) VALUES (?, ?, 1, ?)';
-  db.query(createGroupQuery, [groupName, maxMembers, userId], (err, results) => {
-    if (err) {
-      console.error('데이터베이스 쿼리 오류:', err);
-      return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
-    }
+  try {
+    const createGroupQuery = 'INSERT INTO `Group` (group_name, max_members, current_members, user_ID) VALUES (?, ?, 1, ?)';
+    const [groupResult] = await pool.query(createGroupQuery, [groupName, maxMembers, userId]);
 
-    const groupId = results.insertId;
+    const groupId = groupResult.insertId;
     const addUserToGroupQuery = 'INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)';
-    db.query(addUserToGroupQuery, [userId, groupId], (err, results) => {
-      if (err) {
-        console.error('데이터베이스 쿼리 오류:', err);
-        return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
-      }
+    await pool.query(addUserToGroupQuery, [userId, groupId]);
 
-      res.json({ success: true, message: '그룹이 생성되었습니다.', groupId: groupId });
-    });
-  });
+    res.json({ success: true, message: '그룹이 생성되었습니다.', groupId: groupId });
+
+  } catch (error) {
+    console.error('데이터베이스 쿼리 오류:', error);
+    res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
+  }
 });
 
 // 사용자 그룹 정보 가져오기
-app.get('/api/user-groups', isAuthenticated, (req, res) => {
+app.get('/api/user-groups', isAuthenticated, async (req, res) => {
     const userId = req.session.user.id;
 
     console.log('사용자 ID:', userId);
@@ -213,62 +199,71 @@ app.get('/api/user-groups', isAuthenticated, (req, res) => {
         WHERE ug.user_ID = ?
     `;
 
-    db.query(query, [userId], (err, results) => {
-        if (err) {
-            console.error('데이터베이스 쿼리 오류:', err);
-            return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
-        }
+    try {
+        const [results] = await pool.query(query, [userId]);
 
         console.log('그룹 정보 조회 결과:', results);
         res.json({ groups: results });
-    });
+
+    } catch (error) {
+        console.error('데이터베이스 쿼리 오류:', error);
+        res.status(500).json({ message: '데이터베이스 쿼리 오류', error: error });
+    }
 });
 
 // 그룹 삭제 라우트
 app.delete('/api/delete-group/:groupId', async (req, res) => {
-    const { groupId } = req.params;
-    const userId = req.session.user_id; // 세션에서 사용자 ID를 가져옵니다.
+  const { groupId } = req.params;
+  const userId = req.session.user.id; // 세션에서 사용자 ID를 가져옵니다.
 
-    if (!userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
+  if (!userId) {
+    console.error('Unauthorized: 세션에서 사용자 ID를 찾을 수 없습니다.');
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  console.log('그룹 삭제 요청:', { groupId, userId });
+
+  try {
+    const [result] = await pool.query('DELETE FROM `Group` WHERE group_ID = ? AND user_ID = ?', [groupId, userId]);
+
+    if (result.affectedRows > 0) {
+      res.json({ success: true, message: '그룹이 삭제되었습니다.' });
+    } else {
+      res.status(403).json({ success: false, message: '그룹 삭제 권한이 없습니다.' });
     }
-
-    try {
-        const [result] = await pool.query('DELETE FROM groups WHERE group_id = ? AND group_king = ?', [groupId, userId]);
-
-        if (result.affectedRows > 0) {
-            res.json({ success: true, message: '그룹이 삭제되었습니다.' });
-        } else {
-            res.status(403).json({ success: false, message: '그룹 삭제 권한이 없습니다.' });
-        }
-    } catch (error) {
-        console.error('그룹 삭제 중 오류 발생:', error);
-        res.status(500).json({ success: false, message: '그룹 삭제 중 오류가 발생했습니다.' });
-    }
+  } catch (error) {
+    console.error('그룹 삭제 중 오류 발생:', error);
+    res.status(500).json({ success: false, message: '그룹 삭제 중 오류가 발생했습니다.' });
+  }
 });
+
 
 // 그룹 탈퇴 라우트
 app.post('/api/exit-group/:groupId', async (req, res) => {
-    const { groupId } = req.params;
-    const userId = req.session.user_id; // 세션에서 사용자 ID를 가져옵니다.
+  const { groupId } = req.params;
+  const userId = req.session.user.id; // 세션에서 사용자 ID를 가져옵니다.
 
-    if (!userId) {
-        return res.status(401).json({ success: false, message: 'Unauthorized' });
+  if (!userId) {
+    console.error('Unauthorized: 세션에서 사용자 ID를 찾을 수 없습니다.');
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  console.log('그룹 탈퇴 요청:', { groupId, userId });
+
+  try {
+    const [result] = await pool.query('DELETE FROM UserGroup WHERE group_ID = ? AND user_ID = ?', [groupId, userId]);
+
+    if (result.affectedRows > 0) {
+      res.json({ success: true, message: '그룹에서 탈퇴하였습니다.' });
+    } else {
+      res.status(403).json({ success: false, message: '그룹 탈퇴에 실패했습니다.' });
     }
-
-    try {
-        const [result] = await pool.query('DELETE FROM group_members WHERE group_id = ? AND user_id = ?', [groupId, userId]);
-
-        if (result.affectedRows > 0) {
-            res.json({ success: true, message: '그룹에서 탈퇴하였습니다.' });
-        } else {
-            res.status(403).json({ success: false, message: '그룹 탈퇴에 실패했습니다.' });
-        }
-    } catch (error) {
-        console.error('그룹 탈퇴 중 오류 발생:', error);
-        res.status(500).json({ success: false, message: '그룹 탈퇴 중 오류가 발생했습니다.' });
-    }
+  } catch (error) {
+    console.error('그룹 탈퇴 중 오류 발생:', error);
+    res.status(500).json({ success: false, message: '그룹 탈퇴 중 오류가 발생했습니다.' });
+  }
 });
+
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
