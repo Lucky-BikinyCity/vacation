@@ -1,3 +1,4 @@
+<!---->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -118,31 +119,29 @@
                 groupBox.href = '../public/group.html';
                 groupBox.className = 'groupBox existGroup';
 
-                groupBox.innerHTML = `
-                    <div class="imgWrapper">
-                        <img class="thumbnail" src="" alt="" onerror="this.style.display='none'">
-                        <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
-                    </div>
-                    <div class="groupInfoContainer">
-                        <div class="groupInfo">
-                            <div class="namingGroup koreanFont">${group.group_name} / ${group.group_king}</div>
-                            <div class="numberingMember">
-                                <img src="../imgs/icon/group.png" alt="">
-                                <span class="count">${group.current_members} / ${group.max_members}</span>
+                        groupBox.innerHTML = `
+                            <div class="imgWrapper">
+                                <img class="thumbnail" src="" alt="" onerror="this.style.display='none'">
+                                <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
                             </div>
-                        </div>
-                        <div class="buttonWrapper">
-                            ${userId === group.group_king 
-                                ? `<button class="koreanFont" id="delGroup" data-group-id="${group.group_id}">
-                                     <img src="../imgs/icon/exit.png" alt="">
-                                   </button>`
-                                : `<button class="koreanFont" id="exitGroup" data-group-id="${group.group_id}">
-                                     <img src="../imgs/icon/delete.png" alt="">
-                                   </button>`
-                            }
-                        </div>
-                    </div>
-                `;
+                            <div class="groupInfoContainer">
+                                <div class="groupInfo">
+                                    <div class="namingGroup koreanFont">${group.group_name} / ${group.group_king}</div>
+                                    <div class="numberingMember">
+                                        <img src="../imgs/icon/group.png" alt="">
+                                        <span class="count">${group.current_members} / ${group.max_members}</span>
+                                    </div>
+                                </div>
+                                <div class="buttonWrapper">
+                                    <button class="koreanFont" id="delGroup">
+                                        <img src="../imgs/icon/exit.png" alt="">
+                                    </button>
+                                    <button class="koreanFont" id="exitGroup">
+                                        <img src="../imgs/icon/delete.png" alt="">
+                                    </button>
+                                </div>
+                            </div>
+                        `;
 
                 groupBoxes.appendChild(groupBox);
             });
@@ -281,6 +280,12 @@
                 alert('그룹 생성 중 오류가 발생했습니다.');
             }
         });
+
+        function preventLink(event) {
+            event.preventDefault();
+
+            //여기에 삭제나 그룹탈퇴 버튼 기능 작성
+        }
     </script>
 </body>
 </html>
