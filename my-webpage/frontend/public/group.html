@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>그룹</title>
+    <link rel="stylesheet" href="../src/index.css">
+</head>
+<body>
+    <div class="sidebar">
+        <img class="logoInMain" src="../imgs/web-icons/logo2-B.png" alt="">
+        <div class="memberListContainer">
+            <!--자기 자신-->
+            <div class="memberList myself">
+                <img src="../imgs/icon/user.png" alt="">
+                <span class="member">username</span>
+                <div></div> <!--더미-->
+                <button><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+            </div>
+
+            <!--다른 멤버-->
+            <div class="memberList">
+                <img src="../imgs/icon/user.png" alt="">
+                <span class="member">username</span>
+                <div></div> <!--더미-->
+            </div>
+        </div>
+        <button class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
+    </div>
+    <div class="groupContainer"></div>
+</body>
+<script src="../src/index.js"></script>
+</html>
