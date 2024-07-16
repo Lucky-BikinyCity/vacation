@@ -1,3 +1,4 @@
+<!---->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -131,10 +132,10 @@
                                     </div>
                                 </div>
                                 <div class="buttonWrapper">
-                                    <button class="koreanFont" id="delGroup">
+                                    <button class="koreanFont" id="delGroup" onclick="preventLink(event)">
                                         <img src="../imgs/icon/exit.png" alt="">
                                     </button>
-                                    <button class="koreanFont" id="exitGroup">
+                                    <button class="koreanFont" id="exitGroup" onclick="preventLink(event)">
                                         <img src="../imgs/icon/delete.png" alt="">
                                     </button>
                                 </div>
@@ -242,6 +243,12 @@
                 alert('그룹 생성 중 오류가 발생했습니다.');
             }
         });
+
+        function preventLink(event) {
+            event.preventDefault();
+
+            //여기에 삭제나 그룹탈퇴 버튼 기능 작성
+        }
     </script>
 </body>
 </html>
