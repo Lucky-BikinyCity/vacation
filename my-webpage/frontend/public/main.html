@@ -79,82 +79,121 @@
     <script src="../src/index.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                // 사용자 정보 가져오기
-                const userInfoResponse = await fetch('/api/main');
-                console.log('User info response:', userInfoResponse);  // 응답 로그
+    try {
+        // 사용자 정보 가져오기
+        const userInfoResponse = await fetch('/api/main');
+        console.log('User info response:', userInfoResponse);  // 응답 로그
 
-                if (!userInfoResponse.ok) {
-                    throw new Error('사용자 정보를 가져오지 못했습니다.');
-                }
+        if (!userInfoResponse.ok) {
+            throw new Error('사용자 정보를 가져오지 못했습니다.');
+        }
 
-                const userInfo = await userInfoResponse.json();
-                console.log('User info data:', userInfo);  // 사용자 정보 로그
+        const userInfo = await userInfoResponse.json();
+        console.log('User info data:', userInfo);  // 사용자 정보 로그
 
-                document.getElementById('profileName').textContent = userInfo.user_name;
-                document.getElementById('group_count').textContent = userInfo.group_count;
-                document.getElementById('like_count').textContent = userInfo.like_count;
+        const userId = userInfo.user_id;  // 사용자 ID
+        document.getElementById('profileName').textContent = userInfo.user_name;
+        document.getElementById('group_count').textContent = userInfo.group_count;
+        document.getElementById('like_count').textContent = userInfo.like_count;
 
-                // 그룹 정보 가져오기
-                const groupResponse = await fetch('/api/user-groups');
-                console.log('Group response:', groupResponse);  // 응답 로그
+        // 그룹 정보 가져오기
+        const groupResponse = await fetch('/api/user-groups');
+        console.log('Group response:', groupResponse);  // 응답 로그
 
-                if (!groupResponse.ok) {
-                    throw new Error('그룹 정보를 가져오지 못했습니다.');
-                }
+        if (!groupResponse.ok) {
+            throw new Error('그룹 정보를 가져오지 못했습니다.');
+        }
 
-                const groupData = await groupResponse.json();
-                console.log('Group data:', groupData);  // 그룹 정보 로그
+        const groupData = await groupResponse.json();
+        console.log('Group data:', groupData);  // 그룹 정보 로그
 
-                const groupBoxes = document.getElementById('groupBoxes');
+        const groupBoxes = document.getElementById('groupBoxes');
 
-                if (groupData.groups.length > 0) {
-                    // 그룹이 있을 때
-                    groupData.groups.forEach(group => {
-                        console.log('Group:', group);  // 각 그룹 정보 로그
+        if (groupData.groups.length > 0) {
+            // 그룹이 있을 때
+            groupData.groups.forEach(group => {
+                console.log('Group:', group);  // 각 그룹 정보 로그
 
-                        const groupBox = document.createElement('a');
-                        groupBox.href = '../public/group.html';
-                        groupBox.className = 'groupBox existGroup';
+                const groupBox = document.createElement('a');
+                groupBox.href = '../public/group.html';
+                groupBox.className = 'groupBox existGroup';
 
-                        groupBox.innerHTML = `
-                            <div class="imgWrapper">
-                                <img class="thumbnail" src="" alt="" onerror="this.style.display='none'">
-                                <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
+                groupBox.innerHTML = `
+                    <div class="imgWrapper">
+                        <img class="thumbnail" src="" alt="" onerror="this.style.display='none'">
+                        <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
+                    </div>
+                    <div class="groupInfoContainer">
+                        <div class="groupInfo">
+                            <div class="namingGroup koreanFont">${group.group_name} / ${group.group_king}</div>
+                            <div class="numberingMember">
+                                <img src="../imgs/icon/group.png" alt="">
+                                <span class="count">${group.current_members} / ${group.max_members}</span>
                             </div>
-                            <div class="groupInfoContainer">
-                                <div class="groupInfo">
-                                    <div class="namingGroup koreanFont">${group.group_name} / ${group.group_king}</div>
-                                    <div class="numberingMember">
-                                        <img src="../imgs/icon/group.png" alt="">
-                                        <span class="count">${group.current_members} / ${group.max_members}</span>
-                                    </div>
-                                </div>
-                                <div class="buttonWrapper">
-                                    <button class="koreanFont" id="delGroup">
-                                        <img src="../imgs/icon/exit.png" alt="">
-                                    </button>
-                                    <button class="koreanFont" id="exitGroup">
-                                        <img src="../imgs/icon/delete.png" alt="">
-                                    </button>
-                                </div>
-                            </div>
-                        `;
+                        </div>
+                        <div class="buttonWrapper">
+                            ${userId === group.group_king 
+                                ? `<button class="koreanFont" id="delGroup" data-group-id="${group.group_id}">
+                                     <img src="../imgs/icon/exit.png" alt="">
+                                   </button>`
+                                : `<button class="koreanFont" id="exitGroup" data-group-id="${group.group_id}">
+                                     <img src="../imgs/icon/delete.png" alt="">
+                                   </button>`
+                            }
+                        </div>
+                    </div>
+                `;
 
-                        groupBoxes.appendChild(groupBox);
-                    });
-                    document.getElementById('groupBoxes').style.display = 'flex';
-                    document.getElementById('addGroupInBoxes').style.display = 'block';
-                } else {
-                    // 그룹이 없을 때
-                    document.getElementById('addGroupOnMain').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('정보를 가져오는 중 오류가 발생했습니다.');
-            }
-        });
+                groupBoxes.appendChild(groupBox);
+            });
+            document.getElementById('groupBoxes').style.display = 'flex';
+            document.getElementById('addGroupInBoxes').style.display = 'block';
 
+            // 그룹 삭제 및 탈퇴 버튼 이벤트 추가
+            document.querySelectorAll('.delGroup').forEach(button => {
+                button.addEventListener('click', async function(event) {
+                    const groupId = event.currentTarget.getAttribute('data-group-id');
+                    try {
+                        const response = await fetch(`/api/delete-group/${groupId}`, { method: 'DELETE' });
+                        if (response.ok) {
+                            alert('그룹이 삭제되었습니다.');
+                            window.location.reload(); // 페이지 새로고침
+                        } else {
+                            alert('그룹 삭제에 실패했습니다.');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('그룹 삭제 중 오류가 발생했습니다.');
+                    }
+                });
+            });
+
+            document.querySelectorAll('.exitGroup').forEach(button => {
+                button.addEventListener('click', async function(event) {
+                    const groupId = event.currentTarget.getAttribute('data-group-id');
+                    try {
+                        const response = await fetch(`/api/exit-group/${groupId}`, { method: 'POST' });
+                        if (response.ok) {
+                            alert('그룹에서 탈퇴하였습니다.');
+                            window.location.reload(); // 페이지 새로고침
+                        } else {
+                            alert('그룹 탈퇴에 실패했습니다.');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('그룹 탈퇴 중 오류가 발생했습니다.');
+                    }
+                });
+            });
+        } else {
+            // 그룹이 없을 때
+            document.getElementById('addGroupOnMain').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('정보를 가져오는 중 오류가 발생했습니다.');
+    }
+});
         // 로그아웃 버튼 클릭 시 로그아웃 처리
         document.getElementById('logout').addEventListener('click', async function() {
             try {
