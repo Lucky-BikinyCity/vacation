@@ -74,6 +74,10 @@
     font-weight: 400;
 }
 
+:root{
+    --default_black_color:#424242; /*var(--defualt_black_color)를 작성하면 #424242값이 적용됨*/
+}
+
 /*
 미디어 쿼리문 : 설정된 크기 값에 맞춰 css를 변경함.
 반응형 웹을 만들기 위해 필요.
@@ -90,7 +94,7 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .logoInLoginPage{
         width:150px !important;
     }
-    .logoInMain{
+    .mainHtmlHeader > .logoInMain{
         margin-left: 30px !important;
     }
     .profileWrapper{
@@ -114,7 +118,7 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .logoInLoginPage{
         width:100px !important;
     }
-    .logoInMain{
+    .mainHtmlHeader > .logoInMain{
         margin-left: 0px !important;
     }
     .profileWrapper{
@@ -738,4 +742,105 @@ html,body {
 /*유저 프로파일 이름*/
 .profileName{
     margin-bottom: 3px;
+}
+
+/*사이드바*/
+.sidebar{
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+    width:300px;
+    height:100%;
+    background-color: #F7F7F5;
+    &>.logoInMain{
+        margin:0;
+        position: relative;
+        top:2%;
+        left:50%;
+        transform: translateX(-60%);
+    }
+    &>.memberListContainer{
+        position: relative;
+        top: 5%;
+        left:50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height:78%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        &>.memberList{
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top:10%;
+            left:50%;
+            transform: translateX(-50%);
+            width:98%;
+            height:40px;
+            color:#a1a1a1;
+            &:hover{
+                color:var(--default_black_color);
+                &>img,&>.member,&>button{
+                    transition: all 0.25s;
+                    transform:scale(1.2);
+                    visibility: visible;
+                }
+            }
+            &>img{
+                position: relative;
+                left: 15px;
+                width:20px;
+            }
+            &>.member{
+                position: relative;
+                left:-10px;
+                font-size: 1.5em;
+            }
+            &>button{
+                visibility: hidden;
+                position: absolute;
+                right:35px;
+                width:20px;
+                height:20px;
+                border: 0;
+                background-color: none;
+                cursor: pointer;
+                &>img{
+                    position: absolute;
+                    width: 20px;
+                    height:auto;
+                    top:0;
+                    left:0;
+                }
+            }
+        }
+        &>.memberList:first-child{
+            margin-top: 0;
+        }
+        & .myself{
+
+        }
+    }
+    &>.addMember{
+        position: relative;
+        top:10%;
+        left:50%;
+        transform: translateX(-50%);
+        border:0;
+        background-color: none;
+        width:80%;
+        height:50px;
+        border-radius: 10px;
+        background-color: var(--default_black_color);
+        transition: all 0.25s;
+        &>img{
+            width:30px;
+            position: relative;
+            left:5px;
+        }
+        &:hover{
+            background-color: #808080;
+        }
+    }
 }

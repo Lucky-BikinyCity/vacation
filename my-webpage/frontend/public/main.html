@@ -42,12 +42,12 @@
         <div id="groupBoxes" class="groupBoxes">
 
             <!--그룹 박스-->
-            <div id="groupBox" class="groupBox existGroup">
+            <a href="../public/group.html" id="groupBox" class="groupBox existGroup">
                 <div class="imgWrapper">
                     <img id="thumbnail" class="thumbnail" src="" alt="" onerror="this.style.display='none'"> <!--썸네일 이미지 공간 onerror를 이용해서 이미지 주소가 없을 때 display none으로 아예 감춰버림-->
                     <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
                 </div>
-                <div class="groupInfoContainer">
+                <div class="groupInfoContainer" onclick="location.href='../public/group.html';">
                     <div class="groupInfo">
                         <div id="group_name" class="namingGroup koreanFont">[그룹 이름]</div>
                         <div class="numberingMember">
@@ -61,7 +61,7 @@
                         </button>
                     </div>
                 </div>
-            </div>
+            </a>
 
             <!--그룹 추가 박스-->
             <div id="createGroup" class="groupBox createGroup">
@@ -107,42 +107,43 @@
         </button>
     </main>
     <script src="../src/index.js"></script>
-    <script>
-        // 페이지 로드 시 사용자 정보 가져오기
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                const response = await fetch('/api/main');
-                if (!response.ok) {
-                    throw new Error('사용자 정보를 가져오지 못했습니다.');
-                }
-                const data = await response.json();
-                document.getElementById('profileName').textContent = data.user_name;
-                document.getElementById('group_count').textContent = data.group_count;
-                document.getElementById('like_count').textContent = data.like_count;
-            } catch (error) {
-                console.error('Error:', error);
-                // 세션이 없을 경우 로그인 페이지로 리디렉션
-                window.location.href = '/';
-            }
-        });
-
-        // 로그아웃 버튼 클릭 시 로그아웃 처리
-        document.getElementById('logout').addEventListener('click', async function() {
-            try {
-                const response = await fetch('/logout');
-                if (!response.ok) {
-                    throw new Error('로그아웃에 실패했습니다.');
-                }
-                const result = await response.json();
-                if (result.success) {
-                    window.location.href = '/';
-                } else {
-                    throw new Error('로그아웃에 실패했습니다.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
-    </script>
 </body>
+<script src="../src/index.js"></script>
+<script>
+    // 페이지 로드 시 사용자 정보 가져오기
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            const response = await fetch('/api/main');
+            if (!response.ok) {
+                throw new Error('사용자 정보를 가져오지 못했습니다.');
+            }
+            const data = await response.json();
+            document.getElementById('profileName').textContent = data.user_name;
+            document.getElementById('group_count').textContent = data.group_count;
+            document.getElementById('like_count').textContent = data.like_count;
+        } catch (error) {
+            console.error('Error:', error);
+            // 세션이 없을 경우 로그인 페이지로 리디렉션
+            window.location.href = '/';
+        }
+    });
+
+    // 로그아웃 버튼 클릭 시 로그아웃 처리
+    document.getElementById('logout').addEventListener('click', async function() {
+        try {
+            const response = await fetch('/logout');
+            if (!response.ok) {
+                throw new Error('로그아웃에 실패했습니다.');
+            }
+            const result = await response.json();
+            if (result.success) {
+                window.location.href = '/';
+            } else {
+                throw new Error('로그아웃에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+</script>
 </html>
