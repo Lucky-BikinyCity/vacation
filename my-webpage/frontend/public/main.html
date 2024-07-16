@@ -18,18 +18,17 @@
                 <div class="containerInProfileInfo">
                     <img src="../imgs/icon/group-B.png" alt="">
                     <div>그룹</div>
-                    <div></div> <!--그냥 더미-->
-                    <span id="group_count" class="count"></span> <!--그룹 갯수-->
+                    <div></div>
+                    <span id="group_count" class="count"></span>
                 </div>
 
                 <div class="containerInProfileInfo">
                     <img src="../imgs/icon/heart_fill.png" alt="">
                     <div>좋아요</div>
-                    <div></div> <!--그냥 더미-->
-                    <span id="like_count" class="count"></span> <!--좋아요 갯수-->
+                    <div></div>
+                    <span id="like_count" class="count"></span>
                 </div>
 
-                <!--로그아웃 버튼-->
                 <button id="logout" class="logoutInProfile">
                     <img src="../imgs/icon/exit-b.png" alt="">
                     로그아웃
@@ -38,112 +37,180 @@
         </div>
     </header>
     <main class="mainHtmlMain">
-        <!--맨 아래그룹추가 버튼이 눌리면 아래 div가 보여지고 맨 아래 그룹추가버튼은 display none으로 가려버림-->
-        <div id="groupBoxes" class="groupBoxes">
-
-            <!--그룹 박스-->
-            <a href="../public/group.html" id="groupBox" class="groupBox existGroup">
-                <div class="imgWrapper">
-                    <img id="thumbnail" class="thumbnail" src="" alt="" onerror="this.style.display='none'"> <!--썸네일 이미지 공간 onerror를 이용해서 이미지 주소가 없을 때 display none으로 아예 감춰버림-->
-                    <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
-                </div>
-                <div class="groupInfoContainer" onclick="location.href='../public/group.html';">
-                    <div class="groupInfo">
-                        <div id="group_name" class="namingGroup koreanFont">[그룹 이름]</div>
-                        <div class="numberingMember">
-                            <img src="../imgs/icon/group.png" alt="">
-                            <span id="member_count" class="count">3</span>
-                        </div>
-                    </div>
-                    <div class="buttonWrapper">
-                        <button class="koreanFont" id="delGroup">
-                            <img src="../imgs/icon/exit.png" alt="">
-                        </button>
-                    </div>
-                </div>
-            </a>
-
-            <!--그룹 추가 박스-->
-            <div id="createGroup" class="groupBox createGroup">
-                <!--썸네일-->
-                <div id="imgWrapper" class="imgWrapper">
-                    <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
-                </div>
-                <!--아래 세팅부분-->
-                <div id="groupSetting" class="groupSetting">
-                    <div class="groupInfo">
-                        <!--그룹 이름-->
-                        <div class="namingGroup">
-                            <input id="input_group_name" type="text" placeholder="group name">
-                        </div>
-                        <!--멤버 수 설정-->
-                        <div class="numberingMember">
-                            <img src="../imgs/icon/group.png" alt="">
-                            <span>member</span>
-                            <div class="member-count-container">
-                                <button class="minus" onclick="handleMemberCount(-1)">-</button>
-                                <input type="input_member_number" id="member-count" value="2" min="2" />
-                                <button class="plus" onclick="handleMemberCount(1)">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="buttonWrapper">
-                        <button class="koreanFont" id="add-button">추가</button>
-                    </div>
-                </div>
-            </div>
-
-            <!--boxes활성화 상태시 그룹 추가 버튼-->
-            <button id="addGroupInBoxes" class="addGroupInGroupBox">
-                <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
-                <div class="addGroupPhrase koreanFont">그룹 추가</div>
-            </button>
-        </div>
-
-        <!--boxes 비활성화 상태시 그룹 추가 버튼-->
-        <button id="addGroupOnMain" class="addGroup">
+        <div id="groupBoxes" class="groupBoxes" style="display: none;"></div>
+        <button id="addGroupOnMain" class="addGroup" style="display: none;">
+            <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
+            <div class="addGroupPhrase koreanFont">그룹 추가</div>
+        </button>
+        <button id="addGroupInBoxes" class="addGroupInGroupBox" style="display: none;">
             <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
             <div class="addGroupPhrase koreanFont">그룹 추가</div>
         </button>
     </main>
-    <script src="../src/index.js"></script>
-</body>
-<script src="../src/index.js"></script>
-<script>
-    // 페이지 로드 시 사용자 정보 가져오기
-    document.addEventListener('DOMContentLoaded', async function() {
-        try {
-            const response = await fetch('/api/main');
-            if (!response.ok) {
-                throw new Error('사용자 정보를 가져오지 못했습니다.');
-            }
-            const data = await response.json();
-            document.getElementById('profileName').textContent = data.user_name;
-            document.getElementById('group_count').textContent = data.group_count;
-            document.getElementById('like_count').textContent = data.like_count;
-        } catch (error) {
-            console.error('Error:', error);
-            // 세션이 없을 경우 로그인 페이지로 리디렉션
-            window.location.href = '/';
-        }
-    });
 
-    // 로그아웃 버튼 클릭 시 로그아웃 처리
-    document.getElementById('logout').addEventListener('click', async function() {
-        try {
-            const response = await fetch('/logout');
-            if (!response.ok) {
-                throw new Error('로그아웃에 실패했습니다.');
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // 사용자 정보 가져오기
+                const userInfoResponse = await fetch('/api/main');
+                console.log('User info response:', userInfoResponse);  // 응답 로그
+
+                if (!userInfoResponse.ok) {
+                    throw new Error('사용자 정보를 가져오지 못했습니다.');
+                }
+
+                const userInfo = await userInfoResponse.json();
+                console.log('User info data:', userInfo);  // 사용자 정보 로그
+
+                document.getElementById('profileName').textContent = userInfo.user_name;
+                document.getElementById('group_count').textContent = userInfo.group_count;
+                document.getElementById('like_count').textContent = userInfo.like_count;
+
+                // 그룹 정보 가져오기
+                const groupResponse = await fetch('/api/user-groups');
+                console.log('Group response:', groupResponse);  // 응답 로그
+
+                if (!groupResponse.ok) {
+                    throw new Error('그룹 정보를 가져오지 못했습니다.');
+                }
+
+                const groupData = await groupResponse.json();
+                console.log('Group data:', groupData);  // 그룹 정보 로그
+
+                const groupBoxes = document.getElementById('groupBoxes');
+
+                if (groupData.groups.length > 0) {
+                    // 그룹이 있을 때
+                    groupData.groups.forEach(group => {
+                        console.log('Group:', group);  // 각 그룹 정보 로그
+
+                        const groupBox = document.createElement('a');
+                        groupBox.href = '../public/group.html';
+                        groupBox.className = 'groupBox existGroup';
+
+                        groupBox.innerHTML = `
+                            <div class="imgWrapper">
+                                <img class="thumbnail" src="" alt="" onerror="this.style.display='none'">
+                                <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
+                            </div>
+                            <div class="groupInfoContainer">
+                                <div class="groupInfo">
+                                    <div class="namingGroup koreanFont">${group.group_name}</div>
+                                    <div class="namingGroup koreanFont">${group.group_king}</div>
+                                    <div class="numberingMember">
+                                        <img src="../imgs/icon/group.png" alt="">
+                                        <span class="count">${group.current_members} / ${group.max_members}</span>
+                                    </div>
+                                </div>
+                                <div class="buttonWrapper">
+                                    <button class="koreanFont" id="delGroup">
+                                        <img src="../imgs/icon/exit.png" alt="">
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+
+                        groupBoxes.appendChild(groupBox);
+                    });
+                    document.getElementById('groupBoxes').style.display = 'block';
+                    document.getElementById('addGroupInBoxes').style.display = 'block';
+                } else {
+                    // 그룹이 없을 때
+                    document.getElementById('addGroupOnMain').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('정보를 가져오는 중 오류가 발생했습니다.');
             }
-            const result = await response.json();
-            if (result.success) {
-                window.location.href = '/';
-            } else {
-                throw new Error('로그아웃에 실패했습니다.');
+        });
+
+        // 로그아웃 버튼 클릭 시 로그아웃 처리
+        document.getElementById('logout').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/logout');
+                console.log('Logout response:', response);  // 응답 로그
+
+                if (!response.ok) {
+                    throw new Error('로그아웃에 실패했습니다.');
+                }
+
+                const result = await response.json();
+                console.log('Logout result:', result);  // 로그아웃 결과 로그
+
+                if (result.success) {
+                    window.location.href = '/';
+                } else {
+                    throw new Error('로그아웃에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
             }
-        } catch (error) {
-            console.error('Error:', error);
+        });
+
+        // 그룹 추가 버튼 클릭 시 createGroup 표시
+        document.getElementById('addGroupOnMain').addEventListener('click', function() {
+            document.getElementById('createGroup').style.display = 'block';
+            this.style.display = 'none';
+        });
+
+        document.getElementById('addGroupInBoxes').addEventListener('click', function() {
+            document.getElementById('createGroup').style.display = 'block';
+            this.style.display = 'none';
+        });
+
+        // 멤버 수 조절 버튼 기능
+        function handleMemberCount(change) {
+            const input = document.getElementById('member-count');
+            if (input) {
+                const currentValue = parseInt(input.value);
+                const newValue = currentValue + change;
+                if (newValue >= 2 && newValue <= 15) {
+                    input.value = newValue;
+                }
+            }
         }
-    });
-</script>
+
+        // 그룹 추가 버튼 클릭 시 입력 값을 서버로 전송
+        document.getElementById('add-button').addEventListener('click', async function() {
+            const groupNameElement = document.getElementById('input_group_name');
+            const maxMembersElement = document.getElementById('member-count');
+
+            if (!groupNameElement || !maxMembersElement) {
+                console.error('Element not found');
+                return;
+            }
+
+            const groupName = groupNameElement.value;
+            const maxMembers = maxMembersElement.value;
+
+            if (!groupName || !maxMembers) {
+                alert('모든 필드를 입력해주세요.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/create-group', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ groupName, maxMembers })
+                });
+                console.log('Create group response:', response);  // 응답 로그
+
+                if (response.ok) {
+                    alert('그룹이 생성되었습니다.');
+                    window.location.reload(); // 페이지 새로고침
+                } else {
+                    const result = await response.json();
+                    console.log('Create group result:', result);  // 결과 로그
+                    alert(result.message || '그룹 생성에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('그룹 생성 중 오류가 발생했습니다.');
+            }
+        });
+    </script>
+</body>
 </html>
