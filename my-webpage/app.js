@@ -200,30 +200,30 @@ app.post('/api/create-group', isAuthenticated, (req, res) => {
   });
 });
 
-// 사용자가 속한 모든 그룹 정보 가져오기
+// 사용자 그룹 정보 가져오기
 app.get('/api/user-groups', isAuthenticated, (req, res) => {
-  const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
-  console.log(`Fetching groups for user: ${userId}`);  // 사용자 ID 로그
+    console.log('사용자 ID:', userId);
 
-  const query = `
-    SELECT g.group_ID, g.group_name, g.max_members, g.current_members, g.user_ID as group_king
-    FROM UserGroup ug
-    JOIN \`Group\` g ON ug.group_ID = g.group_ID
-    WHERE ug.user_ID = ?;
-  `;
+    const query = `
+        SELECT g.group_ID, g.group_name, g.max_members, g.current_members, g.user_ID as group_king
+        FROM UserGroup ug
+        JOIN \`Group\` g ON ug.group_ID = g.group_ID
+        WHERE ug.user_ID = ?
+    `;
 
-  db.query(query, [userId], (err, results) => {
-    if (err) {
-      console.error('데이터베이스 쿼리 오류:', err);
-      return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
-    }
+    db.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('데이터베이스 쿼리 오류:', err);
+            return res.status(500).json({ message: '데이터베이스 쿼리 오류', error: err });
+        }
 
-    console.log('User group results:', results);  // 결과 로그
-
-    res.json({ success: true, groups: results });
-  });
+        console.log('그룹 정보 조회 결과:', results);
+        res.json({ groups: results });
+    });
 });
+
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
