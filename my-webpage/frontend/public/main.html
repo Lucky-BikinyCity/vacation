@@ -42,12 +42,38 @@
                 <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
                 <div class="addGroupPhrase koreanFont">그룹 추가</div>
             </button>
+
+            <div id="createGroup" class="groupBox createGroup" style="display: none;">
+                <div id="imgWrapper" class="imgWrapper">
+                    <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
+                </div>
+                <div id="groupSetting" class="groupSetting">
+                    <div class="groupInfo">
+                        <div class="namingGroup">
+                            <input id="input_group_name" type="text" placeholder="group name">
+                        </div>
+                        <div class="numberingMember">
+                            <img src="../imgs/icon/group.png" alt="">
+                            <span>member</span>
+                            <div class="member-count-container">
+                                <button class="minus" onclick="handleMemberCount(-1)">-</button>
+                                <input type="number" id="input_member_number" value="2" min="2" />
+                                <button class="plus" onclick="handleMemberCount(1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="buttonWrapper">
+                        <button class="koreanFont" id="add-button">추가</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <button id="addGroupOnMain" class="addGroup" style="display: none;">
             <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
             <div class="addGroupPhrase koreanFont">그룹 추가</div>
         </button>
+
         
     </main>
     <script src="../src/index.js"></script>
@@ -98,8 +124,7 @@
                             </div>
                             <div class="groupInfoContainer">
                                 <div class="groupInfo">
-                                    <div class="namingGroup koreanFont">${group.group_name}</div>
-                                    <div class="namingGroup koreanFont">${group.group_king}</div>
+                                    <div class="namingGroup koreanFont">${group.group_name} / ${group.group_king}</div>
                                     <div class="numberingMember">
                                         <img src="../imgs/icon/group.png" alt="">
                                         <span class="count">${group.current_members} / ${group.max_members}</span>
@@ -163,11 +188,11 @@
 
         // 멤버 수 조절 버튼 기능
         function handleMemberCount(change) {
-            const input = document.getElementById('member-count');
+            const input = document.getElementById('input_member_number');
             if (input) {
                 const currentValue = parseInt(input.value);
                 const newValue = currentValue + change;
-                if (newValue >= 2 && newValue <= 15) {
+                if (newValue >= 2) {
                     input.value = newValue;
                 }
             }
@@ -176,7 +201,7 @@
         // 그룹 추가 버튼 클릭 시 입력 값을 서버로 전송
         document.getElementById('add-button').addEventListener('click', async function() {
             const groupNameElement = document.getElementById('input_group_name');
-            const maxMembersElement = document.getElementById('member-count');
+            const maxMembersElement = document.getElementById('input_member_number');
 
             if (!groupNameElement || !maxMembersElement) {
                 console.error('Element not found');

@@ -124,14 +124,6 @@ function AddGroup(){
     })
 }
 
-    //그룹 생성 박스 멤버 숫자 조절, html 태그 내에 삽입
-function handleMemberCount(delta) {
-    let val = Number(document.querySelector(".createGroup #member-count").value);
-    if (!(delta < 0 && val <= 2)) {
-        document.querySelector(".createGroup #member-count").value = val + delta;
-    }
-}
-
     //프로필 호버효과
 function ShowProfile(){
     // Get elements

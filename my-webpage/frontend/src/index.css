@@ -490,6 +490,7 @@ html,body {
 /*그룹 생성하는 그룹 박스*/
 .createGroup{
     display: none;
+    order:999;
 }
 
 .imgWrapper{
@@ -617,6 +618,17 @@ html,body {
     gap: 4px;
 
     margin-left: 8px;
+    &> input{
+        width:10px;
+        &:focus{
+            outline: none;
+        }
+    }
+    &>input[type=number]::-webkit-inner-spin-button,
+    &>input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 
     & button.plus, & button.minus {
         display: flex;
@@ -849,9 +861,6 @@ html,body {
         }
         &>.memberList:first-child{
             margin-top: 0;
-        }
-        & .myself{
-
         }
     }
     &>.addMember{
