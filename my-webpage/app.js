@@ -224,6 +224,52 @@ app.get('/api/user-groups', isAuthenticated, (req, res) => {
     });
 });
 
+// 그룹 삭제 라우트
+app.delete('/api/delete-group/:groupId', async (req, res) => {
+    const { groupId } = req.params;
+    const userId = req.session.user_id; // 세션에서 사용자 ID를 가져옵니다.
+
+    if (!userId) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    try {
+        const [result] = await pool.query('DELETE FROM groups WHERE group_id = ? AND group_king = ?', [groupId, userId]);
+
+        if (result.affectedRows > 0) {
+            res.json({ success: true, message: '그룹이 삭제되었습니다.' });
+        } else {
+            res.status(403).json({ success: false, message: '그룹 삭제 권한이 없습니다.' });
+        }
+    } catch (error) {
+        console.error('그룹 삭제 중 오류 발생:', error);
+        res.status(500).json({ success: false, message: '그룹 삭제 중 오류가 발생했습니다.' });
+    }
+});
+
+// 그룹 탈퇴 라우트
+app.post('/api/exit-group/:groupId', async (req, res) => {
+    const { groupId } = req.params;
+    const userId = req.session.user_id; // 세션에서 사용자 ID를 가져옵니다.
+
+    if (!userId) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    try {
+        const [result] = await pool.query('DELETE FROM group_members WHERE group_id = ? AND user_id = ?', [groupId, userId]);
+
+        if (result.affectedRows > 0) {
+            res.json({ success: true, message: '그룹에서 탈퇴하였습니다.' });
+        } else {
+            res.status(403).json({ success: false, message: '그룹 탈퇴에 실패했습니다.' });
+        }
+    } catch (error) {
+        console.error('그룹 탈퇴 중 오류 발생:', error);
+        res.status(500).json({ success: false, message: '그룹 탈퇴 중 오류가 발생했습니다.' });
+    }
+});
+
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
