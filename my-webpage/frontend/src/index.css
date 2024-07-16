@@ -109,6 +109,10 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .showPwdWrapper{
         left:-75px !important;
     }
+    .sidebar{
+        position:absolute !important;
+        transform:translateX(-100%) !important;
+    }
 }
 
 @media(max-width : 400px){
@@ -159,6 +163,10 @@ html,body {
     align-items: center;
     height: 100vh;
     box-sizing: border-box;
+}
+
+#groupBody{
+    display: flex;
 }
 
 .loginPageContainer {
@@ -746,8 +754,6 @@ html,body {
 
 /*사이드바*/
 .sidebar{
-    overflow-x: hidden;
-    overflow-y: auto;
     position: relative;
     width:300px;
     height:100%;
@@ -771,7 +777,6 @@ html,body {
         &>.memberList{
             position: relative;
             display: flex;
-            justify-content: space-around;
             align-items: center;
             margin-top:10%;
             left:50%;
@@ -785,22 +790,47 @@ html,body {
                     transition: all 0.25s;
                     transform:scale(1.2);
                     visibility: visible;
+                    filter:none;
                 }
             }
             &>img{
-                position: relative;
+                filter: invert(71%) sepia(1%) saturate(0%) hue-rotate(65deg) brightness(89%) contrast(93%);
+                position: absolute;
                 left: 15px;
                 width:20px;
             }
             &>.member{
-                position: relative;
-                left:-10px;
+                position: absolute;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width:96px;
+                height:30px;
+                left:60px;
+                overflow: hidden;
                 font-size: 1.5em;
+                & span{
+                    overflow: hidden;
+                    position: absolute;
+                    left:0;
+                    width: 74%;
+                    height: 100%;
+                    text-align: right;
+                }
+                & div{
+                    position: absolute;
+                    text-align: left;
+                    top:6px;
+                    right:-2px;
+                    width: 26%;
+                    height: auto;
+                    font-size: 0.7em;
+                }
             }
             &>button{
                 visibility: hidden;
                 position: absolute;
-                right:35px;
+                right:20px;
                 width:20px;
                 height:20px;
                 border: 0;
@@ -843,4 +873,43 @@ html,body {
             background-color: #808080;
         }
     }
+}
+
+/*게시글 노션 감싸는 wrapper*/
+.groupContainer{
+    position:relative;
+    display: block;
+    width:100%;
+    height:100%;
+    overflow-y: auto;
+}
+
+/*그룹 페이지 게시글 노션*/
+.boardContainer{
+    position: relative;
+    display: flex;
+    margin-bottom: 100px;
+    left:50%;
+    transform: translateX(-50%);
+    width:90%;
+    height:800px;
+    border:1px solid black;
+    &:first-child{
+        margin-top: 100px;
+    }
+}
+
+.board{
+    position: relative;
+    width:70%;
+    height:100%;
+    border:1px solid black;
+    background-color: white;
+}
+
+.commentContainer{
+    position: relative;
+    width:30%;
+    height:100%;
+    border:1px solid black;
 }
