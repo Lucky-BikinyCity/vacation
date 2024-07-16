@@ -1,0 +1,52 @@
+create database project;
+use project;
+
+create table `User`(
+    user_ID varchar(50) not null,
+    user_name varchar(50) not null,
+    password varchar(200) not null,
+    group_count int default 0,
+    like_count int default 0,
+    primary key (user_ID)
+);
+
+create table `Group`(
+    group_ID varchar(20) not null,
+    group_name varchar(50) not null,
+    max_members int default 2,
+    current_members int default 2,
+    user_ID varchar(50) not null,
+    primary key (group_ID),
+    foreign key (user_ID) references `User`(user_ID) on delete cascade,
+    check (max_members between 2 and 15),
+    check (current_members <= 15)
+);
+
+create table Post(
+   post_ID varchar(50) not null,
+    link varchar(2048) not null,
+    posting_time timestamp default current_timestamp,
+    group_ID varchar(20) not null,
+    user_ID varchar(50) not null,
+    primary key (post_ID),
+    foreign key (group_ID) references `Group`(group_ID) on delete cascade,
+    foreign key (user_ID) references `User`(user_ID) on delete cascade
+);
+
+create table PostLike(
+   post_ID varchar(50),
+    user_ID varchar(50),
+   foreign key (post_ID) references Post(group_ID) on delete cascade,
+    foreign key (user_ID) references `User`(user_ID) on delete cascade
+);
+
+create table PostComment(
+   comment_ID int unsigned auto_increment,
+    content varchar(1000),
+    posting_time timestamp default current_timestamp,
+    post_ID varchar(50),
+    user_ID varchar(50),
+    primary key (comment_ID),
+    foreign key (post_ID) references Post(group_ID) on delete cascade,
+    foreign key (user_ID) references `User`(user_ID) on delete cascade
+);
