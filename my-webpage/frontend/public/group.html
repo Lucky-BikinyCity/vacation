@@ -6,28 +6,56 @@
     <title>그룹</title>
     <link rel="stylesheet" href="../src/index.css">
 </head>
-<body>
+<body id="groupBody">
     <div class="sidebar">
         <img class="logoInMain" src="../imgs/web-icons/logo2-B.png" alt="">
         <div class="memberListContainer">
-            <!--자기 자신-->
+            <!--자기 자신 자기자신은 항상 위에 위치-->
             <div class="memberList myself">
                 <img src="../imgs/icon/user.png" alt="">
-                <span class="member">username</span>
-                <div></div> <!--더미-->
-                <button><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+                <div class="member">
+                    <span id="myname">username</span>
+                    <div>(나)</div>
+                </div>
+                <button id="post"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
             </div>
 
             <!--다른 멤버-->
             <div class="memberList">
                 <img src="../imgs/icon/user.png" alt="">
-                <span class="member">username</span>
+                <span id="membername" class="member">username</span>
                 <div></div> <!--더미-->
             </div>
         </div>
-        <button class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
+        <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
     </div>
-    <div class="groupContainer"></div>
+
+    <div class="groupContainer">
+        <div class="boardContainer">
+            <iframe class="board" src="https://gofnrk.tistory.com/48" frameborder="0"></iframe>
+            <div class="commentContainer"></div>
+        </div>
+        <div class="boardContainer">
+            <iframe class="board" src="https://gdnn.tistory.com/50" frameborder="0"></iframe>
+            <div class="commentContainer"></div>
+        </div>
+        <div class="boardContainer">
+            <iframe class="board" src="https://codepen.io/sosuke/pen/Pjoqqp" frameborder="0"></iframe>
+            <div class="commentContainer"></div>
+        </div>
+        <div class="boardContainer">
+            <iframe class="board" src="" frameborder="0"></iframe>
+            <div class="commentContainer"></div>
+        </div>
+        <div class="boardContainer">
+            <iframe class="board" src="" frameborder="0"></iframe>
+            <div class="commentContainer"></div>
+        </div>
+        <div class="boardContainer">
+            <iframe class="board" src="" frameborder="0"></iframe>
+            <div class="commentContainer"></div>
+        </div>
+    </div>
 </body>
 <script src="../src/index.js"></script>
 </html>
