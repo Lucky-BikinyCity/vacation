@@ -37,17 +37,20 @@
         </div>
     </header>
     <main class="mainHtmlMain">
-        <div id="groupBoxes" class="groupBoxes" style="display: none;"></div>
+        <div id="groupBoxes" class="groupBoxes" style="display: none;">
+            <button id="addGroupInBoxes" class="addGroupInGroupBox" style="display: none;">
+                <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
+                <div class="addGroupPhrase koreanFont">그룹 추가</div>
+            </button>
+        </div>
+
         <button id="addGroupOnMain" class="addGroup" style="display: none;">
             <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
             <div class="addGroupPhrase koreanFont">그룹 추가</div>
         </button>
-        <button id="addGroupInBoxes" class="addGroupInGroupBox" style="display: none;">
-            <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
-            <div class="addGroupPhrase koreanFont">그룹 추가</div>
-        </button>
+        
     </main>
-
+    <script src="../src/index.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             try {
@@ -112,7 +115,7 @@
 
                         groupBoxes.appendChild(groupBox);
                     });
-                    document.getElementById('groupBoxes').style.display = 'block';
+                    document.getElementById('groupBoxes').style.display = 'flex';
                     document.getElementById('addGroupInBoxes').style.display = 'block';
                 } else {
                     // 그룹이 없을 때
