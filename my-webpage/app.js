@@ -224,7 +224,6 @@ app.get('/api/user-groups', isAuthenticated, (req, res) => {
     });
 });
 
-
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
