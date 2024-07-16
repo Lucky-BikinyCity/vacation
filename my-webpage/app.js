@@ -47,6 +47,15 @@ app.use(session({
   cookie: { secure: false }   // HTTPS를 사용할 경우 true로 설정
 }));
 
+// 인증 미들웨어
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.user) {
+    return next();
+  } else {
+    res.redirect('./public/login.html');
+  }
+}
+
 //ghldnjsrkd;lq
 app.post('/signup', async (req, res) => {
   const { ID, PW, USERNAME } = req.body;
@@ -122,7 +131,7 @@ app.post('/login', (req, res) => {
       req.session.user = { id: user.user_ID, username: user.user_name };
 
       // main.html로 리디렉션
-      res.json({ message: '로그인 성공' });
+      res.redirect('/main');
     });
   });
 });
@@ -135,6 +144,11 @@ app.get('/logout', (req, res) => {
     }
     res.redirect('/login');
   });
+});
+
+// 보호된 라우트 예제
+app.get('/main', isAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'public', 'main.html'));
 });
 
 
