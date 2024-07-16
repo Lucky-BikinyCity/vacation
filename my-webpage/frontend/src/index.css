@@ -786,13 +786,13 @@ html,body {
             width:55px;
             height:60px;
             top:50%;
-            left:0;
+            left:10px;
             transform: translateY(-50%);
         }
         &>.title{
             position: absolute;
             left:70px;
-            width:120px;
+            width:100px;
             text-align: center;
             overflow: hidden;
         }
@@ -828,7 +828,7 @@ html,body {
             &>img{
                 filter: invert(71%) sepia(1%) saturate(0%) hue-rotate(65deg) brightness(89%) contrast(93%);
                 position: absolute;
-                left: 15px;
+                left: 3%;
                 width:20px;
             }
             &>.member{
@@ -838,7 +838,7 @@ html,body {
                 align-items: center;
                 width:96px;
                 height:30px;
-                left:60px;
+                left:20%;
                 overflow: hidden;
                 font-size: 1.5em;
                 & span{
@@ -862,7 +862,7 @@ html,body {
             &>button{
                 visibility: hidden;
                 position: absolute;
-                right:20px;
+                right:10px;
                 width:20px;
                 height:20px;
                 border: 0;
@@ -901,6 +901,15 @@ html,body {
         &:hover{
             background-color: #808080;
         }
+    }
+}
+
+#kick{
+    right:2px;
+    width:30px;
+    height:30px;
+    &>img{
+        width:30px;
     }
 }
 
