@@ -85,41 +85,6 @@
 </body>
 <script src="../src/index.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const searchButton = document.querySelector('.searchButton');
-      const searchNameDiv = document.getElementById('searchName');
-  
-      searchButton.addEventListener('click', async () => {
-        const userId = document.getElementById('searchUser').value;
-        const groupId = 'YOUR_GROUP_ID_HERE'; // 현재 그룹 ID를 여기에 입력합니다.
-  
-        if (!userId) {
-          alert('사용자 ID를 입력해주세요.');
-          return;
-        }
-  
-        try {
-          const response = await fetch('/search-user', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userId, groupId })
-          });
-  
-          const data = await response.json();
-  
-          if (data.success) {
-            searchNameDiv.textContent = `${data.user.name}(${data.user.id})`;
-          } else {
-            searchNameDiv.textContent = data.message;
-          }
-        } catch (error) {
-          console.error('사용자 검색 중 오류 발생:', error);
-          alert('사용자 검색 중 오류가 발생했습니다.');
-        }
-      });
-    });
-  </script>
-  
+    
+    </script> 
 </html>

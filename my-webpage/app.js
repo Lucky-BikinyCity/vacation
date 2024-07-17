@@ -211,6 +211,17 @@ app.get('/api/user-groups', isAuthenticated, async (req, res) => {
     }
 });
 
+// 그룹ID 세션 저장
+app.post('/api/set-group-session', (req, res) => {
+  const groupId = req.body.groupId;
+  if (!groupId) {
+      return res.status(400).json({ message: 'Group ID is required' });
+  }
+
+  req.session.groupId = groupId;
+  res.status(200).json({ message: 'Group ID set in session' });
+});
+
 // 그룹 삭제 라우트
 app.delete('/api/delete-group/:groupId', async (req, res) => {
   const { groupId } = req.params;
@@ -264,40 +275,54 @@ app.post('/api/exit-group/:groupId', async (req, res) => {
   }
 });
 
-// 사용자 검색 라우트
-app.post('/search-user', isAuthenticated, async (req, res) => {
-  const { userId, groupId } = req.body;
+app.post('/api/search-user', (req, res) => {
+  const { user_ID } = req.body;
+  const group_ID = req.session.groupId;
 
-  if (!userId || !groupId) {
-    return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
+  if (!user_ID || !group_ID) {
+      return res.status(400).json({ message: 'user_ID and group_ID are required' });
   }
 
-  try {
-    // User 테이블에서 입력받은 user_ID로 검색
-    const userQuery = 'SELECT * FROM User WHERE user_ID = ?';
-    const [userResults] = await pool.query(userQuery, [userId]);
+  connection.query('SELECT * FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID], (err, results) => {
+      if (err) {
+          return res.status(500).json({ message: 'Database query error' });
+      }
 
-    if (userResults.length === 0) {
-      return res.json({ success: false, message: '결과 없음.' });
-    }
+      if (results.length > 0) {
+          return res.status(400).json({ message: '검색 불가' });
+      }
 
-    const user = userResults[0];
+      connection.query('SELECT user_name FROM User WHERE user_ID = ?', [user_ID], (err, results) => {
+          if (err) {
+              return res.status(500).json({ message: 'Database query error' });
+          }
 
-    // UserGroup 테이블에서 그룹에 속해 있는지 확인
-    const groupQuery = 'SELECT * FROM UserGroup WHERE group_ID = ? AND user_ID = ?';
-    const [groupResults] = await pool.query(groupQuery, [groupId, userId]);
+          if (results.length === 0) {
+              return res.status(404).json({ message: 'User not found' });
+          }
 
-    if (groupResults.length > 0) {
-      return res.json({ success: false, message: '결과 없음' });
-    }
-
-    res.json({ success: true, user: { id: user.user_ID, name: user.user_name } });
-
-  } catch (error) {
-    console.error('서버 오류:', error);
-    res.status(500).json({ message: '서버 오류', error });
-  }
+          res.json({ user_name: results[0].user_name, user_ID });
+      });
+  });
 });
+
+app.post('/api/invite-user', (req, res) => {
+  const { user_ID } = req.body;
+  const group_ID = req.session.groupId;
+
+  if (!user_ID || !group_ID) {
+      return res.status(400).json({ message: 'user_ID and group_ID are required' });
+  }
+
+  connection.query('INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)', [user_ID, group_ID], (err) => {
+      if (err) {
+          return res.status(500).json({ message: 'Database insert error' });
+      }
+
+      res.json({ message: 'User invited successfully' });
+  });
+});
+
 
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
