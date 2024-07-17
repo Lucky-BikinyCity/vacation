@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function(){
         SignUpBody();
     }else if(document.body.id==='mainBody'){
         MainBody();
+    }else if(document.body.id==='groupBody'){
+        GroupBody();
     }
 });
 
@@ -32,6 +34,13 @@ function MainBody(){
     AddGroup();
 
     ShowProfile();
+}
+
+    //그룹 페이지
+function GroupBody(){
+    openSearchUser();
+
+    SidebarOnOff();
 }
 
 //이 아래서부턴 필요한 js함수 작성
@@ -124,14 +133,6 @@ function AddGroup(){
     })
 }
 
-    //그룹 생성 박스 멤버 숫자 조절, html 태그 내에 삽입
-function handleMemberCount(delta) {
-    let val = Number(document.querySelector(".createGroup #member-count").value);
-    if (!(delta < 0 && val <= 2)) {
-        document.querySelector(".createGroup #member-count").value = val + delta;
-    }
-}
-
     //프로필 호버효과
 function ShowProfile(){
     // Get elements
@@ -153,5 +154,75 @@ function ShowProfile(){
         profileWrapper.style.backgroundColor = '';
         profileWrapper.style.boxShadow = '';
         profileNameWrapper.style.border='';
+    });
+}
+
+    //유저 검색창 on/off
+function openSearchUser(){
+    var check = false;
+    const searchUser = document.querySelector('.searchUserContainer');
+    const searchResult = document.querySelector('.searchResultContainer');
+
+    document.getElementById('addmember').addEventListener('click', function() {
+        if (check) {
+            searchUser.style.height = '0';
+            searchResult.style.display = 'none';
+            check = false;
+        } else {
+            searchUser.style.height = '260px';
+            setTimeout(() => {
+                searchResult.style.display = 'block';
+            }, 100); // transition 시간과 동일하게 설정
+            check = true;
+        }
+    });
+}
+
+//사이드바 on/off
+function SidebarOnOff() {
+    console.log(18);
+    var openBtn = document.getElementById("buttonSidebar");
+    var closeBtn = document.getElementById("closeSidebar");
+    var sidebar = document.getElementById("sidebar");
+    var check = false;
+
+    // 화면 크기 감지 함수
+    function checkScreenSize() {
+        return window.innerWidth >= 1100;
+    }
+
+    openBtn.addEventListener("click", function() {
+        if (checkScreenSize()) {
+            return;
+        }
+
+        console.log(2);
+        sidebar.style.transform = "translateX(0)";
+        openBtn.style.display = "none";
+        check = true;
+    });
+
+    closeBtn.addEventListener("click",function(){
+        if (checkScreenSize()) {
+            return;
+        }
+
+        console.log(1);
+        sidebar.style.transform = "translateX(-100%)";
+        openBtn.style.display = "block";
+        check = false;
+    });
+
+    // 화면 크기 변경 시 동작 제어
+    window.addEventListener("resize", function() {
+        if (checkScreenSize()) {
+            sidebar.style.transform = "translateX(0)";
+            closeBtn.style.display="none";
+        }else{
+            closeBtn.style.display="block";
+            if(!check){
+                sidebar.style.transform = "translateX(-100%)";
+            }
+        }
     });
 }
