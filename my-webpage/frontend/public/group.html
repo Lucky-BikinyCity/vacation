@@ -1,7 +1,3 @@
-<!--iframe 새로고침 버튼 추가
-유저 삭제버튼 추가
-유저 검색추가
--->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -10,36 +6,21 @@
     <title>그룹</title>
     <link rel="stylesheet" href="../src/index.css">
 </head>
-<body id="groupBody">
+<body id="groupBody" onload="fetchGroupInfo()">
     <div class="sidebar">
         <div class="titleContainer">
             <img class="logoInMain" src="../imgs/web-icons/logo1-B.png" alt="">
             <h1 class="title">TITLE</h1>
         </div>
-        <div class="memberListContainer">
-            <!--자기 자신-->
-            <div class="memberList myself">
-                <img src="../imgs/icon/user.png" alt="">
-                <div class="member">
-                    <span id="myname">username</span>
-                    <div>(나)</div>
-                </div>
-                <button id="post"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
-            </div>
-
-            <!--다른 멤버-->
-            <div class="memberList">
-                <img src="../imgs/icon/user.png" alt="">
-                <span id="membername" class="member">username</span>
-                <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼-->
-            </div>
+        <div class="memberListContainer" id="memberListContainer">
+            <!-- 여기서 동적으로 멤버 리스트가 추가됩니다 -->
         </div>
 
         <div class="addUserContainer">
             <div id="searchUserContainer" class="searchUserContainer">
                 <div class="inputContainer">
                     <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
-                    <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
+                    <button class="searchButton" type="submit" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
                 </div>
                 <div class="searchResultContainer">
                     <div class="searchResult" onclick="inviteUser()">
@@ -81,10 +62,98 @@
 </body>
 <script src="../src/index.js"></script>
 <script>
+    let currentUserID = '';
+    let groupOwnerID = '';
+    let groupID = ''; // 전역 변수로 groupID를 추가합니다.
+
+    async function fetchGroupInfo() {
+        try {
+            const response = await fetch('/api/group-info');
+            if (!response.ok) {
+                throw new Error('Failed to fetch group info');
+            }
+            const data = await response.json();
+            groupID = data.groupID; // groupID를 전역 변수에 저장합니다.
+            renderGroupInfo(data);
+        } catch (error) {
+            console.error('Error fetching group info:', error);
+        }
+    }
+
+    function renderGroupInfo(data) {
+        const memberListContainer = document.querySelector('.memberListContainer');
+        memberListContainer.innerHTML = '';
+
+        const { currentUser, groupOwner, members } = data;
+        currentUserID = currentUser.user_ID;
+        groupOwnerID = groupOwner.user_ID;
+
+        // 현재 사용자 정보 출력
+        const currentUserElement = document.createElement('div');
+        currentUserElement.className = 'memberList myself';
+        currentUserElement.innerHTML = `
+            <img src="../imgs/icon/user.png" alt="">
+            <div class="member">
+                <span id="myname">${currentUser.user_name}</span>
+                <div>(나)</div>
+            </div>
+            <button id="post"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+        `;
+        memberListContainer.appendChild(currentUserElement);
+
+        // 그룹장 정보 출력 (그룹장이 현재 사용자가 아닌 경우에만)
+        if (currentUser.user_ID !== groupOwner.user_ID) {
+            const groupOwnerElement = document.createElement('div');
+            groupOwnerElement.className = 'memberList';
+            groupOwnerElement.innerHTML = `
+                <img src="../imgs/icon/user.png" alt="">
+                <span id="membername" class="member">${groupOwner.user_name}</span>
+            `;
+            memberListContainer.appendChild(groupOwnerElement);
+        }
+
+        // 그룹 멤버 정보 출력
+        members.forEach(member => {
+            if (member.user_ID !== currentUser.user_ID && member.user_ID !== groupOwner.user_ID) {  // 현재 사용자와 그룹장은 제외
+                const memberElement = document.createElement('div');
+                memberElement.className = 'memberList';
+                memberElement.innerHTML = `
+                    <img src="../imgs/icon/user.png" alt="">
+                    <span id="membername" class="member">${member.user_name}</span>
+                    ${groupOwnerID === currentUserID ? `<button class="kickButton" onclick="kickUser('${member.user_ID}')"><img src="../imgs/icon/close.png" alt=""></button>` : ''}
+                `;
+                memberListContainer.appendChild(memberElement);
+            }
+        });
+    }
+
+    async function kickUser(userID) {
+        try {
+            const response = await fetch('/api/kick-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_ID: userID, group_ID: groupID, groupOwnerID: groupOwnerID })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+                fetchGroupInfo(); // 사용자 추방 후 그룹 정보를 다시 가져옵니다.
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
     async function searchUser() {
         const userID = document.getElementById('searchUser').value;
         const searchName = document.getElementById('searchName');
-        
+
         console.log('Searching for user:', userID); // 디버깅용 로그
 
         try {
@@ -95,9 +164,9 @@
                 },
                 body: JSON.stringify({ user_ID: userID })
             });
-            
+
             const result = await response.json();
-            
+
             if (response.ok) {
                 searchName.textContent = `${result.user_name} (${result.user_ID})`;
                 document.querySelector('.searchResultContainer').style.display = 'block';
@@ -112,7 +181,7 @@
     async function inviteUser() {
         const searchName = document.getElementById('searchName').textContent;
         const userID = searchName.split('(')[1].slice(0, -1);
-        
+
         console.log('Inviting user:', userID); // 디버깅용 로그
 
         try {
@@ -123,11 +192,12 @@
                 },
                 body: JSON.stringify({ user_ID: userID })
             });
-            
+
             const result = await response.json();
-            
+
             if (response.ok) {
                 alert(result.message);
+                fetchGroupInfo(); // 사용자 초대 후 그룹 정보를 다시 가져옵니다.
             } else {
                 alert(result.message);
             }
@@ -135,5 +205,8 @@
             console.error('Error:', error);
         }
     }
-</script> 
+
+    // 페이지 로드 시 그룹 정보를 가져옵니다.
+    window.onload = fetchGroupInfo;
+</script>
 </html>

@@ -316,22 +316,107 @@ app.post('/api/search-user', async (req, res) => {
 });
 
 
-app.post('/api/invite-user', (req, res) => {
+app.post('/api/invite-user', async (req, res) => {
   const { user_ID } = req.body;
   const group_ID = req.session.groupId;
 
+  console.log('Received invite request:', { user_ID, group_ID });
+
   if (!user_ID || !group_ID) {
+    console.log('Missing user_ID or group_ID');
+    return res.status(400).json({ message: 'user_ID and group_ID are required' });
+  }
+
+  try {
+    // Invite user logic here, e.g., inserting into UserGroup table
+    const [results] = await pool.query('INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)', [user_ID, group_ID]);
+    console.log('Invite user results:', results);
+    res.json({ message: 'User invited successfully' });
+  } catch (error) {
+    console.error('Database query error:', error);
+    res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+// 그룹 정보 가져오기 API
+app.get('/api/group-info', async (req, res) => {
+  const { user } = req.session;
+  const group_ID = req.session.groupId;
+
+  console.log('Session data:', { user, group_ID });
+
+  if (!user || !group_ID) {
+      console.log('Missing user or group_ID:', { user, group_ID });
       return res.status(400).json({ message: 'user_ID and group_ID are required' });
   }
 
-  connection.query('INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)', [user_ID, group_ID], (err) => {
-      if (err) {
-          return res.status(500).json({ message: 'Database insert error' });
+  try {
+      const connection = await pool.getConnection();
+
+      console.log('Fetching current user info');
+      const [userResults] = await connection.query('SELECT user_name FROM User WHERE user_ID = ?', [user.id]);
+      const currentUserName = userResults[0]?.user_name || '';
+
+      console.log('Fetching group owner info');
+      const [groupResults] = await connection.query('SELECT user_ID FROM `Group` WHERE group_ID = ?', [group_ID]);
+      const groupOwnerID = groupResults[0]?.user_ID || '';
+
+      let groupOwnerName = '';
+      if (groupOwnerID) {
+          const [ownerResults] = await connection.query('SELECT user_name FROM User WHERE user_ID = ?', [groupOwnerID]);
+          groupOwnerName = ownerResults[0]?.user_name || '';
       }
 
-      res.json({ message: 'User invited successfully' });
-  });
+      console.log('Fetching group members info');
+      const [memberResults] = await connection.query('SELECT u.user_ID, u.user_name FROM UserGroup ug JOIN User u ON ug.user_ID = u.user_ID WHERE ug.group_ID = ? ORDER BY u.user_name', [group_ID]);
+
+      connection.release();
+
+      res.json({
+          currentUser: { user_ID: user.id, user_name: currentUserName },
+          groupOwner: { user_ID: groupOwnerID, user_name: groupOwnerName },
+          groupID: group_ID, // groupID를 추가합니다.
+          members: memberResults
+      });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
 });
+
+
+app.post('/api/kick-user', async (req, res) => {
+  console.log(1);
+  const { user_ID, group_ID, groupOwnerID } = req.body;
+  const currentUser = req.session.user;
+
+  // 디버깅용 로그 추가
+  console.log('Current session user:', currentUser);
+  console.log('Request body:', { user_ID, group_ID, groupOwnerID });
+
+  if (!user_ID || !group_ID || !groupOwnerID) {
+      return res.status(400).json({ message: 'user_ID, group_ID and groupOwnerID are required' });
+  }
+
+  if (currentUser.id !== groupOwnerID) {
+      return res.status(403).json({ message: 'Only the group owner can kick members' });
+  }
+
+  try {
+      const connection = await pool.getConnection();
+      console.log('Removing user from UserGroup');
+      await connection.query('DELETE FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID]);
+
+      connection.release();
+
+      res.json({ message: 'User kicked out successfully' });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+
 
 
 
