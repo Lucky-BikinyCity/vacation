@@ -91,6 +91,7 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
 @media(max-width:1100px){
     #sidebar{
         position:absolute;
+        height: 100%;
         transform:translateX(-100%);
     }
     #buttonSidebar{
@@ -174,13 +175,15 @@ html,body {
 
 #groupBody{
     display: block;
+    overflow: hidden;
 }
 
 .secondGroupBody{
     display:flex;
-    position: absolute;
+    position: relative;
+    bottom:0;
     width:100%;
-    height: auto;
+    height: 94%;
 }
 
 .loginPageContainer {
@@ -350,6 +353,18 @@ html,body {
     padding: 10px 20px;
     background-color: #F7F7F5;
     z-index: 2; /* 화면에 보여지는 우선순위 */
+}
+
+.groupHtmlHeader {
+    position: relative;
+    width:98%;
+    height:5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #F7F7F5;
+    z-index: 4; /* 화면에 보여지는 우선순위 */
 }
 
 .logoInMain{
@@ -785,6 +800,7 @@ html,body {
     z-index: 3;
     position: relative;
     width:300px;
+    height: 100%;
     background-color: #F7F7F5;
     transition: all 0.25s;
     &>.titleContainer{
@@ -795,7 +811,7 @@ html,body {
         display: flex;
         width:200px;
         height:80px;
-        &>.logoInMain{
+        /* &>.logoInMain{
             margin:0;
             position: relative;
             width:55px;
@@ -803,10 +819,10 @@ html,body {
             top:50%;
             left:10px;
             transform: translateY(-50%);
-        }
+        } */
         &>.title{
             position: absolute;
-            left:70px;
+            left:30px;
             width:100px;
             text-align: center;
             overflow: hidden;
