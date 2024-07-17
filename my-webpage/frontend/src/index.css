@@ -967,7 +967,7 @@ html,body {
                         width:20px;
                         filter: invert(71%) sepia(1%) saturate(0%) hue-rotate(65deg) brightness(89%) contrast(93%);
                     }
-                    & .serachName{
+                    & .searchName{
                         position: absolute;
                         display: flex;
                         justify-content: center;
@@ -977,7 +977,7 @@ html,body {
                         top:3px;
                         left:40px;
                         overflow: hidden;
-                        font-size: 1.5em;
+                        font-size: 1em;
                         overflow: hidden;
                     }
                 }

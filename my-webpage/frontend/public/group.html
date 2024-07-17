@@ -2,7 +2,7 @@
 유저 삭제버튼 추가
 유저 검색추가
 -->
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -17,7 +17,7 @@
             <h1 class="title">TITLE</h1>
         </div>
         <div class="memberListContainer">
-            <!--자기 자신 자기자신은 항상 위에 위치-->
+            <!--자기 자신-->
             <div class="memberList myself">
                 <img src="../imgs/icon/user.png" alt="">
                 <div class="member">
@@ -36,27 +36,26 @@
             <!--다른 멤버-->
             <div class="memberList">
                 <img src="../imgs/icon/user.png" alt="">
-                <span id="membername" class="member">일반멤버</span>
-                <button id="kick" type="submit"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼, 그룹장이 아니라면 이 버튼이 보이면 안된다-->
+                <span id="membername" class="member">username</span>
+                <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼, 그룹장이 아니라면 이 버튼이 보이면 안된다-->
             </div>
         </div>
 
         <div class="addUserContainer">
-            <!--사이드바 유저 검색 input창-->
             <div id="searchUserContainer" class="searchUserContainer">
-                <div class="inputContainer">
-                    <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
-                    <button class="searchButton"><img src="../imgs/icon/search.png" alt=""></button> <!--검색버튼-->
-                  </div>
-              
-                  <!--사이드바 유저 검색 결과 테두리-->
-                  <div class="searchResultContainer">
-                    <!--사이드바 유저 검색 결과-->
-                    <div class="searchResult">
-                      <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                      <div id="searchName" class="serachName"></div>
-                    </div>
-                  </div>
+              <div class="inputContainer">
+                <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
+                <button class="searchButton"><img src="../imgs/icon/search.png" alt=""></button> <!--검색버튼-->
+              </div>
+          
+              <!--사이드바 유저 검색 결과 테두리-->
+              <div class="searchResultContainer">
+                <!--사이드바 유저 검색 결과-->
+                <div class="searchResult">
+                  <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                  <div id="searchName" class="serachName"></div>
+                </div>
+              </div>
             </div>
             <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
         </div>
@@ -84,6 +83,59 @@
 </body>
 <script src="../src/index.js"></script>
 <script>
-    
-    </script> 
+    async function searchUser() {
+        const userID = document.getElementById('searchUser').value;
+        const searchName = document.getElementById('searchName');
+        
+        console.log('Searching for user:', userID); // 디버깅용 로그
+
+        try {
+            const response = await fetch('/api/search-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_ID: userID })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                searchName.textContent = `${result.user_name} (${result.user_ID})`;
+                document.querySelector('.searchResultContainer').style.display = 'block';
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function inviteUser() {
+        const searchName = document.getElementById('searchName').textContent;
+        const userID = searchName.split('(')[1].slice(0, -1);
+        
+        console.log('Inviting user:', userID); // 디버깅용 로그
+
+        try {
+            const response = await fetch('/api/invite-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_ID: userID })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                alert(result.message);
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+</script> 
 </html>

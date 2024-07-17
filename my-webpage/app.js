@@ -275,36 +275,46 @@ app.post('/api/exit-group/:groupId', async (req, res) => {
   }
 });
 
-app.post('/api/search-user', (req, res) => {
+app.post('/api/search-user', async (req, res) => {
   const { user_ID } = req.body;
   const group_ID = req.session.groupId;
 
+  console.log('Received search request:', { user_ID, group_ID });
+
   if (!user_ID || !group_ID) {
-      return res.status(400).json({ message: 'user_ID and group_ID are required' });
+    console.log('Missing user_ID or group_ID');
+    return res.status(400).json({ message: 'user_ID and group_ID are required' });
   }
 
-  connection.query('SELECT * FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID], (err, results) => {
-      if (err) {
-          return res.status(500).json({ message: 'Database query error' });
-      }
+  try {
+    // UserGroup에서 user_ID와 group_ID로 조회
+    const [userGroupResults] = await pool.query('SELECT * FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID]);
+    
+    console.log('UserGroup query results:', userGroupResults);
 
-      if (results.length > 0) {
-          return res.status(400).json({ message: '검색 불가' });
-      }
+    if (userGroupResults.length > 0) {
+      console.log('User already in group');
+      return res.status(400).json({ message: '검색 불가' });
+    }
 
-      connection.query('SELECT user_name FROM User WHERE user_ID = ?', [user_ID], (err, results) => {
-          if (err) {
-              return res.status(500).json({ message: 'Database query error' });
-          }
+    // User 테이블에서 user_ID로 조회
+    const [userResults] = await pool.query('SELECT user_name FROM User WHERE user_ID = ?', [user_ID]);
 
-          if (results.length === 0) {
-              return res.status(404).json({ message: 'User not found' });
-          }
+    console.log('User query results:', userResults);
 
-          res.json({ user_name: results[0].user_name, user_ID });
-      });
-  });
+    if (userResults.length === 0) {
+      console.log('User not found');
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    console.log('User found:', userResults[0].user_name);
+    res.json({ user_name: userResults[0].user_name, user_ID });
+  } catch (error) {
+    console.error('Database query error:', error);
+    res.status(500).json({ message: 'Database query error' });
+  }
 });
+
 
 app.post('/api/invite-user', (req, res) => {
   const { user_ID } = req.body;
