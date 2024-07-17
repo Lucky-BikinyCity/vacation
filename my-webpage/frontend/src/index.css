@@ -1150,6 +1150,14 @@ html,body {
     }
 }
 
+@media(max-width:1200px){
+    .commentContainer{
+        display:none;
+        position:absolute;
+        width:400px;
+    }
+}
+
 @media(max-width:1000px){
     #sidebar{
         position:absolute;
