@@ -67,13 +67,6 @@
     font-variation-settings:"wdth" 100;
 }
 
-/*한국어 글꼴 적용*/
-/*앞으로 .koreanFont를 이용해서 한국어 폰트 적용*/
-.koreanFont {
-    font-family: "Jua", sans-serif;
-    font-weight: 400;
-}
-
 :root{
     --default_black_color:#424242; /*var(--defualt_black_color)를 작성하면 #424242값이 적용됨*/
 }
@@ -88,64 +81,6 @@ id로 해야 적용이 되고
 class로 하면 뒤에 !important를 붙여야 적용이 됨
 */
 
-@media(max-width:1100px){
-    #sidebar{
-        position:absolute;
-        height: 100%;
-        transform:translateX(-100%);
-    }
-    #buttonSidebar{
-        display: block;
-    }
-}
-
-@media(max-width : 900px){
-    .loginPagePhrase{
-        font-size: 2em !important;
-    }
-    .logoInLoginPage{
-        width:150px !important;
-    }
-    .mainHtmlHeader > .logoInMain{
-        margin-left: 30px !important;
-    }
-    .mainHtmlHeader > .profileWrapper{
-        right: 20px !important;
-    }
-    .groupHtmlHeader > .logoInMain{
-        margin-left: 25px !important;
-    }
-    .groupHtmlHeader > .profileWrapper{
-        right: 70px !important;
-    }
-    .inputWrapper{
-        width:200px !important;
-        &>input{
-            width: 150px !important;
-        }
-    }
-    .showPwdWrapper{
-        left:-75px !important;
-    }
-}
-
-@media(max-width : 400px){
-    .loginPagePhrase{
-        font-size: 1.5em !important;
-    }
-    .logoInLoginPage{
-        width:100px !important;
-    }
-    .logoInMain{
-        margin-left: 0px !important;
-    }
-    .mainHtmlHeader > .profileWrapper{
-        right: 10px !important;
-    }
-    .showPwdWrapper{
-        left:-73px !important;
-    }
-}
 
 html{ /*글꼴 크기 자동 조절 막음*/
     -webkit-text-size-adjust: none; /*Chrome, Safari, newer versions of Opera*/
@@ -808,7 +743,7 @@ html,body {
 .sidebar{
     z-index: 3;
     position: relative;
-    width:300px;
+    width:350px;
     height: 100%;
     background-color: #F7F7F5;
     transition: all 0.25s;
@@ -1077,7 +1012,7 @@ html,body {
     margin-bottom: 100px;
     left:50%;
     transform: translateX(-50%);
-    width:90%;
+    width:80%;
     height:800px;
     border:2px solid black;
     &:first-child{
@@ -1087,17 +1022,21 @@ html,body {
 
 .board{
     position: relative;
-    width:70%;
+    width:100%;
     height:100%;
     border-right:0;
     background-color: white;
 }
 
 .commentContainer{
+    background-color: white;
     position: relative;
-    width:30%;
+    right:0;
+    display: block;
+    width:60%;
     height:100%;
     border-left:2px solid #808080;
+    z-index: 3;
 }
 
 .commentFooter{
@@ -1201,4 +1140,71 @@ html,body {
     right:10px;
     width:30px;
     height:30px;
+}
+
+
+
+@media(max-width:1400px){
+    .boardContainer{
+        width:90%;
+    }
+}
+
+@media(max-width:1000px){
+    #sidebar{
+        position:absolute;
+        height: 100%;
+        transform:translateX(-100%);
+    }
+    #buttonSidebar{
+        display: block;
+    }
+}
+
+@media(max-width : 900px){
+    .loginPagePhrase{
+        font-size: 2em;
+    }
+    .logoInLoginPage{
+        width:150px;
+    }
+    .mainHtmlHeader > .logoInMain{
+        margin-left: 30px;
+    }
+    .mainHtmlHeader > .profileWrapper{
+        right: 20px;
+    }
+    .groupHtmlHeader > .logoInMain{
+        margin-left: 25px;
+    }
+    .groupHtmlHeader > .profileWrapper{
+        right: 70px;
+    }
+    .inputWrapper{
+        width:200px !important;
+        &>input{
+            width: 150px;
+        }
+    }
+    .showPwdWrapper{
+        left:-75px;
+    }
+}
+
+@media(max-width : 400px){
+    .loginPagePhrase{
+        font-size: 1.5em;
+    }
+    .logoInLoginPage{
+        width:100px;
+    }
+    .logoInMain{
+        margin-left: 0px;
+    }
+    .mainHtmlHeader > .profileWrapper{
+        right: 10px;
+    }
+    .showPwdWrapper{
+        left:-73px;
+    }
 }

@@ -190,7 +190,7 @@ function SidebarOnOff() {
 
     // 화면 크기 감지 함수
     function checkScreenSize() {
-        return window.innerWidth >= 1100;
+        return window.innerWidth >= 1000;
     }
 
     openBtn.addEventListener("click", function() {
