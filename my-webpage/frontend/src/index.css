@@ -109,8 +109,14 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .mainHtmlHeader > .logoInMain{
         margin-left: 30px !important;
     }
-    .profileWrapper{
+    .mainHtmlHeader > .profileWrapper{
         right: 20px !important;
+    }
+    .groupHtmlHeader > .logoInMain{
+        margin-left: 25px !important;
+    }
+    .groupHtmlHeader > .profileWrapper{
+        right: 70px !important;
     }
     .inputWrapper{
         width:200px !important;
@@ -130,10 +136,10 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     .logoInLoginPage{
         width:100px !important;
     }
-    .mainHtmlHeader > .logoInMain{
+    .logoInMain{
         margin-left: 0px !important;
     }
-    .profileWrapper{
+    .mainHtmlHeader > .profileWrapper{
         right: 10px !important;
     }
     .showPwdWrapper{
@@ -180,10 +186,10 @@ html,body {
 
 .secondGroupBody{
     display:flex;
-    position: relative;
+    position: absolute;
     bottom:0;
     width:100%;
-    height: 94%;
+    height: 100%;
 }
 
 .loginPageContainer {
@@ -357,14 +363,17 @@ html,body {
 
 .groupHtmlHeader {
     position: relative;
-    width:98%;
-    height:5%;
+    width:100%;
+    height:65px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
     background-color: #F7F7F5;
     z-index: 4; /* 화면에 보여지는 우선순위 */
+    &>.profileWrapper{
+        right:90px;
+    }
 }
 
 .logoInMain{
@@ -805,7 +814,7 @@ html,body {
     transition: all 0.25s;
     &>.titleContainer{
         position: relative;
-        top:2%;
+        top:80px;
         left:50%;
         transform: translateX(-50%);
         display: flex;
@@ -830,11 +839,11 @@ html,body {
     }
     &>.memberListContainer{
         position: relative;
-        top: 5%;
+        top: 80px;
         left:50%;
         transform: translateX(-50%);
         width: 80%;
-        height:78%;
+        height:73%;
         overflow-x: hidden;
         overflow-y: auto;
         &>.memberList{
@@ -911,6 +920,13 @@ html,body {
         &>.memberList:first-child{
             margin-top: 0;
         }
+    }
+    &>.hideMemberList{
+        position: absolute;
+        width:100%;
+        height:60px;
+        bottom:0;
+        background-color: #F7F7F5;
     }
     &>.addUserContainer{
         position: absolute;
@@ -1181,7 +1197,7 @@ html,body {
 #closeSidebar{
     display: none;
     position: absolute;
-    top:10px;
+    top:90px;
     right:10px;
     width:30px;
     height:30px;

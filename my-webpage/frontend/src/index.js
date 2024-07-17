@@ -194,6 +194,7 @@ function SidebarOnOff() {
     }
 
     openBtn.addEventListener("click", function() {
+        sidebar.style.transition="all 0.25s";
         if (checkScreenSize()) {
             return;
         }
@@ -204,6 +205,7 @@ function SidebarOnOff() {
     });
 
     closeBtn.addEventListener("click",function(){
+        sidebar.style.transition="all 0.25s";
         if (checkScreenSize()) {
             return;
         }
@@ -217,9 +219,11 @@ function SidebarOnOff() {
     window.addEventListener("resize", function() {
         if (checkScreenSize()) {
             sidebar.style.transform = "translateX(0)";
+            sidebar.style.transition="all 0.25s";
             closeBtn.style.display="none";
         }else{
             closeBtn.style.display="block";
+            sidebar.style.transition="all 0s";
             if(!check){
                 sidebar.style.transform = "translateX(-100%)";
             }

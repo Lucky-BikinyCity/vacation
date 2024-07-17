@@ -8,7 +8,7 @@
 </head>
 <body id="groupBody">
     <header class="groupHtmlHeader">
-        <img src="../imgs/web-icons/logo2-B.png" alt="Logo" class="logo logoInMain">
+        <img src="../imgs/web-icons/logo2-B.png" alt="Logo" class="logo logoInMain" onclick="location.href='./main.html';">
         <div class="profileWrapper">
             <div class="profileNameWrapper">
                 <img src="../imgs/icon/user_circle.png" class="profileImg" alt="">
@@ -44,9 +44,25 @@
                 <h1 class="title">TITLE</h1>
             </div>
             <div class="memberListContainer">
-                <!-- 여기서 동적으로 멤버 리스트가 추가됩니다 -->
+                <!--자기 자신-->
+                <!-- <div class="memberList myself">
+                    <img src="../imgs/icon/user.png" alt="">
+                    <div class="member">
+                        <span id="myname">username</span>
+                        <div>(나)</div>
+                    </div>
+                    <button id="post"><img src="../imgs/icon/post.png" alt=""></button> 
+                </div> -->
+
+                <!--다른 멤버-->
+                <!-- <div class="memberList">
+                    <img src="../imgs/icon/user.png" alt="">
+                    <span id="membername" class="member">username</span>
+                    <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> 
+                </div> -->
             </div>
 
+            <div class="hideMemberList"></div> <!--단순히 멤버리스트 가리기 용-->
             <div class="addUserContainer">
                 <!--사이드바 유저 검색 input창-->
                 <div id="searchUserContainer" class="searchUserContainer">
@@ -69,6 +85,24 @@
 
         <!--블로그나 노션 나타내는 공간-->
         <div class="groupContainer">
+            <!--게시물-->
+            <div class="boardContainer">
+                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
+                <div class="commentContainer">
+                    <div></div>
+                    <div class="commentFooter">
+                        <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
+                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
+                        <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button> -->
+                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                        <div class="commentStructure">
+                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
+                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--게시물-->
             <div class="boardContainer">
                 <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
                 <div class="commentContainer">
