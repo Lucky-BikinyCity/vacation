@@ -87,6 +87,17 @@ ex) 900px 이상 600px 이하 @media(max-width : 900px) and (min-width:500px) {}
 id로 해야 적용이 되고 
 class로 하면 뒤에 !important를 붙여야 적용이 됨
 */
+
+@media(max-width:1100px){
+    #sidebar{
+        position:absolute;
+        transform:translateX(-100%);
+    }
+    #buttonSidebar{
+        display: block;
+    }
+}
+
 @media(max-width : 900px){
     .loginPagePhrase{
         font-size: 2em !important;
@@ -108,10 +119,6 @@ class로 하면 뒤에 !important를 붙여야 적용이 됨
     }
     .showPwdWrapper{
         left:-75px !important;
-    }
-    .sidebar{
-        position:absolute !important;
-        transform:translateX(-100%) !important;
     }
 }
 
@@ -768,10 +775,12 @@ html,body {
 
 /*사이드바*/
 .sidebar{
+    z-index: 3;
     position: relative;
     width:300px;
     height:100%;
     background-color: #F7F7F5;
+    transition: all 0.25s;
     &>.titleContainer{
         position: relative;
         top:2%;
@@ -1064,6 +1073,7 @@ html,body {
 }
 
 .commentStructure{
+    border:1px solid black;
     position: relative;
     display: flex;
     width: 75%;
@@ -1119,8 +1129,38 @@ html,body {
 }
 
 .sendComment{
-    position: absolute;
+    position: relative;
     top:5px;
-    right:0;
+    left:90%;
     cursor: pointer;
+    &:hover{
+        filter:brightness(0.4);
+    }
+}
+
+.buttonSidebar{
+    display: none;
+    position: absolute;
+    z-index: 2;
+    width:30px;
+    height:30px;
+    border: 0;
+    background: 0;
+    top:100px;
+    &>img{
+        position: absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+    }
+}
+
+#closeSidebar{
+    display: block;
+    position: absolute;
+    top:10px;
+    right:10px;
+    width:30px;
+    height:30px;
 }
