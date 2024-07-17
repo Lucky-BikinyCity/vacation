@@ -41,6 +41,8 @@ function GroupBody(){
     openSearchUser();
 
     SidebarOnOff();
+
+    ShowProfile();
 }
 
 //이 아래서부턴 필요한 js함수 작성
@@ -196,7 +198,6 @@ function SidebarOnOff() {
             return;
         }
 
-        console.log(2);
         sidebar.style.transform = "translateX(0)";
         openBtn.style.display = "none";
         check = true;
@@ -207,7 +208,6 @@ function SidebarOnOff() {
             return;
         }
 
-        console.log(1);
         sidebar.style.transform = "translateX(-100%)";
         openBtn.style.display = "block";
         check = false;
