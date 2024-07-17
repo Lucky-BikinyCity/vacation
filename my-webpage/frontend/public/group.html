@@ -36,50 +36,21 @@
         </div>
 
         <div class="addUserContainer">
-
             <!--사이드바 유저 검색 input창-->
             <div id="searchUserContainer" class="searchUserContainer">
-                <div class="inputContainer">
-                    <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
-                    <button class="searchButton"><img src="../imgs/icon/search.png" alt=""></button> <!--검색버튼-->
+              <div class="inputContainer">
+                <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
+                <button class="searchButton"><img src="../imgs/icon/search.png" alt=""></button> <!--검색버튼-->
+              </div>
+          
+              <!--사이드바 유저 검색 결과 테두리-->
+              <div class="searchResultContainer">
+                <!--사이드바 유저 검색 결과-->
+                <div class="searchResult">
+                  <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                  <div id="searchName" class="serachName"></div>
                 </div>
-
-                <!--사이드바 유저 검색 결과 테두리-->
-                <div class="searchResultContainer">
-                    <!--사이드바 유저 검색 결과-->
-                    <div class="searchResult">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="serachName">USERNAME</div>
-                    </div>
-                    <div class="searchResult">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="serachName">USERNAME</div>
-                    </div>
-                    <div class="searchResult">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="serachName">USERNAME</div>
-                    </div>
-                    <div class="searchResult">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="serachName">USERNAME</div>
-                    </div>
-                    <div class="searchResult">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="serachName">USERNAME</div>
-                    </div>
-                    <div class="searchResult">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="serachName">USERNAME</div>
-                    </div>
-                    <div class="searchResult">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="serachName">USERNAME</div>
-                    </div>
-                    <div class="searchResult">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="serachName">USERNAME</div>
-                    </div>
-                </div>
+              </div>
             </div>
             <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
         </div>
@@ -113,4 +84,42 @@
     </div>
 </body>
 <script src="../src/index.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchButton = document.querySelector('.searchButton');
+      const searchNameDiv = document.getElementById('searchName');
+  
+      searchButton.addEventListener('click', async () => {
+        const userId = document.getElementById('searchUser').value;
+        const groupId = 'YOUR_GROUP_ID_HERE'; // 현재 그룹 ID를 여기에 입력합니다.
+  
+        if (!userId) {
+          alert('사용자 ID를 입력해주세요.');
+          return;
+        }
+  
+        try {
+          const response = await fetch('/search-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId, groupId })
+          });
+  
+          const data = await response.json();
+  
+          if (data.success) {
+            searchNameDiv.textContent = `${data.user.name}(${data.user.id})`;
+          } else {
+            searchNameDiv.textContent = data.message;
+          }
+        } catch (error) {
+          console.error('사용자 검색 중 오류 발생:', error);
+          alert('사용자 검색 중 오류가 발생했습니다.');
+        }
+      });
+    });
+  </script>
+  
 </html>
