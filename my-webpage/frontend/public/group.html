@@ -2,7 +2,7 @@
 유저 삭제버튼 추가
 유저 검색추가
 -->
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -34,7 +34,55 @@
                 <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼, 그룹장이 아니라면 이 버튼이 보이면 안된다-->
             </div>
         </div>
-        <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
+
+        <div class="addUserContainer">
+
+            <!--사이드바 유저 검색 input창-->
+            <div id="searchUserContainer" class="searchUserContainer">
+                <div class="inputContainer">
+                    <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
+                    <button class="searchButton"><img src="../imgs/icon/search.png" alt=""></button> <!--검색버튼-->
+                </div>
+
+                <!--사이드바 유저 검색 결과 테두리-->
+                <div class="searchResultContainer">
+                    <!--사이드바 유저 검색 결과-->
+                    <div class="searchResult">
+                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                        <div id="searchName" class="serachName">USERNAME</div>
+                    </div>
+                    <div class="searchResult">
+                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                        <div id="searchName" class="serachName">USERNAME</div>
+                    </div>
+                    <div class="searchResult">
+                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                        <div id="searchName" class="serachName">USERNAME</div>
+                    </div>
+                    <div class="searchResult">
+                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                        <div id="searchName" class="serachName">USERNAME</div>
+                    </div>
+                    <div class="searchResult">
+                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                        <div id="searchName" class="serachName">USERNAME</div>
+                    </div>
+                    <div class="searchResult">
+                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                        <div id="searchName" class="serachName">USERNAME</div>
+                    </div>
+                    <div class="searchResult">
+                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                        <div id="searchName" class="serachName">USERNAME</div>
+                    </div>
+                    <div class="searchResult">
+                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                        <div id="searchName" class="serachName">USERNAME</div>
+                    </div>
+                </div>
+            </div>
+            <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
+        </div>
     </div>
 
     <div class="groupContainer">
