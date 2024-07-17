@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function(){
         SignUpBody();
     }else if(document.body.id==='mainBody'){
         MainBody();
+    }else if(document.body.id==='groupBody'){
+        GroupBody();
     }
 });
 
@@ -32,6 +34,11 @@ function MainBody(){
     AddGroup();
 
     ShowProfile();
+}
+
+    //그룹 페이지
+function GroupBody(){
+    openSearchUser();
 }
 
 //이 아래서부턴 필요한 js함수 작성
@@ -145,5 +152,26 @@ function ShowProfile(){
         profileWrapper.style.backgroundColor = '';
         profileWrapper.style.boxShadow = '';
         profileNameWrapper.style.border='';
+    });
+}
+
+    //유저 검색창 on/off
+function openSearchUser(){
+    var check = false;
+    const searchUser = document.querySelector('.searchUserContainer');
+    const searchResult = document.querySelector('.searchResultContainer');
+
+    document.getElementById('addmember').addEventListener('click', function() {
+        if (check) {
+            searchUser.style.height = '0';
+            searchResult.style.display = 'none';
+            check = false;
+        } else {
+            searchUser.style.height = '260px';
+            setTimeout(() => {
+                searchResult.style.display = 'block';
+            }, 100); // transition 시간과 동일하게 설정
+            check = true;
+        }
     });
 }

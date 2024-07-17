@@ -128,7 +128,7 @@ app.get('/logout', (req, res) => {
     if (err) {
       return res.status(500).json({ message: '로그아웃 중 오류가 발생했습니다.' });
     }
-    res.json({ success: true, message: '로그아웃 성공' });
+    res.json({ success: true, message: '로그아웃 성공', redirectUrl: '/frontend' });
   });
 });
 
@@ -261,6 +261,41 @@ app.post('/api/exit-group/:groupId', async (req, res) => {
   } catch (error) {
     console.error('그룹 탈퇴 중 오류 발생:', error);
     res.status(500).json({ success: false, message: '그룹 탈퇴 중 오류가 발생했습니다.' });
+  }
+});
+
+// 사용자 검색 라우트
+app.post('/search-user', isAuthenticated, async (req, res) => {
+  const { userId, groupId } = req.body;
+
+  if (!userId || !groupId) {
+    return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
+  }
+
+  try {
+    // User 테이블에서 입력받은 user_ID로 검색
+    const userQuery = 'SELECT * FROM User WHERE user_ID = ?';
+    const [userResults] = await pool.query(userQuery, [userId]);
+
+    if (userResults.length === 0) {
+      return res.json({ success: false, message: '결과 없음.' });
+    }
+
+    const user = userResults[0];
+
+    // UserGroup 테이블에서 그룹에 속해 있는지 확인
+    const groupQuery = 'SELECT * FROM UserGroup WHERE group_ID = ? AND user_ID = ?';
+    const [groupResults] = await pool.query(groupQuery, [groupId, userId]);
+
+    if (groupResults.length > 0) {
+      return res.json({ success: false, message: '결과 없음' });
+    }
+
+    res.json({ success: true, user: { id: user.user_ID, name: user.user_name } });
+
+  } catch (error) {
+    console.error('서버 오류:', error);
+    res.status(500).json({ message: '서버 오류', error });
   }
 });
 

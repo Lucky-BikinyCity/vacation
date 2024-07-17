@@ -2,7 +2,7 @@
 유저 삭제버튼 추가
 유저 검색추가
 -->
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -21,48 +21,104 @@
             <div class="memberList myself">
                 <img src="../imgs/icon/user.png" alt="">
                 <div class="member">
-                    <span id="myname">username</span>
-                    <div>(나)</div>
+                    <span id="myname">나 자신</span>
+                    <div>(나)</div> <!--자기자신-->
                 </div>
-                <button id="post"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+                <button id="post" type="submit"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+            </div>
+
+            <!--그룹장-->
+            <div class="memberList">
+                <img src="../imgs/icon/user.png" alt="">
+                <span id="membername" class="member">그룹장</span>
             </div>
 
             <!--다른 멤버-->
             <div class="memberList">
                 <img src="../imgs/icon/user.png" alt="">
-                <span id="membername" class="member">username</span>
-                <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼, 그룹장이 아니라면 이 버튼이 보이면 안된다-->
+                <span id="membername" class="member">일반멤버</span>
+                <button id="kick" type="submit"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼, 그룹장이 아니라면 이 버튼이 보이면 안된다-->
             </div>
         </div>
-        <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
+
+        <div class="addUserContainer">
+            <!--사이드바 유저 검색 input창-->
+            <div id="searchUserContainer" class="searchUserContainer">
+                <div class="inputContainer">
+                    <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
+                    <button class="searchButton"><img src="../imgs/icon/search.png" alt=""></button> <!--검색버튼-->
+                  </div>
+              
+                  <!--사이드바 유저 검색 결과 테두리-->
+                  <div class="searchResultContainer">
+                    <!--사이드바 유저 검색 결과-->
+                    <div class="searchResult">
+                      <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                      <div id="searchName" class="serachName"></div>
+                    </div>
+                  </div>
+            </div>
+            <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
+        </div>
     </div>
 
+    <!--블로그나 노션 나타내는 공간-->
     <div class="groupContainer">
         <div class="boardContainer">
             <iframe class="board" src="https://gofnrk.tistory.com/48" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="https://gdnn.tistory.com/50" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="https://codepen.io/sosuke/pen/Pjoqqp" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
+            <div class="commentContainer">
+                <div></div>
+                <div class="commentFooter">
+                    <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
+                    <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
+                    <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button> -->
+                    <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                    <div class="commentStructure">
+                        <input id="comment" class="commentInput" type="text" placeholder="댓글">
+                        <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 <script src="../src/index.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchButton = document.querySelector('.searchButton');
+      const searchNameDiv = document.getElementById('searchName');
+  
+      searchButton.addEventListener('click', async () => {
+        const userId = document.getElementById('searchUser').value;
+        const groupId = 'YOUR_GROUP_ID_HERE'; // 현재 그룹 ID를 여기에 입력합니다.
+  
+        if (!userId) {
+          alert('사용자 ID를 입력해주세요.');
+          return;
+        }
+  
+        try {
+          const response = await fetch('/search-user', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId, groupId })
+          });
+  
+          const data = await response.json();
+  
+          if (data.success) {
+            searchNameDiv.textContent = `${data.user.name}(${data.user.id})`;
+          } else {
+            searchNameDiv.textContent = data.message;
+          }
+        } catch (error) {
+          console.error('사용자 검색 중 오류 발생:', error);
+          alert('사용자 검색 중 오류가 발생했습니다.');
+        }
+      });
+    });
+  </script>
+  
 </html>
