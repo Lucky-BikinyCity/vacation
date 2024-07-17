@@ -73,84 +73,86 @@
             <img src="../imgs/icon/add_circle.png" alt="Logo" class="addCircle">
             <div class="addGroupPhrase koreanFont">그룹 추가</div>
         </button>
-
-        
     </main>
     <script src="../src/index.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                const userInfoResponse = await fetch('/api/main');
-                if (!userInfoResponse.ok) {
-                    throw new Error('사용자 정보를 가져오지 못했습니다.');
-                }
+    try {
+        const userInfoResponse = await fetch('/api/main');
+        if (!userInfoResponse.ok) {
+            throw new Error('사용자 정보를 가져오지 못했습니다.');
+        }
 
-                const userInfo = await userInfoResponse.json();
-                const userId = userInfo.user_id; // 세션에서 사용자 ID를 가져옵니다.
-                document.getElementById('profileName').textContent = userInfo.user_name;
-                document.getElementById('group_count').textContent = userInfo.group_count;
-                document.getElementById('like_count').textContent = userInfo.like_count;
+        const userInfo = await userInfoResponse.json();
+        const userId = userInfo.user_id; // 세션에서 사용자 ID를 가져옵니다.
+        console.log(`Fetched userId: ${userId}`); // 디버깅용 로그
 
-                const groupResponse = await fetch('/api/user-groups');
-                if (!groupResponse.ok) {
-                    throw new Error('그룹 정보를 가져오지 못했습니다.');
-                }
+        document.getElementById('profileName').textContent = userInfo.user_name;
+        document.getElementById('group_count').textContent = userInfo.group_count;
+        document.getElementById('like_count').textContent = userInfo.like_count;
 
-                const groupData = await groupResponse.json();
-                const groupBoxes = document.getElementById('groupBoxes');
+        const groupResponse = await fetch('/api/user-groups');
+        if (!groupResponse.ok) {
+            throw new Error('그룹 정보를 가져오지 못했습니다.');
+        }
 
-                if (groupData.groups.length > 0) {
-                    groupData.groups.forEach(group => {
-                        const groupBox = document.createElement('a');
-                        groupBox.href = '../public/group.html';
-                        groupBox.className = 'groupBox existGroup';
-                        groupBox.dataset.groupId = group.group_ID; // 그룹 ID를 data 속성에 저장
-                        groupBox.addEventListener('click', setGroupSessionAndRedirect); // 클릭 이벤트 추가
+        const groupData = await groupResponse.json();
+        const groupBoxes = document.getElementById('groupBoxes');
 
-                        let buttonHtml;
-                        if (userId === group.group_king) {
-                            buttonHtml = `
-                                <button class="koreanFont" id="delGroup" data-group-id="${group.group_ID}" data-action="delete" onclick="preventLink(event)">
-                                    <img src="../imgs/icon/delete.png" alt="">
-                                </button>`;
-                        } else {
-                            buttonHtml = `
-                                <button class="koreanFont" id="exitGroup" data-group-id="${group.group_ID}" data-action="exit" onclick="preventLink(event)">
-                                    <img src="../imgs/icon/exit.png" alt="">
-                                </button>`;
-                        }
+        if (groupData.groups.length > 0) {
+            groupData.groups.forEach(group => {
+                console.log(`userId: ${userId}, group_king: ${group.group_king}`); // 디버깅용 로그
 
-                        groupBox.innerHTML = `
-                            <div class="imgWrapper">
-                                <img class="thumbnail" src="" alt="" onerror="this.style.display='none'">
-                                <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
-                            </div>
-                            <div class="groupInfoContainer">
-                                <div class="groupInfo">
-                                    <div class="namingGroup koreanFont">${group.group_name} / ${group.group_king}</div>
-                                    <div class="numberingMember">
-                                        <img src="../imgs/icon/group.png" alt="">
-                                        <span class="count">${group.current_members} / ${group.max_members}</span>
-                                    </div>
-                                </div>
-                                <div class="buttonWrapper">
-                                    ${buttonHtml}
-                                </div>
-                            </div>
-                        `;
+                const groupBox = document.createElement('a');
+                groupBox.href = '../public/group.html';
+                groupBox.className = 'groupBox existGroup';
+                groupBox.dataset.groupId = group.group_ID; // 그룹 ID를 data 속성에 저장
+                groupBox.addEventListener('click', setGroupSessionAndRedirect); // 클릭 이벤트 추가
 
-                        groupBoxes.appendChild(groupBox);
-                    });
-                    document.getElementById('groupBoxes').style.display = 'flex';
-                    document.getElementById('addGroupInBoxes').style.display = 'block';
+                let buttonHtml;
+                if (userId === group.group_king) {
+                    buttonHtml = `
+                        <button class="koreanFont" id="delGroup" data-group-id="${group.group_ID}" data-action="delete" onclick="preventLink(event)">
+                            <img src="../imgs/icon/delete.png" alt="">
+                        </button>`;
                 } else {
-                    document.getElementById('addGroupOnMain').style.display = 'block';
+                    buttonHtml = `
+                        <button class="koreanFont" id="exitGroup" data-group-id="${group.group_ID}" data-action="exit" onclick="preventLink(event)">
+                            <img src="../imgs/icon/exit.png" alt="">
+                        </button>`;
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('정보를 가져오는 중 오류가 발생했습니다.');
-            }
-        });
+
+                groupBox.innerHTML = `
+                    <div class="imgWrapper">
+                        <img class="thumbnail" src="" alt="" onerror="this.style.display='none'">
+                        <img class="logo" src="../imgs/web-icons/logo1-B.png" alt="">
+                    </div>
+                    <div class="groupInfoContainer">
+                        <div class="groupInfo">
+                            <div class="namingGroup koreanFont">${group.group_name} / ${group.group_king}</div>
+                            <div class="numberingMember">
+                                <img src="../imgs/icon/group.png" alt="">
+                                <span class="count">${group.current_members} / ${group.max_members}</span>
+                            </div>
+                        </div>
+                        <div class="buttonWrapper">
+                            ${buttonHtml}
+                        </div>
+                    </div>
+                `;
+
+                groupBoxes.appendChild(groupBox);
+            });
+            document.getElementById('groupBoxes').style.display = 'flex';
+            document.getElementById('addGroupInBoxes').style.display = 'block';
+        } else {
+            document.getElementById('addGroupOnMain').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('정보를 가져오는 중 오류가 발생했습니다.');
+    }
+});
 
         async function preventLink(event) {
             event.preventDefault();

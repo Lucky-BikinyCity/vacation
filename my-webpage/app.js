@@ -150,6 +150,7 @@ app.get('/api/main', isAuthenticated, async (req, res) => {
 
     const user = results[0];
     res.json({
+      user_id: userId, // user_id 추가
       user_name: user.user_name,
       group_count: user.group_count,
       like_count: user.like_count
@@ -160,6 +161,7 @@ app.get('/api/main', isAuthenticated, async (req, res) => {
     res.status(500).json({ message: '서버 오류', error });
   }
 });
+
 
 // 그룹 생성 처리
 app.post('/api/create-group', isAuthenticated, async (req, res) => {
@@ -415,10 +417,6 @@ app.post('/api/kick-user', async (req, res) => {
       res.status(500).json({ message: 'Database query error' });
   }
 });
-
-
-
-
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
