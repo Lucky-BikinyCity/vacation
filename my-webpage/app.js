@@ -330,15 +330,34 @@ app.post('/api/invite-user', async (req, res) => {
   }
 
   try {
-    // Invite user logic here, e.g., inserting into UserGroup table
+    // 그룹 정보 가져오기
+    const [groupResults] = await pool.query('SELECT max_members, current_members FROM `Group` WHERE group_ID = ?', [group_ID]);
+    
+    if (groupResults.length === 0) {
+      return res.status(404).json({ message: 'Group not found' });
+    }
+
+    const group = groupResults[0];
+
+    // 현재 멤버 수가 최대 멤버 수보다 작은지 확인
+    if (group.current_members >= group.max_members) {
+      return res.status(400).json({ message: 'Group is already full' });
+    }
+
+    // 유저 초대 로직
     const [results] = await pool.query('INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)', [user_ID, group_ID]);
     console.log('Invite user results:', results);
+
+    // current_members 값 증가
+    await pool.query('UPDATE `Group` SET current_members = current_members + 1 WHERE group_ID = ?', [group_ID]);
+
     res.json({ message: 'User invited successfully' });
   } catch (error) {
     console.error('Database query error:', error);
     res.status(500).json({ message: 'Database query error' });
   }
 });
+
 
 // 그룹 정보 가져오기 API
 app.get('/api/group-info', async (req, res) => {
@@ -409,6 +428,10 @@ app.post('/api/kick-user', async (req, res) => {
       console.log('Removing user from UserGroup');
       await connection.query('DELETE FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID]);
 
+      // current_members 값 감소
+      console.log('Decreasing current_members');
+      await connection.query('UPDATE `Group` SET current_members = current_members - 1 WHERE group_ID = ?', [group_ID]);
+
       connection.release();
 
       res.json({ message: 'User kicked out successfully' });
@@ -417,6 +440,7 @@ app.post('/api/kick-user', async (req, res) => {
       res.status(500).json({ message: 'Database query error' });
   }
 });
+
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
