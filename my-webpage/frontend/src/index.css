@@ -173,7 +173,14 @@ html,body {
 }
 
 #groupBody{
-    display: flex;
+    display: block;
+}
+
+.secondGroupBody{
+    display:flex;
+    position: absolute;
+    width:100%;
+    height: auto;
 }
 
 .loginPageContainer {
@@ -778,7 +785,6 @@ html,body {
     z-index: 3;
     position: relative;
     width:300px;
-    height:100%;
     background-color: #F7F7F5;
     transition: all 0.25s;
     &>.titleContainer{

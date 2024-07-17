@@ -11,65 +11,97 @@
     <link rel="stylesheet" href="../src/index.css">
 </head>
 <body id="groupBody">
-    <div id="sidebar" class="sidebar">
-        <img id="closeSidebar" src="../imgs/icon/close.png" alt="">
-        <div class="titleContainer">
-            <img class="logoInMain" src="../imgs/web-icons/logo1-B.png" alt="">
-            <h1 class="title">TITLE</h1>
-        </div>
-        <div class="memberListContainer">
-            <!--자기 자신-->
-            <div class="memberList myself">
-                <img src="../imgs/icon/user.png" alt="">
-                <div class="member">
-                    <span id="myname">username</span>
-                    <div>(나)</div>
-                </div>
-                <button id="post"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+    <header class="mainHtmlHeader">
+        <img src="../imgs/web-icons/logo2-B.png" alt="Logo" class="logo logoInMain">
+        <div class="profileWrapper">
+            <div class="profileNameWrapper">
+                <img src="../imgs/icon/user_circle.png" class="profileImg" alt="">
+                <span id="profileName" class="profileName"></span>
             </div>
+            <div class="profileInfo">
+                <div class="containerInProfileInfo">
+                    <img src="../imgs/icon/group-B.png" alt="">
+                    <div>그룹</div>
+                    <div></div>
+                    <span id="group_count" class="count"></span>
+                </div>
 
-            <!--다른 멤버-->
-            <div class="memberList">
-                <img src="../imgs/icon/user.png" alt="">
-                <span id="membername" class="member">username</span>
-                <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼-->
+                <div class="containerInProfileInfo">
+                    <img src="../imgs/icon/heart_fill.png" alt="">
+                    <div>좋아요</div>
+                    <div></div>
+                    <span id="like_count" class="count"></span>
+                </div>
+
+                <button id="logout" class="logoutInProfile">
+                    <img src="../imgs/icon/exit-b.png" alt="">
+                    로그아웃
+                </button>
             </div>
         </div>
+    </header>
 
-        <div class="addUserContainer">
-            <!--사이드바 유저 검색 input창-->
-            <div id="searchUserContainer" class="searchUserContainer">
-                <div class="inputContainer">
-                    <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
-                    <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
-                </div>
-                <div class="searchResultContainer">
-                    <div class="searchResult" onclick="inviteUser()">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="searchName"></div>
+    <div class="secondGroupBody">
+        <div id="sidebar" class="sidebar">
+            <img id="closeSidebar" src="../imgs/icon/close.png" alt="">
+            <div class="titleContainer">
+                <img class="logoInMain" src="../imgs/web-icons/logo1-B.png" alt="">
+                <h1 class="title">TITLE</h1>
+            </div>
+            <div class="memberListContainer">
+                <!--자기 자신-->
+                <div class="memberList myself">
+                    <img src="../imgs/icon/user.png" alt="">
+                    <div class="member">
+                        <span id="myname">username</span>
+                        <div>(나)</div>
                     </div>
-                  </div>
+                    <button id="post"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+                </div>
+
+                <!--다른 멤버-->
+                <div class="memberList">
+                    <img src="../imgs/icon/user.png" alt="">
+                    <span id="membername" class="member">username</span>
+                    <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼-->
+                </div>
             </div>
-            <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
+
+            <div class="addUserContainer">
+                <!--사이드바 유저 검색 input창-->
+                <div id="searchUserContainer" class="searchUserContainer">
+                    <div class="inputContainer">
+                        <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
+                        <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
+                    </div>
+                    <div class="searchResultContainer">
+                        <div class="searchResult" onclick="inviteUser()">
+                            <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                            <div id="searchName" class="searchName"></div>
+                        </div>
+                    </div>
+                </div>
+                <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
+            </div>
         </div>
-    </div>
 
-    <button id="buttonSidebar" class="buttonSidebar"><img src="../imgs/icon/menu.png" alt=""></button>
+        <button id="buttonSidebar" class="buttonSidebar"><img src="../imgs/icon/menu.png" alt=""></button>
 
-    <!--블로그나 노션 나타내는 공간-->
-    <div class="groupContainer">
-        <div class="boardContainer">
-            <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
-            <div class="commentContainer">
-                <div></div>
-                <div class="commentFooter">
-                    <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
-                    <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
-                    <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button> -->
-                    <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
-                    <div class="commentStructure">
-                        <input id="comment" class="commentInput" type="text" placeholder="댓글">
-                        <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
+        <!--블로그나 노션 나타내는 공간-->
+        <div class="groupContainer">
+            <div class="boardContainer">
+                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
+                <div class="commentContainer">
+                    <div></div>
+                    <div class="commentFooter">
+                        <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
+                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
+                        <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button> -->
+                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                        <div class="commentStructure">
+                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
+                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
+                        </div>
                     </div>
                 </div>
             </div>
