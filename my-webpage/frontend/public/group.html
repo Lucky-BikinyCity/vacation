@@ -331,8 +331,7 @@ async function submitPost() {
 
         if (response.ok) {
             alert(result.message);
-            postOnOff();
-            fetchGroupInfo();
+            location.reload(); // 페이지 새로고침
         } else {
             alert(result.message);
         }
@@ -489,7 +488,7 @@ async function submitComment(postID) {
 
         if (response.ok) {
             alert(result.message);
-            loadComments(postID); // 댓글 작성 후 댓글 리스트를 다시 로드합니다.
+            location.reload(); // 페이지 새로고침
         } else {
             alert(result.message);
         }
@@ -710,6 +709,9 @@ notionBtn.addEventListener("click", function() {
     blogBtn.classList.remove("active");
 });
 
+document.getElementById('reviseProfile').addEventListener('click', function() {
+    window.location.href = './setting.html';
+});
 </script>
 <script src="../src/index.js"></script>
 </html>
