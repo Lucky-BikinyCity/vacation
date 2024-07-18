@@ -52,10 +52,8 @@
             <div class="addUserContainer">
                 <div id="searchUserContainer" class="searchUserContainer">
                     <div class="inputContainer">
-                        <form action="">
-                            <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
-                            <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
-                        </form> 
+                        <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
+                        <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
                     </div>
                     <div class="searchResultContainer">
                         <div class="searchResult" onclick="inviteUser()">
@@ -589,6 +587,11 @@ function openSearchUser() {
             }, 100);
             check = true;
         }
+    });
+
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        searchUser();
     });
 }
 
