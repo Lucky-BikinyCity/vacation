@@ -75,6 +75,10 @@
 
         <div id="postWrite" class="postWrite">
             <div class="postContainer">
+                <div id="postUnderlineOfTitle" class="postUnderlineOfTitle">
+                    <img src="../imgs/icon/title.png" alt="">
+                    <input type="text" id="title" placeholder="title of notion" class="embedLink">
+                </div>
                 <div class="postUnderline">
                     <img src="../imgs/icon/link.png" alt="">
                     <input type="text" id="embedLink" placeholder="your blog or notion link..." class="embedLink">
@@ -88,6 +92,7 @@
         </div>
 
         <div id="groupContainer" class="groupContainer">
+
         </div>
     </div>
 </body>
@@ -384,7 +389,12 @@ function renderPosts(posts) {
         if (post.post_type === 'blog') {
             postContent = `<iframe class="board" src="${post.link}" frameborder="0"></iframe>`;
         } else if (post.post_type === 'notion') {
-            postContent = `<div class="notionLink"><a href="${post.link}" target="_blank">${post.link}</a></div>`;
+            postContent = ` <div class="board" style="cursor:pointer;" onclick="location.href='${post.link}';">
+                                <div>
+                                    <img class="imgInBoard" src="../imgs/icon/notion.png">
+                                    <span>타이틀</span>
+                                </div>
+                            </div>`;
         }
 
         const liked = await checkLike(post.post_ID);

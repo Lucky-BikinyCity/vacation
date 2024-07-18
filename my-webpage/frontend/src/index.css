@@ -200,6 +200,7 @@ html,body {
         border:0;
         background-color: #ffffff;
         outline: none;
+        font-size: 1em;
     }
     &>img:first-child{ /*내에 있는 img태그 중 첫번째*/
         filter: invert(71%) sepia(0%) saturate(0%) hue-rotate(20deg) brightness(88%) contrast(90%);
@@ -1015,6 +1016,37 @@ html,body {
     }
 }
 
+.postUnderlineOfTitle{
+    position: absolute;
+    top:10%;
+    left:50%;
+    transform: translate(-50%,0);
+    border-bottom: 3px solid var(--default_black_color);
+    width:90%;
+    height:40px;
+    z-index: 2;
+    & img{
+        position: absolute;
+        top:50%;
+        left:10px;
+        transform: translateY(-50%);
+        width:40px;
+        height:auto;
+    }
+    & .embedLink{
+        font-size: 1em;
+        position: relative;
+        top:0;
+        left:60px;
+        width:90%;
+        height:90%;
+        border: 0;
+        &:focus{
+            outline: none;
+        }
+    }
+}
+
 .postWrite{
     display: none; 
     position: relative; 
@@ -1024,7 +1056,7 @@ html,body {
         position: relative;
         display: block;
         width:900px;
-        height:120px;
+        height:160px;
         top:50%;
         left:50%;
         transform: translate(-50%,-50%);
@@ -1032,7 +1064,7 @@ html,body {
         border-radius: 10px;
         & .postUnderline{
             position: relative;
-            top:50%;
+            top:60%;
             left:50%;
             transform: translate(-50%,-70%);
             border-bottom: 3px solid var(--default_black_color);
@@ -1133,6 +1165,32 @@ html,body {
     height:100%;
     border-right:0;
     background-color: white;
+}
+
+div.board{
+    &:hover{
+        .imgInBoard{
+            width:20%;
+        }
+    }
+    & div{
+        display: flex;
+        align-items: center;
+        position:absolute; 
+        top:50%; 
+        left:60%; 
+        transform:translate(-50%,-50%);
+        & .imgInBoard{
+            width:18%; 
+            transition: all 0.25s;
+        }
+        & span{
+            margin-left: 20px;
+            text-align: center;
+            font-size: 2em;
+            transition: all 0.25s;
+        }
+    }
 }
 
 
