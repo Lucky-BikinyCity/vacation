@@ -36,6 +36,7 @@ create table Post(
     posting_time timestamp default current_timestamp,
     group_ID int unsigned not null,
     user_ID varchar(50) not null,
+    post_type varchar(10) not null,
     primary key (post_ID),
     foreign key (group_ID) references `Group`(group_ID) on delete cascade,
     foreign key (user_ID) references `User`(user_ID) on delete cascade
