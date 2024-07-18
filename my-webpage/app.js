@@ -493,6 +493,79 @@ app.get('/api/group-posts', isAuthenticated, async (req, res) => {
   }
 });
 
+// 게시글 삭제하기
+app.post('/api/delete-post', isAuthenticated, async (req, res) => {
+  const { post_ID } = req.body;
+  const user_ID = req.session.user.id;
+
+  try {
+      const connection = await pool.getConnection();
+
+      // 게시글 작성자가 현재 로그인한 사용자와 일치하는지 확인
+      const [postResults] = await connection.query('SELECT user_ID FROM Post WHERE post_ID = ?', [post_ID]);
+      if (postResults.length === 0 || postResults[0].user_ID !== user_ID) {
+          connection.release();
+          return res.status(403).json({ message: '게시글 삭제 권한이 없습니다.' });
+      }
+
+      // 게시글 삭제
+      await connection.query('DELETE FROM Post WHERE post_ID = ?', [post_ID]);
+
+      connection.release();
+      res.json({ message: '게시글이 삭제되었습니다.' });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+app.get('/api/post-like-status', async (req, res) => {
+  const { post_ID, user_ID } = req.query;
+
+  if (!post_ID || !user_ID) {
+      return res.status(400).json({ message: 'post_ID and user_ID are required' });
+  }
+
+  try {
+      const [results] = await pool.query('SELECT * FROM PostLike WHERE post_ID = ? AND user_ID = ?', [post_ID, user_ID]);
+      if (results.length > 0) {
+          res.json({ liked: true });
+      } else {
+          res.json({ liked: false });
+      }
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+
+// 좋아요 추가 및 제거
+app.post('/api/toggle-like', async (req, res) => {
+  const { user_ID, post_ID } = req.body;
+  if (!user_ID || !post_ID) {
+      return res.status(400).json({ message: 'user_ID and post_ID are required' });
+  }
+
+  try {
+      // 좋아요 상태를 토글하는 로직
+      const [existingLike] = await pool.query('SELECT * FROM PostLike WHERE user_ID = ? AND post_ID = ?', [user_ID, post_ID]);
+      if (existingLike.length > 0) {
+          // 좋아요가 이미 존재하면 삭제
+          await pool.query('DELETE FROM PostLike WHERE user_ID = ? AND post_ID = ?', [user_ID, post_ID]);
+          res.json({ liked: false });
+      } else {
+          // 좋아요가 존재하지 않으면 추가
+          await pool.query('INSERT INTO PostLike (user_ID, post_ID) VALUES (?, ?)', [user_ID, post_ID]);
+          res.json({ liked: true });
+      }
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+
 // 특정 게시글의 댓글 가져오기
 app.get('/api/post-comments', isAuthenticated, async (req, res) => {
   const { post_ID } = req.query;

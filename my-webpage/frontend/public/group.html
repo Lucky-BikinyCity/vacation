@@ -301,6 +301,16 @@ function formatDateForMySQL(date) {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+function formatDateTime(dateTimeString) {
+    const date = new Date(dateTimeString);
+    const year = String(date.getFullYear()).slice(2);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
 async function submitPost() {
     const embedLink = document.getElementById("embedLink").value;
     let postType = '';
@@ -357,43 +367,81 @@ async function loadPosts() {
     }
 }
 
+async function checkLike(postID) {
+    try {
+        const response = await fetch(`/api/check-like?post_ID=${postID}&user_ID=${currentUserID}`); // user_ID 추가
+        if (!response.ok) {
+            throw new Error('Failed to check like');
+        }
+        const result = await response.json();
+        return result.liked;
+    } catch (error) {
+        console.error('Error checking like:', error);
+        return false;
+    }
+}
+
+
 function renderPosts(posts) {
     const groupContainer = document.getElementById('groupContainer');
     groupContainer.innerHTML = '';
 
-    posts.forEach(post => {
+    posts.forEach(async (post) => {
         const postElement = document.createElement('div');
         postElement.className = 'boardContainer';
 
+        let postContent;
         if (post.post_type === 'blog') {
-            postElement.innerHTML = `
-                <iframe class="board" src="${post.link}" frameborder="0"></iframe>
-            `;
+            postContent = `<iframe class="board" src="${post.link}" frameborder="0"></iframe>`;
         } else if (post.post_type === 'notion') {
-            postElement.innerHTML = `
-                <div class="notionLink"><a href="${post.link}" target="_blank">${post.link}</a></div>
-            `;
+            postContent = `<div class="notionLink"><a href="${post.link}" target="_blank">${post.link}</a></div>`;
         }
 
-        const commentContainer = document.createElement('div');
-        commentContainer.className = 'commentContainer';
-        commentContainer.innerHTML = `
-            <div class="commentList" id="commentList-${post.post_ID}"></div>
-            <div class="commentFooter">
-                <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button>
-                <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
-                <div class="commentStructure">
-                    <input id="commentInput-${post.post_ID}" class="commentInput" type="text" placeholder="댓글">
-                    <button onclick="submitComment('${post.post_ID}')" class="sendComment btnCommentFooter"><img src="../imgs/icon/send.png" alt=""></button>
+        const liked = await checkLike(post.post_ID);
+        const likeIcon = liked ? 'heart_fill_red.png' : 'heart.png';
+
+        postElement.innerHTML = `
+            ${postContent}
+            <div class="commentContainer">
+                ${currentUserID === post.user_ID ? `<button onclick="deletePost('${post.post_ID}')" id="delPost" class="delPost"><img src="../imgs/icon/delete.png" alt="Delete"></button>` : ''}
+                <div class="commentList" id="commentList-${post.post_ID}"></div>
+                <div class="commentFooter">
+                    <button id="like-${post.post_ID}" class="like btnCommentFooter" onclick="toggleLike('${post.post_ID}')"><img src="../imgs/icon/${likeIcon}" alt="Like"></button>
+                    <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                    <div class="commentStructure">
+                        <input id="commentInput-${post.post_ID}" class="commentInput" type="text" placeholder="댓글">
+                        <button onclick="submitComment('${post.post_ID}')" class="sendComment btnCommentFooter"><img src="../imgs/icon/send.png" alt=""></button>
+                    </div>
                 </div>
             </div>
         `;
 
-        postElement.appendChild(commentContainer);
         groupContainer.appendChild(postElement);
-
         loadComments(post.post_ID); // 댓글 로드
     });
+}
+
+async function deletePost(postID) {
+    try {
+        const response = await fetch('/api/delete-post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ post_ID: postID })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+            loadPosts(); // 게시글 삭제 후 게시글 리스트를 다시 로드합니다.
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 async function loadComments(postID) {
@@ -414,12 +462,13 @@ function renderComments(postID, comments) {
     commentList.innerHTML = '';
 
     comments.forEach(comment => {
+        const formattedTime = formatDateTime(comment.posting_time);
         const commentElement = document.createElement('div');
         commentElement.className = 'comment';
         commentElement.innerHTML = `
             <div class="commentHeader">
                 <div class="commentWriter">${comment.user_ID}</div>
-                <div class="commentPostDate">${comment.posting_time}</div>
+                <div class="commentPostDate">${formattedTime}</div>
             </div>
             <div class="commentContent">${comment.content}</div>
             ${currentUserID === comment.user_ID ? `<button onclick="deleteComment(${comment.comment_ID}, ${postID})" class="delComment">[삭제]</button>` : ''}
@@ -427,6 +476,7 @@ function renderComments(postID, comments) {
         commentList.appendChild(commentElement);
     });
 }
+
 
 async function submitComment(postID) {
     const commentInput = document.getElementById(`commentInput-${postID}`);
@@ -485,6 +535,31 @@ async function deleteComment(commentID, postID) {
         console.error('Error:', error);
     }
 }
+
+async function toggleLike(postID) {
+    try {
+        const response = await fetch('/api/toggle-like', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_ID: currentUserID, post_ID: postID }) // user_ID 추가
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            const likeButton = document.getElementById(`like-${postID}`);
+            const likeIcon = result.liked ? 'heart_fill_red.png' : 'heart.png';
+            likeButton.innerHTML = `<img src="../imgs/icon/${likeIcon}" alt="Like">`;
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 
 window.onload = async function() {
     await fetchUserInfo();
