@@ -386,9 +386,10 @@ app.get('/api/group-info', async (req, res) => {
       const [userResults] = await connection.query('SELECT user_name FROM User WHERE user_ID = ?', [user.id]);
       const currentUserName = userResults[0]?.user_name || '';
 
-      console.log('Fetching group owner info');
-      const [groupResults] = await connection.query('SELECT user_ID FROM `Group` WHERE group_ID = ?', [group_ID]);
+      console.log('Fetching group info');
+      const [groupResults] = await connection.query('SELECT user_ID, group_name FROM `Group` WHERE group_ID = ?', [group_ID]);
       const groupOwnerID = groupResults[0]?.user_ID || '';
+      const groupName = groupResults[0]?.group_name || '';
 
       let groupOwnerName = '';
       if (groupOwnerID) {
@@ -405,6 +406,7 @@ app.get('/api/group-info', async (req, res) => {
           currentUser: { user_ID: user.id, user_name: currentUserName },
           groupOwner: { user_ID: groupOwnerID, user_name: groupOwnerName },
           groupID: group_ID, // groupID를 추가합니다.
+          groupName: groupName, // 그룹 이름을 추가합니다.
           members: memberResults
       });
   } catch (error) {
@@ -412,6 +414,7 @@ app.get('/api/group-info', async (req, res) => {
       res.status(500).json({ message: 'Database query error' });
   }
 });
+
 
 //게시글 작성 라우터
 app.post('/api/submit-post', async (req, res) => {
