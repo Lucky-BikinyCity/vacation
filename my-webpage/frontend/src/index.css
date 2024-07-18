@@ -1142,8 +1142,8 @@ html,body {
         width:98%;
         height:auto;
         color:#3b3b3b;
-        margin-top: 20px;
-        margin-bottom: 20px;
+        margin-top: 40px;
+        margin-bottom: 40px;
         & .commentHeader{
             display: flex;
             justify-content: space-between;
