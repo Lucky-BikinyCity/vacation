@@ -229,3 +229,18 @@ function SidebarOnOff() {
         }
     });
 }
+
+
+    //그룹페이지 댓글창 on/off
+function openComment(){
+    const commentContainer = document.getElementById("commentContainer");
+    const check = false;
+
+    if(!check){
+        commentContainer.style.display="block";
+        check = true;
+    }else{
+        commentContainer.style.display="none";
+        check = false;
+    }
+}

@@ -70,8 +70,10 @@
                 <!--사이드바 유저 검색 input창-->
                 <div id="searchUserContainer" class="searchUserContainer">
                     <div class="inputContainer">
-                        <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
-                        <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
+                        <form action="">
+                            <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
+                            <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
+                        </form> 
                     </div>
                     <div class="searchResultContainer">
                         <div class="searchResult" onclick="inviteUser()">
@@ -106,7 +108,11 @@
             <!--게시물-->
             <div class="boardContainer">
                 <!--iframe-->
-                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
+                <iframe class="board" src="https://gofnrk.tistory.com/48" frameborder="0"></iframe> 
+
+                <!--댓글창 키고 끄는 버튼-->
+                <button id="openComment" class="openComment" onclick="openComment()"><img src="../imgs/icon/comment.png" alt=""></button>
+
                 <!--댓글 틀-->
                 <div class="commentContainer">
                     <!--댓글 목록-->
@@ -133,22 +139,6 @@
                         <div class="commentStructure">
                             <input id="comment" class="commentInput" type="text" placeholder="댓글">
                             <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/send.png" alt=""></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--게시물-->
-            <div class="boardContainer">
-                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
-                <div class="commentContainer">
-                    <div class="commentFooter">
-                        <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
-                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
-                        <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button> -->
-                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
-                        <div class="commentStructure">
-                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
-                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
                         </div>
                     </div>
                 </div>
