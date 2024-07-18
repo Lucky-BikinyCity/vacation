@@ -457,6 +457,22 @@ app.post('/api/submit-post', async (req, res) => {
   }
 });
 
+// 그룹의 게시글 가져오기
+app.get('/api/group-posts', isAuthenticated, async (req, res) => {
+  const { group_ID } = req.query;
+
+  try {
+      const query = 'SELECT * FROM Post WHERE group_ID = ? ORDER BY posting_time DESC';
+      const [results] = await pool.query(query, [group_ID]);
+
+      res.json(results);
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
