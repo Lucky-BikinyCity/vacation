@@ -1,7 +1,3 @@
-<!--iframe 새로고침 버튼 추가
-유저 삭제버튼 추가
-유저 검색추가
--->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -9,131 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>그룹</title>
     <link rel="stylesheet" href="../src/index.css">
+    <style>
+        .active {
+            filter: opacity(0.7);
+        }
+    </style>
 </head>
 <body id="groupBody">
-    <div class="sidebar">
-        <div class="titleContainer">
-            <img class="logoInMain" src="../imgs/web-icons/logo1-B.png" alt="">
-            <h1 class="title">TITLE</h1>
-        </div>
-        <div class="memberListContainer">
-            <!--자기 자신-->
-            <div class="memberList myself">
-                <img src="../imgs/icon/user.png" alt="">
-                <div class="member">
-                    <span id="myname">username</span>
-                    <div>(나)</div>
-                </div>
-                <button id="post"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+    <header class="groupHtmlHeader">
+        <img src="../imgs/web-icons/logo2-B.png" alt="Logo" class="logo logoInMain" onclick="location.href='./main.html';">
+        <div class="profileWrapper">
+            <div class="profileNameWrapper">
+                <img src="../imgs/icon/user_circle.png" class="profileImg" alt="">
+                <span id="profileName" class="profileName"></span>
             </div>
+            <div class="profileInfo">
+                <div class="containerInProfileInfo">
+                    <img src="../imgs/icon/group-B.png" alt="">
+                    <div>그룹</div>
+                    <div></div>
+                    <span id="group_count" class="count"></span>
+                </div>
 
-            <!--다른 멤버-->
-            <div class="memberList">
-                <img src="../imgs/icon/user.png" alt="">
-                <span id="membername" class="member">username</span>
-                <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> <!--강퇴 버튼-->
+                <div class="containerInProfileInfo">
+                    <img src="../imgs/icon/heart_fill.png" alt="">
+                    <div>좋아요</div>
+                    <div></div>
+                    <span id="like_count" class="count"></span>
+                </div>
+
+                <button id="logout" class="logoutInProfile">
+                    <img src="../imgs/icon/exit-b.png" alt="">
+                    로그아웃
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="secondGroupBody">
+        <div id="sidebar" class="sidebar">
+            <img id="closeSidebar" src="../imgs/icon/close.png" alt="">
+            <div class="titleContainer">TITLE</div>
+            <div class="memberListContainer"></div>
+
+            <div class="hideMemberList"></div> <!--단순히 멤버리스트 가리기 용-->
+            <div class="addUserContainer">
+                <div id="searchUserContainer" class="searchUserContainer">
+                    <div class="inputContainer">
+                        <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
+                        <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
+                    </div>
+                    <div class="searchResultContainer">
+                        <div class="searchResult" onclick="inviteUser()">
+                            <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
+                            <div id="searchName" class="searchName"></div>
+                        </div>
+                    </div>
+                </div>
+                <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
             </div>
         </div>
 
-        <div class="addUserContainer">
-            <div id="searchUserContainer" class="searchUserContainer">
-                <div class="inputContainer">
-                    <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
-                    <button class="searchButton" onclick="searchUser()"><img src="../imgs/icon/search.png" alt=""></button>
+        <button id="buttonSidebar" class="buttonSidebar"><img src="../imgs/icon/menu.png" alt=""></button>
+
+        <div id="postWrite" class="postWrite">
+            <div class="postContainer">
+                <div class="postUnderline">
+                    <img src="../imgs/icon/link.png" alt="">
+                    <input type="text" id="embedLink" placeholder="your blog or notion link..." class="embedLink">
                 </div>
-                <div class="searchResultContainer">
-                    <div class="searchResult" onclick="inviteUser()">
-                        <img class="searchResultImg" src="../imgs/icon/user.png" alt="">
-                        <div id="searchName" class="searchName"></div>
+                <div class="chooseLink">
+                    <button id="blogBtn" class="blogBtn"><img src="../imgs/icon/blog.png" alt=""></button>
+                    <button id="notionBtn" class="notionBtn"><img src="../imgs/icon/notion.png" alt=""></button>
+                </div>
+                <button id="submitPost" class="submitPost" type="submit">Post</button>
+            </div>
+        </div>
+
+        <div id="groupContainer" class="groupContainer">
+            <div class="boardContainer">
+                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
+                <div class="commentContainer">
+                    <div></div>
+                    <div class="commentFooter">
+                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
+                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                        <div class="commentStructure">
+                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
+                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <button id="addmember" class="addMember"><img src="../imgs/icon/add-user.png" alt=""></button>
-        </div>
-    </div>
-
-    <div class="groupContainer">
-        <div class="boardContainer">
-            <iframe class="board" src="https://gofnrk.tistory.com/48" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="https://gdnn.tistory.com/50" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="https://codepen.io/sosuke/pen/Pjoqqp" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
-        </div>
-        <div class="boardContainer">
-            <iframe class="board" src="" frameborder="0"></iframe>
-            <div class="commentContainer"></div>
+            <div class="boardContainer">
+                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
+                <div class="commentContainer">
+                    <div></div>
+                    <div class="commentFooter">
+                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
+                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                        <div class="commentStructure">
+                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
+                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
+<script src="../src/group.js"></script>
 <script src="../src/index.js"></script>
-<script>
-    async function searchUser() {
-        const userID = document.getElementById('searchUser').value;
-        const searchName = document.getElementById('searchName');
-        
-        console.log('Searching for user:', userID); // 디버깅용 로그
-
-        try {
-            const response = await fetch('/api/search-user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user_ID: userID })
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok) {
-                searchName.textContent = `${result.user_name} (${result.user_ID})`;
-                document.querySelector('.searchResultContainer').style.display = 'block';
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    async function inviteUser() {
-        const searchName = document.getElementById('searchName').textContent;
-        const userID = searchName.split('(')[1].slice(0, -1);
-        
-        console.log('Inviting user:', userID); // 디버깅용 로그
-
-        try {
-            const response = await fetch('/api/invite-user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user_ID: userID })
-            });
-            
-            const result = await response.json();
-            
-            if (response.ok) {
-                alert(result.message);
-            } else {
-                alert(result.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-</script> 
 </html>

@@ -31,39 +31,7 @@
         </form>
         <div id="message"></div> <!-- 메시지를 표시할 요소 추가 -->
     </div>
+    <script src="../src/signup.js"></script> <!-- 분리된 JS 파일 추가 -->
+    <script src="../src/index.js"></script>
 </body>
-<script src="../src/index.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelector('.signupForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const ID = document.getElementById('uid').value;
-            const PW = document.getElementById('password').value;
-            const USERNAME = document.getElementById('username').value;
-
-            try {
-                const response = await fetch('http://localhost:3000/signup', { // URL 절대 경로로 수정
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ID, PW, USERNAME })
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || '서버 오류 발생');
-                }
-
-                document.getElementById('message').textContent = result.message;
-                window.location.href = './login.html';
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('message').textContent = error.message;
-            }
-        });
-    });
-</script>
 </html>

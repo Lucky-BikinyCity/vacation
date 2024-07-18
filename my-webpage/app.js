@@ -141,18 +141,32 @@ app.get('/api/main', isAuthenticated, async (req, res) => {
   const userId = req.session.user.id;
 
   try {
-    const query = 'SELECT user_name, group_count, like_count FROM User WHERE user_ID = ?';
-    const [results] = await pool.query(query, [userId]);
+    // 그룹 카운트 계산
+    const [groupCountResults] = await pool.query('SELECT COUNT(*) AS group_count FROM UserGroup WHERE user_ID = ?', [userId]);
+    const groupCount = groupCountResults[0].group_count;
 
-    if (results.length === 0) {
+    // 좋아요 카운트 계산
+    const [likeCountResults] = await pool.query('SELECT COUNT(*) AS like_count FROM PostLike WHERE writer_ID = ?', [userId]);
+    const likeCount = likeCountResults[0].like_count;
+
+    // 사용자 정보 가져오기
+    const query = 'SELECT user_name FROM User WHERE user_ID = ?';
+    const [userResults] = await pool.query(query, [userId]);
+
+    if (userResults.length === 0) {
       return res.status(404).json({ message: '사용자 정보를 찾을 수 없습니다.' });
     }
 
-    const user = results[0];
+    const user = userResults[0];
+
+    // User 테이블의 group_count와 like_count를 업데이트합니다.
+    await pool.query('UPDATE User SET group_count = ?, like_count = ? WHERE user_ID = ?', [groupCount, likeCount, userId]);
+
     res.json({
+      user_id: userId, // user_id 추가
       user_name: user.user_name,
-      group_count: user.group_count,
-      like_count: user.like_count
+      group_count: groupCount,
+      like_count: likeCount
     });
 
   } catch (error) {
@@ -316,24 +330,132 @@ app.post('/api/search-user', async (req, res) => {
 });
 
 
-app.post('/api/invite-user', (req, res) => {
+app.post('/api/invite-user', async (req, res) => {
   const { user_ID } = req.body;
   const group_ID = req.session.groupId;
 
+  console.log('Received invite request:', { user_ID, group_ID });
+
   if (!user_ID || !group_ID) {
+    console.log('Missing user_ID or group_ID');
+    return res.status(400).json({ message: 'user_ID and group_ID are required' });
+  }
+
+  try {
+    // Invite user logic here, e.g., inserting into UserGroup table
+    const [results] = await pool.query('INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)', [user_ID, group_ID]);
+    console.log('Invite user results:', results);
+    res.json({ message: 'User invited successfully' });
+  } catch (error) {
+    console.error('Database query error:', error);
+    res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+// 그룹 정보 가져오기 API
+app.get('/api/group-info', async (req, res) => {
+  const { user } = req.session;
+  const group_ID = req.session.groupId;
+
+  console.log('Session data:', { user, group_ID });
+
+  if (!user || !group_ID) {
+      console.log('Missing user or group_ID:', { user, group_ID });
       return res.status(400).json({ message: 'user_ID and group_ID are required' });
   }
 
-  connection.query('INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)', [user_ID, group_ID], (err) => {
-      if (err) {
-          return res.status(500).json({ message: 'Database insert error' });
+  try {
+      const connection = await pool.getConnection();
+
+      console.log('Fetching current user info');
+      const [userResults] = await connection.query('SELECT user_name FROM User WHERE user_ID = ?', [user.id]);
+      const currentUserName = userResults[0]?.user_name || '';
+
+      console.log('Fetching group owner info');
+      const [groupResults] = await connection.query('SELECT user_ID FROM `Group` WHERE group_ID = ?', [group_ID]);
+      const groupOwnerID = groupResults[0]?.user_ID || '';
+
+      let groupOwnerName = '';
+      if (groupOwnerID) {
+          const [ownerResults] = await connection.query('SELECT user_name FROM User WHERE user_ID = ?', [groupOwnerID]);
+          groupOwnerName = ownerResults[0]?.user_name || '';
       }
 
-      res.json({ message: 'User invited successfully' });
-  });
+      console.log('Fetching group members info');
+      const [memberResults] = await connection.query('SELECT u.user_ID, u.user_name FROM UserGroup ug JOIN User u ON ug.user_ID = u.user_ID WHERE ug.group_ID = ? ORDER BY u.user_name', [group_ID]);
+
+      connection.release();
+
+      res.json({
+          currentUser: { user_ID: user.id, user_name: currentUserName },
+          groupOwner: { user_ID: groupOwnerID, user_name: groupOwnerName },
+          groupID: group_ID, // groupID를 추가합니다.
+          members: memberResults
+      });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
 });
 
 
+app.post('/api/kick-user', async (req, res) => {
+  console.log(1);
+  const { user_ID, group_ID, groupOwnerID } = req.body;
+  const currentUser = req.session.user;
+
+  // 디버깅용 로그 추가
+  console.log('Current session user:', currentUser);
+  console.log('Request body:', { user_ID, group_ID, groupOwnerID });
+
+  if (!user_ID || !group_ID || !groupOwnerID) {
+      return res.status(400).json({ message: 'user_ID, group_ID and groupOwnerID are required' });
+  }
+
+  if (currentUser.id !== groupOwnerID) {
+      return res.status(403).json({ message: 'Only the group owner can kick members' });
+  }
+
+  try {
+      const connection = await pool.getConnection();
+      console.log('Removing user from UserGroup');
+      await connection.query('DELETE FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID]);
+
+      connection.release();
+
+      res.json({ message: 'User kicked out successfully' });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+// 게시글 작성 처리
+app.post('/api/submit-post', async (req, res) => {
+  const { link, posting_time, group_ID, user_ID, post_type } = req.body;
+
+  console.log('Received post data:', { link, posting_time, group_ID, user_ID, post_type }); // 디버깅용 로그
+
+  if (!link || !posting_time || !group_ID || !user_ID || !post_type) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const query = 'INSERT INTO Post (link, posting_time, group_ID, user_ID, post_type) VALUES (?, ?, ?, ?, ?)';
+    const [result] = await pool.query(query, [link, posting_time, group_ID, user_ID, post_type]);
+
+    console.log('Post insert result:', result); // 디버깅용 로그
+
+    if (result.affectedRows > 0) {
+      res.json({ success: true, message: 'Post submitted successfully' });
+    } else {
+      res.status(500).json({ success: false, message: 'Failed to submit post' });
+    }
+  } catch (error) {
+    console.error('Database query error:', error);
+    res.status(500).json({ message: 'Database query error' });
+  }
+});
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {

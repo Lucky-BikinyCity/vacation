@@ -1,0 +1,75 @@
+// 게시글 작성 쿼리문
+app.post('/api/create-post', isAuthenticated, async (req, res) => {
+  const { link } = req.body;
+  const userId = req.session.user.id;
+  const groupId = req.session.groupId;
+
+  if (!link) {
+    return res.status(400).json({ message: '링크를 입력하세요.' });
+  }
+
+  try {
+    const query = 'INSERT INTO Post (link, posting_time, group_ID, writer_ID) VALUES (?, NOW(), ?, ?)';
+    await pool.query(query, [link, groupId, userId]);
+    res.status(201).json({ message: '게시글이 성공적으로 작성되었습니다.' });
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).json({ message: '게시글 작성 중 오류가 발생했습니다.' });
+  }
+});
+
+
+
+
+
+
+
+// 게시글 작성 스크립트, 게시글 지우고 작성ㄹ화면 띄움
+    document.getElementById('post').addEventListener('click', showPostInput);
+
+    async function showPostInput() {
+        // groupContainer의 내용을 지우고 게시글 입력 창을 추가합니다.
+        const groupContainer = document.querySelector('.groupContainer');
+        groupContainer.innerHTML = `
+            <div class="postInputContainer">
+                <h2>게시글 작성</h2>
+                <input type="text" id="postLink" placeholder="링크를 입력하세요">
+                <button id="submitPost">제출</button>
+                <button id="cancelPost">취소</button>
+            </div>
+        `;
+
+        document.getElementById('submitPost').addEventListener('click', submitPost);
+        document.getElementById('cancelPost').addEventListener('click', fetchGroupInfo); // 취소 시 그룹 정보를 다시 로드
+    }
+
+    //게시글 작성후 데이터를 백엔드로 넘김
+    async function submitPost() {
+        const postLink = document.getElementById('postLink').value;
+
+        if (!postLink) {
+            alert('링크를 입력하세요.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/create-post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ link: postLink })
+            });
+
+            if (response.ok) {
+                alert('게시글이 성공적으로 작성되었습니다.');
+                fetchGroupInfo(); // 게시글 작성 후 그룹 정보를 다시 로드
+            } else {
+                const result = await response.json();
+                alert(result.message || '게시글 작성에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('게시글 작성 중 오류가 발생했습니다.');
+        }
+    }

@@ -39,6 +39,10 @@ function MainBody(){
     //그룹 페이지
 function GroupBody(){
     openSearchUser();
+
+    SidebarOnOff();
+
+    ShowProfile();
 }
 
 //이 아래서부턴 필요한 js함수 작성
@@ -172,6 +176,56 @@ function openSearchUser(){
                 searchResult.style.display = 'block';
             }, 100); // transition 시간과 동일하게 설정
             check = true;
+        }
+    });
+}
+
+//사이드바 on/off
+function SidebarOnOff() {
+    var openBtn = document.getElementById("buttonSidebar");
+    var closeBtn = document.getElementById("closeSidebar");
+    var sidebar = document.getElementById("sidebar");
+    var check = false;
+
+    // 화면 크기 감지 함수
+    function checkScreenSize() {
+        return window.innerWidth >= 1000;
+    }
+
+    openBtn.addEventListener("click", function() {
+        sidebar.style.transition="all 0.25s";
+        if (checkScreenSize()) {
+            return;
+        }
+
+        sidebar.style.transform = "translateX(0)";
+        openBtn.style.display = "none";
+        check = true;
+    });
+
+    closeBtn.addEventListener("click",function(){
+        sidebar.style.transition="all 0.25s";
+        if (checkScreenSize()) {
+            return;
+        }
+
+        sidebar.style.transform = "translateX(-100%)";
+        openBtn.style.display = "block";
+        check = false;
+    });
+
+    // 화면 크기 변경 시 동작 제어
+    window.addEventListener("resize", function() {
+        if (checkScreenSize()) {
+            sidebar.style.transform = "translateX(0)";
+            sidebar.style.transition="all 0.25s";
+            closeBtn.style.display="none";
+        }else{
+            closeBtn.style.display="block";
+            sidebar.style.transition="all 0s";
+            if(!check){
+                sidebar.style.transform = "translateX(-100%)";
+            }
         }
     });
 }
