@@ -105,7 +105,7 @@ async function renderPosts(posts) {
 
         let postContent;
         if (post.post_type === 'blog') {
-            postContent = `<iframe class="board" src="${post.link}" frameborder="0"></iframe>`;
+            postContent = `<iframe class="board" src="${post.link}" frameborder="0"></iframe><button id="openComment" class="openComment"><img src="../imgs/icon/comment.png"></button>`;
         } else if (post.post_type === 'notion') {
             postContent = `
                 <div class="board" style="cursor:pointer;" onclick="location.href='${post.link}';">
@@ -113,7 +113,8 @@ async function renderPosts(posts) {
                         <img class="imgInBoard" src="../imgs/icon/notion.png" alt="Notion">
                         <span>${post.title}</span>
                     </div>
-                </div>`;
+                </div>
+                <button id="openComment" class="openComment"><img src="../imgs/icon/comment.png"></button>`;
         }
 
         const liked = await checkLike(post.post_ID);
@@ -122,6 +123,7 @@ async function renderPosts(posts) {
         postElement.innerHTML = `
             ${postContent}
             <div class="commentContainer">
+            <button id="closeComment" class="closeComment"><img src="../imgs/icon/close.png"></button>
                 ${currentUserID === post.user_ID ? `<button onclick="deletePost('${post.post_ID}')" id="delPost" class="delPost"><img src="../imgs/icon/delete.png" alt="Delete"></button>` : ''}
                 <div class="commentList" id="commentList-${post.post_ID}"></div>
                 <div class="commentFooter">
@@ -132,11 +134,37 @@ async function renderPosts(posts) {
                         <button onclick="submitComment('${post.post_ID}')" class="sendComment btnCommentFooter"><img src="../imgs/icon/send.png" alt="Send"></button>
                     </div>
                 </div>
+                
             </div>
         `;
 
         groupContainer.appendChild(postElement);
         loadComments(post.post_ID); // 댓글 로드
+
+        addCommentToggleFunctionality();
+        closeCommentToggleFunctionality();
+    });
+}
+
+function addCommentToggleFunctionality() {
+    const openCommentButtons = document.querySelectorAll('.openComment');
+    const commentContainers = document.querySelectorAll('.commentContainer');
+
+    openCommentButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            commentContainers[index].style.display = 'block';
+        });
+    });
+}
+
+function closeCommentToggleFunctionality() {
+    const closeCommentButtons = document.querySelectorAll('.closeComment');
+    const commentContainers = document.querySelectorAll('.commentContainer');
+
+    closeCommentButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+            commentContainers[index].style.display = 'none';
+        });
     });
 }
 
