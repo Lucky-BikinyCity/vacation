@@ -1516,11 +1516,89 @@ div.board{
         width:400px;
     }
 
-    .postWrite{
-        position: relative; 
-        width: 100%; 
-        height:100%;
-        & .postContainer{
+    .postContainer{
+        position: relative;
+        display: block;
+        width:500px;
+        height:160px;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+        border:5px solid var(--default_black_color);
+        border-radius: 10px;
+        & .postUnderline{
+            position: relative;
+            top:60%;
+            left:50%;
+            transform: translate(-50%,-70%);
+            border-bottom: 3px solid var(--default_black_color);
+            width:90%;
+            height:40px;
+            & img{
+                position: absolute;
+                top:50%;
+                left:10px;
+                transform: translateY(-50%);
+                width:40px;
+                height:auto;
+            }
+            & .embedLink{
+                font-size: 1em;
+                position: relative;
+                top:0;
+                left:60px;
+                width:90%;
+                height:90%;
+                border: 0;
+                &:focus{
+                    outline: none;
+                }
+            }
+        }
+        & .chooseLink{
+            position: absolute;
+            bottom:2px;
+            left:80px;
+            display: flex;
+            justify-content:space-around;
+            align-items: center;
+            width:100px;
+            height:40px;
+            & > button{
+                position: relative;
+                top:0;
+                border:0;
+                background: 0;
+                width:30px;
+                height:30px;
+                cursor: pointer;
+                & > img{
+                    position: absolute;
+                    top:0;
+                    left:0;
+                    width:100%;
+                    filter: opacity(0.7);
+                }
+            }
+        }
+        & button{
+            position: absolute;
+            border:0;
+            border-radius: 10px;
+            background-color: var(--default_black_color);
+            color:white;
+            width:120px;
+            height:30px;
+            right:40px;
+            bottom:10px;
+            cursor: pointer;
+            &:hover{
+                filter: opacity(0.7);
+            }
+        }
+    }
+
+        .postContainer2{
             position: relative;
             width:500px;
             height:120px;
@@ -1597,7 +1675,6 @@ div.board{
                 cursor: pointer;
             }
         }
-    }
 
     .openComment{
         display: block;
@@ -1653,11 +1730,89 @@ div.board{
 }
 
 @media(max-width:550px){
-    .postWrite{
-        position: relative; 
-        width: 100%; 
-        height:100%;
-        & .postContainer{
+    .postContainer{
+        position: relative;
+        display: block;
+        width:300px;
+        height:160px;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+        border:5px solid var(--default_black_color);
+        border-radius: 10px;
+        & .postUnderline{
+            position: relative;
+            top:60%;
+            left:50%;
+            transform: translate(-50%,-70%);
+            border-bottom: 3px solid var(--default_black_color);
+            width:90%;
+            height:40px;
+            & img{
+                position: absolute;
+                top:50%;
+                left:10px;
+                transform: translateY(-50%);
+                width:40px;
+                height:auto;
+            }
+            & .embedLink{
+                font-size: 1em;
+                position: relative;
+                top:0;
+                left:60px;
+                width:90%;
+                height:90%;
+                border: 0;
+                &:focus{
+                    outline: none;
+                }
+            }
+        }
+        & .chooseLink{
+            position: absolute;
+            bottom:2px;
+            left:80px;
+            display: flex;
+            justify-content:space-around;
+            align-items: center;
+            width:100px;
+            height:40px;
+            & > button{
+                position: relative;
+                top:0;
+                border:0;
+                background: 0;
+                width:30px;
+                height:30px;
+                cursor: pointer;
+                & > img{
+                    position: absolute;
+                    top:0;
+                    left:0;
+                    width:100%;
+                    filter: opacity(0.7);
+                }
+            }
+        }
+        & button{
+            position: absolute;
+            border:0;
+            border-radius: 10px;
+            background-color: var(--default_black_color);
+            color:white;
+            width:120px;
+            height:30px;
+            right:40px;
+            bottom:10px;
+            cursor: pointer;
+            &:hover{
+                filter: opacity(0.7);
+            }
+        }
+    }
+
+        .postContainer2{
             position: relative;
             width:300px;
             height:120px;
@@ -1735,7 +1890,7 @@ div.board{
             }
         }
     }
-}
+
 
 @media(max-width : 400px){
     .loginPagePhrase{
