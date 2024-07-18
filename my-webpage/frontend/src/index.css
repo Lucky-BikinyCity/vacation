@@ -313,7 +313,7 @@ html,body {
 
 .logoInMain{
     margin: 0;
-    margin-left: 50px;
+    margin-left: 70px;
     width: 92px;
 }
 
@@ -749,28 +749,18 @@ html,body {
     transition: all 0.25s;
     &>.titleContainer{
         position: relative;
-        top:80px;
-        left:50%;
+        top:100px;
+        left:135px;
         transform: translateX(-50%);
         display: flex;
+        justify-content: center;
+        align-items: center;
         width:200px;
-        height:80px;
-        /* &>.logoInMain{
-            margin:0;
-            position: relative;
-            width:55px;
-            height:60px;
-            top:50%;
-            left:10px;
-            transform: translateY(-50%);
-        } */
-        &>.title{
-            position: absolute;
-            left:30px;
-            width:100px;
-            text-align: center;
-            overflow: hidden;
-        }
+        height:40px;
+        margin-bottom: 30px;
+        font-size: 1.5em;
+        font-weight: bold;
+        text-align: center;
     }
     &>.memberListContainer{
         position: relative;
@@ -996,6 +986,91 @@ html,body {
     }
 }
 
+.postWrite{
+    display: none; 
+    position: relative; 
+    width: 100%; 
+    height:100%;
+    & .postContainer{
+        position: relative;
+        display: block;
+        width:900px;
+        height:120px;
+        top:50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+        border:5px solid var(--default_black_color);
+        border-radius: 10px;
+        & .postUnderline{
+            position: relative;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-70%);
+            border-bottom: 3px solid var(--default_black_color);
+            width:90%;
+            height:40px;
+            & img{
+                position: absolute;
+                top:50%;
+                left:10px;
+                transform: translateY(-50%);
+                width:40px;
+                height:auto;
+            }
+            & .embedLink{
+                font-size: 1em;
+                position: relative;
+                top:0;
+                left:60px;
+                width:90%;
+                height:90%;
+                border: 0;
+                &:focus{
+                    outline: none;
+                }
+            }
+        }
+        & .chooseLink{
+            position: absolute;
+            bottom:2px;
+            left:80px;
+            display: flex;
+            justify-content:space-around;
+            align-items: center;
+            width:100px;
+            height:40px;
+            & > button{
+                position: relative;
+                top:0;
+                border:0;
+                background: 0;
+                width:30px;
+                height:30px;
+                cursor: pointer;
+                & > img{
+                    position: absolute;
+                    top:0;
+                    left:0;
+                    width:100%;
+                    filter: opacity(0.7);
+                }
+            }
+        }
+        & button{
+            position: absolute;
+            border:0;
+            border-radius: 10px;
+            background-color: var(--default_black_color);
+            color:white;
+            width:120px;
+            height:30px;
+            right:40px;
+            bottom:10px;
+            cursor: pointer;
+        }
+    }
+}
+
 /*게시글 노션 감싸는 wrapper*/
 .groupContainer{
     position:relative;
@@ -1124,6 +1199,7 @@ html,body {
     border: 0;
     background: 0;
     top:100px;
+    cursor: pointer;
     &>img{
         position: absolute;
         top:0;
@@ -1140,6 +1216,7 @@ html,body {
     right:10px;
     width:30px;
     height:30px;
+    cursor: pointer;
 }
 
 
@@ -1155,6 +1232,89 @@ html,body {
         display:none;
         position:absolute;
         width:400px;
+    }
+
+    .postWrite{
+        position: relative; 
+        width: 100%; 
+        height:100%;
+        & .postContainer{
+            position: relative;
+            width:500px;
+            height:120px;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            border:5px solid var(--default_black_color);
+            border-radius: 10px;
+            & .postUnderline{
+                position: relative;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-70%);
+                border-bottom: 3px solid var(--default_black_color);
+                width:90%;
+                height:40px;
+                & img{
+                    position: absolute;
+                    top:50%;
+                    left:10px;
+                    transform: translateY(-50%);
+                    width:40px;
+                    height:auto;
+                }
+                & .embedLink{
+                    font-size: 1em;
+                    position: relative;
+                    top:0;
+                    left:60px;
+                    width:84%;
+                    height:90%;
+                    border: 0;
+                    &:focus{
+                        outline: none;
+                    }
+                }
+            }
+            & .chooseLink{
+                position: absolute;
+                bottom:2px;
+                left:40px;
+                display: flex;
+                justify-content:space-around;
+                align-items: center;
+                width:100px;
+                height:40px;
+                & > button{
+                    position: relative;
+                    top:0;
+                    border:0;
+                    background: 0;
+                    width:30px;
+                    height:30px;
+                    cursor: pointer;
+                    & > img{
+                        position: absolute;
+                        top:0;
+                        left:0;
+                        width:100%;
+                        /* filter: invert(24%) sepia(2%) saturate(13%) hue-rotate(315deg) brightness(100%) contrast(95%); */
+                    }
+                }
+            }
+            & button{
+                position: absolute;
+                border:0;
+                border-radius: 10px;
+                background-color: var(--default_black_color);
+                color:white;
+                width:120px;
+                height:30px;
+                right:25px;
+                bottom:10px;
+                cursor: pointer;
+            }
+        }
     }
 }
 
@@ -1199,6 +1359,91 @@ html,body {
     }
 }
 
+@media(max-width:550px){
+    .postWrite{
+        position: relative; 
+        width: 100%; 
+        height:100%;
+        & .postContainer{
+            position: relative;
+            width:300px;
+            height:120px;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+            border:5px solid var(--default_black_color);
+            border-radius: 10px;
+            & .postUnderline{
+                position: relative;
+                top:50%;
+                left:50%;
+                transform: translate(-50%,-70%);
+                border-bottom: 3px solid var(--default_black_color);
+                width:90%;
+                height:40px;
+                & img{
+                    position: absolute;
+                    top:50%;
+                    left:10px;
+                    transform: translateY(-50%);
+                    width:30px;
+                    height:auto;
+                }
+                & .embedLink{
+                    font-size: 1em;
+                    position: relative;
+                    top:0;
+                    left:50px;
+                    width:79%;
+                    height:90%;
+                    border: 0;
+                    &:focus{
+                        outline: none;
+                    }
+                }
+            }
+            & .chooseLink{
+                position: absolute;
+                bottom:2px;
+                left:40px;
+                display: flex;
+                justify-content:space-around;
+                align-items: center;
+                width:100px;
+                height:40px;
+                & > button{
+                    position: relative;
+                    top:0;
+                    border:0;
+                    background: 0;
+                    width:30px;
+                    height:30px;
+                    cursor: pointer;
+                    & > img{
+                        position: absolute;
+                        top:0;
+                        left:0;
+                        width:100%;
+                        /* filter: invert(24%) sepia(2%) saturate(13%) hue-rotate(315deg) brightness(100%) contrast(95%); */
+                    }
+                }
+            }
+            & button{
+                position: absolute;
+                border:0;
+                border-radius: 10px;
+                background-color: var(--default_black_color);
+                color:white;
+                width:120px;
+                height:30px;
+                right:25px;
+                bottom:10px;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
 @media(max-width : 400px){
     .loginPagePhrase{
         font-size: 1.5em;
@@ -1210,6 +1455,9 @@ html,body {
         margin-left: 0px;
     }
     .mainHtmlHeader > .profileWrapper{
+        right: 10px;
+    }
+    .groupHtmlHeader > .profileWrapper{
         right: 10px;
     }
     .showPwdWrapper{

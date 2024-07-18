@@ -182,7 +182,6 @@ function openSearchUser(){
 
 //사이드바 on/off
 function SidebarOnOff() {
-    console.log(18);
     var openBtn = document.getElementById("buttonSidebar");
     var closeBtn = document.getElementById("closeSidebar");
     var sidebar = document.getElementById("sidebar");

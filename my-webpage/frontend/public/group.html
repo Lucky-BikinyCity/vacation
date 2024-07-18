@@ -40,9 +40,7 @@
     <div class="secondGroupBody">
         <div id="sidebar" class="sidebar">
             <img id="closeSidebar" src="../imgs/icon/close.png" alt="">
-            <div class="titleContainer">
-                <h1 class="title">TITLE</h1>
-            </div>
+            <div class="titleContainer">TITLE</div>
             <div class="memberListContainer">
                 <!--자기 자신-->
                 <!-- <div class="memberList myself">
@@ -83,8 +81,22 @@
 
         <button id="buttonSidebar" class="buttonSidebar"><img src="../imgs/icon/menu.png" alt=""></button>
 
+        <div id="postWrite" class="postWrite">
+            <div class="postContainer">
+                <div class="postUnderline">
+                    <img src="../imgs/icon/link.png" alt="">
+                    <input type="text" id="embedLink" placeholder="your blog or notion link..." class="embedLink">
+                </div>
+                <div class="chooseLink">
+                    <button id="blogBtn" class="blogBtn"><img src="../imgs/icon/blog.png" alt=""></button>
+                    <button id="notionBtn" class="notionBtn"><img src="../imgs/icon/notion.png" alt=""></button>
+                </div>
+                <button id="submitPost" class="submitPost" type="submit">Post</button>
+            </div>
+        </div>
+
         <!--블로그나 노션 나타내는 공간-->
-        <div class="groupContainer">
+        <div id="groupContainer" class="groupContainer">
             <!--게시물-->
             <div class="boardContainer">
                 <!--iframe-->
@@ -128,6 +140,24 @@
 </body>
 <script src="../src/index.js"></script>
 <script>
+    var postCheck = false;
+
+    //포스트 링크 on off
+    function postOnOff() {
+        var postWrite = document.getElementById("postWrite");
+        var groupContainer = document.getElementById("groupContainer");
+
+        if (!postCheck) {
+            postWrite.style.display = "block";
+            groupContainer.style.display = "none";
+            postCheck = true;
+        } else {
+            postWrite.style.display = "none";
+            groupContainer.style.display = "block";
+            postCheck = false;
+        }
+    }
+
     let currentUserID = '';
     let groupOwnerID = '';
     let groupID = ''; // 전역 변수로 groupID를 추가합니다.
@@ -181,7 +211,7 @@
                 <span id="myname">${currentUser.user_name}</span>
                 <div>(나)</div>
             </div>
-            <button id="post"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
+            <button id="openPost" onclick="postOnOff()"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
         `;
         memberListContainer.appendChild(currentUserElement);
 
@@ -310,6 +340,7 @@
             console.error('Error fetching user info:', error);
         }
     }
+
 </script>
 
 </html>
