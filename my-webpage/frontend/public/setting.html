@@ -33,9 +33,9 @@
                 if (!response.ok) {
                     throw new Error('Failed to fetch user info');
                 }
-                const data = await response.json();
-                document.getElementById('username').value = data.user_name;
-                document.getElementById('password').value = data.password; // 이 부분은 보안상 실제 비밀번호를 보여주지 않는 것이 좋습니다.
+                const userInfo = await response.json();
+
+                document.getElementById('username').placeholder = userInfo.user_name;
             } catch (error) {
                 console.error('Error fetching user info:', error);
             }
@@ -44,13 +44,12 @@
         document.getElementById('profileForm').addEventListener('submit', async function(event) {
             event.preventDefault();
 
-            const userName = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
 
-            const userData = {
-                user_name: userName,
-                password: password
-            };
+            const updatedData = {};
+            if (password) updatedData.password = password;
+            if (username) updatedData.user_name = username;
 
             try {
                 const response = await fetch('/api/update-user', {
@@ -58,21 +57,25 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(userData)
+                    body: JSON.stringify(updatedData)
                 });
 
                 const result = await response.json();
 
                 if (response.ok) {
-                    document.getElementById('message').textContent = '회원정보가 성공적으로 수정되었습니다.';
+                    alert('회원정보가 성공적으로 수정되었습니다.');
+                    // 로그아웃 및 로그인 페이지로 이동
+                    await fetch('/logout');
+                    window.location.href = '/login.html';
                 } else {
-                    document.getElementById('message').textContent = result.message || '회원정보 수정에 실패했습니다.';
+                    document.getElementById('message').textContent = result.message;
                 }
             } catch (error) {
                 console.error('Error updating user info:', error);
-                document.getElementById('message').textContent = '회원정보 수정 중 오류가 발생했습니다.';
+                document.getElementById('message').textContent = '회원정보 수정에 실패했습니다.';
             }
         });
     </script>
+    <script src="../src/index.js"></script>
 </body>
 </html>

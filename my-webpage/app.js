@@ -262,7 +262,6 @@ app.delete('/api/delete-group/:groupId', async (req, res) => {
   }
 });
 
-
 // 그룹 탈퇴 라우트
 app.post('/api/exit-group/:groupId', async (req, res) => {
   const { groupId } = req.params;
@@ -368,7 +367,6 @@ app.post('/api/invite-user', async (req, res) => {
   }
 });
 
-
 // 그룹 정보 가져오기 API
 app.get('/api/group-info', async (req, res) => {
   const { user } = req.session;
@@ -415,70 +413,7 @@ app.get('/api/group-info', async (req, res) => {
   }
 });
 
-
-app.post('/api/kick-user', async (req, res) => {
-  console.log(1);
-  const { user_ID, group_ID, groupOwnerID } = req.body;
-  const currentUser = req.session.user;
-
-  // 디버깅용 로그 추가
-  console.log('Current session user:', currentUser);
-  console.log('Request body:', { user_ID, group_ID, groupOwnerID });
-
-  if (!user_ID || !group_ID || !groupOwnerID) {
-      return res.status(400).json({ message: 'user_ID, group_ID and groupOwnerID are required' });
-  }
-
-  if (currentUser.id !== groupOwnerID) {
-      return res.status(403).json({ message: 'Only the group owner can kick members' });
-  }
-
-  try {
-      const connection = await pool.getConnection();
-      console.log('Removing user from UserGroup');
-      await connection.query('DELETE FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID]);
-      
-      // 그룹의 현재 인원을 1 감소시킴
-      await connection.query('UPDATE `Group` SET current_members = current_members - 1 WHERE group_ID = ?', [group_ID]);
-
-      connection.release();
-
-      res.json({ message: 'User kicked out successfully' });
-  } catch (error) {
-      console.error('Database query error:', error);
-      res.status(500).json({ message: 'Database query error' });
-  }
-});
-
-
-// 게시글 작성 처리
-app.post('/api/submit-post', async (req, res) => {
-  const { link, posting_time, group_ID, user_ID, post_type } = req.body;
-
-  console.log('Received post data:', { link, posting_time, group_ID, user_ID, post_type }); // 디버깅용 로그
-
-  if (!link || !posting_time || !group_ID || !user_ID || !post_type) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
-  try {
-    const query = 'INSERT INTO Post (link, posting_time, group_ID, user_ID, post_type) VALUES (?, ?, ?, ?, ?)';
-    const [result] = await pool.query(query, [link, posting_time, group_ID, user_ID, post_type]);
-
-    console.log('Post insert result:', result); // 디버깅용 로그
-
-    if (result.affectedRows > 0) {
-      res.json({ success: true, message: 'Post submitted successfully' });
-    } else {
-      res.status(500).json({ success: false, message: 'Failed to submit post' });
-    }
-  } catch (error) {
-    console.error('Database query error:', error);
-    res.status(500).json({ message: 'Database query error' });
-  }
-});
-
-// 그룹의 게시글 가져오기
+// 특정 사용자의 게시글 가져오기
 app.get('/api/group-posts', isAuthenticated, async (req, res) => {
   const { group_ID, user_ID } = req.query;
 
@@ -528,6 +463,7 @@ app.post('/api/delete-post', isAuthenticated, async (req, res) => {
   }
 });
 
+// 게시글 좋아요 상태 확인
 app.get('/api/check-like', async (req, res) => {
   const { post_ID, user_ID } = req.query;
 
@@ -547,7 +483,6 @@ app.get('/api/check-like', async (req, res) => {
     res.status(500).json({ message: 'Database query error' });
   }
 });
-
 
 // 좋아요 추가 및 제거
 app.post('/api/toggle-like', async (req, res) => {
@@ -582,8 +517,6 @@ app.post('/api/toggle-like', async (req, res) => {
       res.status(500).json({ message: 'Database query error' });
   }
 });
-
-
 
 // 특정 게시글의 댓글 가져오기
 app.get('/api/post-comments', isAuthenticated, async (req, res) => {
@@ -631,12 +564,12 @@ app.post('/api/delete-comment', isAuthenticated, async (req, res) => {
 });
 
 app.get('/api/user-info', isAuthenticated, async (req, res) => {
-  const user_ID = req.session.user_ID;
+  const user_ID = req.session.user.id;
 
   try {
-      const [user] = await pool.query('SELECT user_name, password FROM User WHERE user_ID = ?', [user_ID]);
-      if (user.length > 0) {
-          res.json(user[0]);
+      const [results] = await pool.query('SELECT user_name, password FROM User WHERE user_ID = ?', [user_ID]);
+      if (results.length > 0) {
+          res.json(results[0]);
       } else {
           res.status(404).json({ message: 'User not found' });
       }
@@ -647,18 +580,36 @@ app.get('/api/user-info', isAuthenticated, async (req, res) => {
 });
 
 app.post('/api/update-user', isAuthenticated, async (req, res) => {
-  const user_ID = req.session.user_ID;
-  const { user_name, password } = req.body;
+  const user_ID = req.session.user.id;
+  const { password, user_name } = req.body;
+
+  console.log(`Received update request: user_ID=${user_ID}, password=${password}, user_name=${user_name}`);
 
   try {
-      await pool.query('UPDATE User SET user_name = ?, password = ? WHERE user_ID = ?', [user_name, password, user_ID]);
+      let query = 'UPDATE User SET';
+      const params = [];
+
+      if (password) {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          query += ' password = ?';
+          params.push(hashedPassword);
+      }
+      if (user_name) {
+          if (params.length > 0) query += ',';
+          query += ' user_name = ?';
+          params.push(user_name);
+      }
+      query += ' WHERE user_ID = ?';
+      params.push(user_ID);
+
+      await pool.query(query, params);
+
       res.json({ message: 'User info updated successfully' });
   } catch (error) {
       console.error('Database query error:', error);
       res.status(500).json({ message: 'Database query error' });
   }
 });
-
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
