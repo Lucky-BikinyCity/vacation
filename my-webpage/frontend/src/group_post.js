@@ -29,6 +29,7 @@ async function submitPost() {
 
     if (document.querySelector('.blogBtn').classList.contains("active")) {
         postType = 'blog';
+        title = null; // 블로그일 경우 title을 null로 설정
     } else if (document.querySelector('.notionBtn').classList.contains("active")) {
         postType = 'notion';
         title = document.getElementById("title").value; // 노션 템플릿의 title 값 가져오기
@@ -39,12 +40,9 @@ async function submitPost() {
         posting_time: formatDateForMySQL(new Date()), // 날짜를 MySQL 형식으로 변환
         group_ID: groupID,
         user_ID: currentUserID,
-        post_type: postType
+        post_type: postType,
+        title: title // title 필드 추가
     };
-
-    if (postType === 'notion') {
-        postData.title = title; // 노션일 경우 title 추가
-    }
 
     console.log('Submitting post:', postData);
 

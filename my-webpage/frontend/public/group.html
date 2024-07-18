@@ -74,7 +74,7 @@
         <button id="buttonSidebar" class="buttonSidebar"><img src="../imgs/icon/menu.png" alt=""></button>
 
         <div id="postWrite" class="postWrite">
-            <div class="postContainer">
+            <div class="postContainer2">
                 <div class="postUnderline">
                     <img src="../imgs/icon/link.png" alt="">
                     <input type="text" id="embedLink" placeholder="your blog or notion link..." class="embedLink">
@@ -131,8 +131,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const blogBtn = document.getElementById('blogBtn');
-    const notionBtn = document.getElementById('notionBtn');
     const postWrite = document.getElementById('postWrite');
 
     const blogTemplate = `
@@ -164,18 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <button id="submitPost" class="submitPost" type="submit">Post</button>
         </div>`;
-
-    blogBtn.addEventListener('click', function() {
-        postWrite.innerHTML = blogTemplate;
-        activateButton('blogBtn');
-        addEventListeners(); // 이벤트 리스너를 다시 추가합니다.
-    });
-
-    notionBtn.addEventListener('click', function() {
-        postWrite.innerHTML = notionTemplate;
-        activateButton('notionBtn');
-        addEventListeners(); // 이벤트 리스너를 다시 추가합니다.
-    });
 
     function activateButton(activeBtnId) {
         const blogBtn = document.getElementById('blogBtn');
@@ -216,9 +202,10 @@ async function submitPost() {
 
     if (document.querySelector('.blogBtn').classList.contains("active")) {
         postType = 'blog';
+        title = null; // 블로그일 경우 title을 null로 설정
     } else if (document.querySelector('.notionBtn').classList.contains("active")) {
         postType = 'notion';
-        title = document.getElementById("title").value; // 노션 템플릿의 title 값 가져오기
+        title = document.getElementById("title") ? document.getElementById("title").value : ''; // 노션 템플릿의 title 값 가져오기
     }
 
     const postData = {
@@ -226,12 +213,9 @@ async function submitPost() {
         posting_time: formatDateForMySQL(new Date()), // 날짜를 MySQL 형식으로 변환
         group_ID: groupID,
         user_ID: currentUserID,
-        post_type: postType
+        post_type: postType,
+        title: title // title 필드 추가
     };
-
-    if (postType === 'notion') {
-        postData.title = title; // 노션일 경우 title 추가
-    }
 
     console.log('Submitting post:', postData);
 
@@ -256,5 +240,6 @@ async function submitPost() {
         console.error('Error:', error);
     }
 }
+
 </script>
 </html>
