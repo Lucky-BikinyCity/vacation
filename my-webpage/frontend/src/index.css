@@ -1558,7 +1558,7 @@ div.board{
         & .chooseLink{
             position: absolute;
             bottom:2px;
-            left:80px;
+            left:60px;
             display: flex;
             justify-content:space-around;
             align-items: center;
@@ -1730,6 +1730,12 @@ div.board{
 }
 
 @media(max-width:550px){
+    .postUnderlineOfTitle{
+            & .embedLink{
+                width:70%;
+            }
+
+    }
     .postContainer{
         position: relative;
         display: block;
@@ -1761,7 +1767,7 @@ div.board{
                 position: relative;
                 top:0;
                 left:60px;
-                width:90%;
+                width:70%;
                 height:90%;
                 border: 0;
                 &:focus{
@@ -1772,7 +1778,7 @@ div.board{
         & .chooseLink{
             position: absolute;
             bottom:2px;
-            left:80px;
+            left:50px;
             display: flex;
             justify-content:space-around;
             align-items: center;
