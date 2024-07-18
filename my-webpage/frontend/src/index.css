@@ -928,6 +928,7 @@ html,body {
                         position: absolute;
                         top:0;
                         right:0;
+                        cursor: pointer; /*마우스 커서 포인터로 했음*/
                         & img{
                             position: absolute;
                             top:0;

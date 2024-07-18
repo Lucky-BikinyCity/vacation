@@ -156,7 +156,7 @@ function handleMemberCount(change) {
     if (input) {
         const currentValue = parseInt(input.value);
         const newValue = currentValue + change;
-        if (newValue >= 2) {
+        if (newValue >= 2 && newValue <= 15) { //max 값이 지정이 안되어 있어서 지정해줌
             input.value = newValue;
         }
     }
