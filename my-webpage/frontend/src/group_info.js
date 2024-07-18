@@ -14,6 +14,11 @@ let groupOwnerID = '';
 let groupID = '';
 
 async function fetchGroupInfo() {
+    const confirmContainer = document.querySelector('.confirmContainer');
+    if (confirmContainer) {
+        confirmContainer.remove();
+    }
+
     try {
         const response = await fetch('/api/group-info');
         if (!response.ok) {
@@ -121,18 +126,15 @@ function showKickConfirm(userId) {
 }
 
 function closeKickConfirm() {
-    console.log('closeKickConfirm 호출됨');
-    const confirmElement = document.querySelector('.confirm');
-    if (confirmElement) {
-        console.log('확인 요소 제거');
-        confirmElement.remove();
-    } else {
-        console.log('확인 요소를 찾을 수 없음');
+    console.log('아니오 버튼 클릭됨');
+    const confirmContainer = document.querySelector('.confirmContainer');
+    if (confirmContainer) {
+        confirmContainer.remove();
     }
+    fetchGroupInfo(); // 그룹 정보를 다시 불러와서 게시물을 출력
 }
 
 async function kickUser(userId) {
-    console.log('kickUser 시작');
     try {
         const response = await fetch(`/api/kick-user/${groupID}/${userId}`, {
             method: 'DELETE',
@@ -143,22 +145,22 @@ async function kickUser(userId) {
 
         if (!response.ok) {
             const result = await response.json();
-            console.error(result.message || 'Failed to kick user');
             alert(result.message || 'Failed to kick user');
             return;
         }
 
         const result = await response.json();
         alert(result.message || 'User kicked successfully');
-        console.log('kickUser 성공, closeKickConfirm 호출');
-        closeKickConfirm(); // 성공적으로 삭제한 후 창을 닫음
-        window.location.reload(); // 창을 새로고침
+        const confirmContainer = document.querySelector('.confirmContainer');
+    if (confirmContainer) {
+        confirmContainer.remove();
+    }
+    fetchGroupInfo();
     } catch (error) {
         console.error('Error kicking user:', error);
         alert('An error occurred while kicking the user.');
         closeKickConfirm(); // 오류가 발생해도 창을 닫음
     }
-    console.log('kickUser 끝');
 }
 
 async function setGroupSessionAndRedirect(event) {
