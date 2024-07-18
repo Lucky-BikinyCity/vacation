@@ -480,11 +480,20 @@ app.post('/api/submit-post', async (req, res) => {
 
 // 그룹의 게시글 가져오기
 app.get('/api/group-posts', isAuthenticated, async (req, res) => {
-  const { group_ID } = req.query;
+  const { group_ID, user_ID } = req.query;
 
   try {
-      const query = 'SELECT * FROM Post WHERE group_ID = ? ORDER BY posting_time DESC';
-      const [results] = await pool.query(query, [group_ID]);
+      let query = 'SELECT * FROM Post WHERE group_ID = ?';
+      const params = [group_ID];
+
+      if (user_ID) {
+          query += ' AND user_ID = ?';
+          params.push(user_ID);
+      }
+
+      query += ' ORDER BY posting_time DESC';
+
+      const [results] = await pool.query(query, params);
 
       res.json(results);
   } catch (error) {
@@ -548,6 +557,13 @@ app.post('/api/toggle-like', async (req, res) => {
   }
 
   try {
+      // 게시글 작성자의 user_ID를 조회
+      const [postResult] = await pool.query('SELECT user_ID AS writer_ID FROM Post WHERE post_ID = ?', [post_ID]);
+      if (postResult.length === 0) {
+          return res.status(404).json({ message: 'Post not found' });
+      }
+      const writer_ID = postResult[0].writer_ID;
+
       // 좋아요 상태를 토글하는 로직
       const [existingLike] = await pool.query('SELECT * FROM PostLike WHERE user_ID = ? AND post_ID = ?', [user_ID, post_ID]);
       if (existingLike.length > 0) {
@@ -557,7 +573,7 @@ app.post('/api/toggle-like', async (req, res) => {
           res.json({ liked: false });
       } else {
           // 좋아요가 존재하지 않으면 추가
-          await pool.query('INSERT INTO PostLike (user_ID, post_ID) VALUES (?, ?)', [user_ID, post_ID]);
+          await pool.query('INSERT INTO PostLike (user_ID, post_ID, writer_ID) VALUES (?, ?, ?)', [user_ID, post_ID, writer_ID]);
           console.log('add');
           res.json({ liked: true });
       }
@@ -566,6 +582,7 @@ app.post('/api/toggle-like', async (req, res) => {
       res.status(500).json({ message: 'Database query error' });
   }
 });
+
 
 
 // 특정 게시글의 댓글 가져오기
