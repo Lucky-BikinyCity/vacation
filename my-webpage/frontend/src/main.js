@@ -26,20 +26,24 @@ document.addEventListener('DOMContentLoaded', async function() {
                 console.log(`userId: ${userId}, group_king: ${group.group_king}`);
 
                 const groupBox = document.createElement('a');
-                groupBox.href = '../public/group.html';
                 groupBox.className = 'groupBox existGroup';
                 groupBox.dataset.groupId = group.group_ID;
-                groupBox.addEventListener('click', setGroupSessionAndRedirect);
+
+                groupBox.addEventListener('click', function(event) {
+                    if (event.target.tagName !== 'BUTTON' && event.target.tagName !== 'IMG') {
+                        setGroupSessionAndRedirect(event);
+                    }
+                });
 
                 let buttonHtml;
                 if (userId === group.group_king) {
                     buttonHtml = `
-                        <button class="koreanFont" id="delGroup" data-group-id="${group.group_ID}" data-action="delete" onclick="preventLink(event)">
+                        <button class="koreanFont" id="delGroup" data-group-id="${group.group_ID}" data-action="delete" onclick="showConfirm(event, 'delete')">
                             <img src="../imgs/icon/delete.png" alt="">
                         </button>`;
                 } else {
                     buttonHtml = `
-                        <button class="koreanFont" id="exitGroup" data-group-id="${group.group_ID}" data-action="exit" onclick="preventLink(event)">
+                        <button class="koreanFont" id="exitGroup" data-group-id="${group.group_ID}" data-action="exit" onclick="showConfirm(event, 'exit')">
                             <img src="../imgs/icon/exit.png" alt="">
                         </button>`;
                 }
@@ -76,19 +80,34 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-async function preventLink(event) {
+function showConfirm(event, action) {
     event.preventDefault();
 
-    const target = event.currentTarget;
-    const groupId = target.getAttribute('data-group-id');
-    const action = target.getAttribute('data-action');
+    const groupId = event.currentTarget.getAttribute('data-group-id');
 
-    if (!groupId || !action) {
-        console.error('Group ID or action not specified');
-        return;
+    const confirmHtml = `
+        <div class="confirm">
+            <img src="../imgs/icon/${action === 'delete' ? 'delete_group.png' : 'delete_group_user.png'}" alt="">
+            <button class="no" onclick="closeConfirm()">아니오</button>
+            <button class="yes" onclick="performAction('${groupId}', '${action}')">네</button>
+        </div>
+    `;
+
+    const confirmContainer = document.createElement('div');
+    confirmContainer.innerHTML = confirmHtml;
+    confirmContainer.className = 'confirmContainer';
+    document.body.appendChild(confirmContainer);
+}
+
+function closeConfirm() {
+    const confirmContainer = document.querySelector('.confirmContainer');
+    if (confirmContainer) {
+        document.body.removeChild(confirmContainer);
     }
+}
 
-    console.log(`Group ID: ${groupId}, Action: ${action}`);
+async function performAction(groupId, action) {
+    closeConfirm();
 
     try {
         let response;
