@@ -244,3 +244,47 @@ function openComment(){
         check = false;
     }
 }
+
+document.getElementById('logout').addEventListener('click', async function() {
+    try {
+        const response = await fetch('/logout');
+        if (!response.ok) {
+            throw new Error('로그아웃에 실패했습니다.');
+        }
+
+        const result = await response.json();
+        if (result.success) {
+            window.location.href = '/';
+        } else {
+            throw new Error('로그아웃에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+var postCheck = false;
+
+function postOnOff() {
+    var postWrite = document.getElementById("postWrite");
+    var groupContainer = document.getElementById("groupContainer");
+
+    if (!postCheck) {
+        postWrite.style.display = "block";
+        groupContainer.style.display = "none";
+        postCheck = true;
+    } else {
+        postWrite.style.display = "none";
+        groupContainer.style.display = "block";
+        postCheck = false;
+    }
+}
+
+document.getElementById('reviseProfile').addEventListener('click', function() {
+    window.location.href = './setting.html';
+});
+
+window.onload = async function() {
+    await fetchUserInfo();
+    fetchGroupInfo();
+};

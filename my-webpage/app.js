@@ -638,6 +638,40 @@ app.post('/api/update-user', isAuthenticated, async (req, res) => {
   }
 });
 
+app.post('/api/kick-user', async (req, res) => {
+  console.log(1);
+  const { user_ID, group_ID, groupOwnerID } = req.body;
+  const currentUser = req.session.user;
+
+  // 디버깅용 로그 추가
+  console.log('Current session user:', currentUser);
+  console.log('Request body:', { user_ID, group_ID, groupOwnerID });
+
+  if (!user_ID || !group_ID || !groupOwnerID) {
+      return res.status(400).json({ message: 'user_ID, group_ID and groupOwnerID are required' });
+  }
+
+  if (currentUser.id !== groupOwnerID) {
+      return res.status(403).json({ message: 'Only the group owner can kick members' });
+  }
+
+  try {
+      const connection = await pool.getConnection();
+      console.log('Removing user from UserGroup');
+      await connection.query('DELETE FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID]);
+
+      // 그룹의 현재 인원을 1 감소시킴
+      await connection.query('UPDATE `Group` SET current_members = current_members - 1 WHERE group_ID = ?', [group_ID]);
+
+      connection.release();
+
+      res.json({ message: 'User kicked out successfully' });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
