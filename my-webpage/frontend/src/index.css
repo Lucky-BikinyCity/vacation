@@ -1283,10 +1283,24 @@ div.board{
 
 
 .openComment{
-    display: none;
+    display: block;
     position: absolute;
     bottom:10px;
     right:10px;
+    width:40px;
+    height:40px;
+    border: 0;
+    background: 0;
+    & img{
+        width:100%;
+    }
+}
+
+.closeComment{
+    display: none;
+    position: absolute;
+    top:10px;
+    left:10px;
     width:40px;
     height:40px;
     border: 0;
@@ -1584,8 +1598,13 @@ div.board{
             }
         }
     }
+
     .openComment{
         display: block;
+    }
+
+    .closeComment{
+        display:block;
     }
 }
 
@@ -1594,6 +1613,9 @@ div.board{
         position:absolute;
         height: 100%;
         transform:translateX(-100%);
+    }
+    #closeSidebar{
+        display:block;
     }
     #buttonSidebar{
         display: block;
