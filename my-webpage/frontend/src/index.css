@@ -1067,6 +1067,9 @@ html,body {
             right:40px;
             bottom:10px;
             cursor: pointer;
+            &:hover{
+                filter: opacity(0.7);
+            }
         }
     }
 }
