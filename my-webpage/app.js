@@ -430,6 +430,33 @@ app.post('/api/kick-user', async (req, res) => {
   }
 });
 
+// 게시글 작성 처리
+app.post('/api/submit-post', async (req, res) => {
+  const { link, posting_time, group_ID, user_ID, post_type } = req.body;
+
+  console.log('Received post data:', { link, posting_time, group_ID, user_ID, post_type }); // 디버깅용 로그
+
+  if (!link || !posting_time || !group_ID || !user_ID || !post_type) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const query = 'INSERT INTO Post (link, posting_time, group_ID, user_ID, post_type) VALUES (?, ?, ?, ?, ?)';
+    const [result] = await pool.query(query, [link, posting_time, group_ID, user_ID, post_type]);
+
+    console.log('Post insert result:', result); // 디버깅용 로그
+
+    if (result.affectedRows > 0) {
+      res.json({ success: true, message: 'Post submitted successfully' });
+    } else {
+      res.status(500).json({ success: false, message: 'Failed to submit post' });
+    }
+  } catch (error) {
+    console.error('Database query error:', error);
+    res.status(500).json({ message: 'Database query error' });
+  }
+});
+
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
