@@ -51,6 +51,9 @@ function renderGroupInfo(data) {
             </div>
             <button id="openPost" onclick="postOnOff()"><img src="../imgs/icon/post.png" alt=""></button>
         `;
+        currentUserElement.addEventListener('click', () => {
+            filterPostsByUser(currentUser.user_ID);
+        });
         memberListContainer.appendChild(currentUserElement);
     } else {
         // 현재 사용자
@@ -64,6 +67,9 @@ function renderGroupInfo(data) {
             </div>
             <button id="openPost" onclick="postOnOff()"><img src="../imgs/icon/post.png" alt=""></button>
         `;
+        currentUserElement.addEventListener('click', () => {
+            filterPostsByUser(currentUser.user_ID);
+        });
         memberListContainer.appendChild(currentUserElement);
 
         // 그룹장
@@ -73,6 +79,9 @@ function renderGroupInfo(data) {
             <img src="../imgs/icon/captain.png" alt="">
             <span id="membername" class="member">${groupOwner.user_name}</span>
         `;
+        groupOwnerElement.addEventListener('click', () => {
+            filterPostsByUser(groupOwner.user_ID);
+        });
         memberListContainer.appendChild(groupOwnerElement);
     }
 
