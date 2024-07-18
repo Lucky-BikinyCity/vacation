@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const USERNAME = document.getElementById('username').value;
 
         try {
-            const response = await fetch('http://localhost:3000/signup', { // URL 절대 경로로 수정
+            const response = await fetch('/signup', { // URL 상대 경로로 수정
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
