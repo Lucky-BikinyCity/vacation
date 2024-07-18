@@ -519,23 +519,23 @@ app.post('/api/delete-post', isAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/api/post-like-status', async (req, res) => {
+app.get('/api/check-like', async (req, res) => {
   const { post_ID, user_ID } = req.query;
 
   if (!post_ID || !user_ID) {
-      return res.status(400).json({ message: 'post_ID and user_ID are required' });
+    return res.status(400).json({ message: 'post_ID and user_ID are required' });
   }
 
   try {
-      const [results] = await pool.query('SELECT * FROM PostLike WHERE post_ID = ? AND user_ID = ?', [post_ID, user_ID]);
-      if (results.length > 0) {
-          res.json({ liked: true });
-      } else {
-          res.json({ liked: false });
-      }
+    const [results] = await pool.query('SELECT * FROM PostLike WHERE post_ID = ? AND user_ID = ?', [post_ID, user_ID]);
+    if (results.length > 0) {
+      res.json({ liked: true });
+    } else {
+      res.json({ liked: false });
+    }
   } catch (error) {
-      console.error('Database query error:', error);
-      res.status(500).json({ message: 'Database query error' });
+    console.error('Database query error:', error);
+    res.status(500).json({ message: 'Database query error' });
   }
 });
 
@@ -553,10 +553,12 @@ app.post('/api/toggle-like', async (req, res) => {
       if (existingLike.length > 0) {
           // 좋아요가 이미 존재하면 삭제
           await pool.query('DELETE FROM PostLike WHERE user_ID = ? AND post_ID = ?', [user_ID, post_ID]);
+          console.log('delete');
           res.json({ liked: false });
       } else {
           // 좋아요가 존재하지 않으면 추가
           await pool.query('INSERT INTO PostLike (user_ID, post_ID) VALUES (?, ?)', [user_ID, post_ID]);
+          console.log('add');
           res.json({ liked: true });
       }
   } catch (error) {
@@ -610,8 +612,6 @@ app.post('/api/delete-comment', isAuthenticated, async (req, res) => {
       res.status(500).json({ message: 'Database query error' });
   }
 });
-
-
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {

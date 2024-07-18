@@ -89,7 +89,7 @@
     </div>
 </body>
 <script>
-    document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function(){
     GroupBody();
 });
 
@@ -97,38 +97,8 @@ function GroupBody(){
     openSearchUser();
     SidebarOnOff();
     ShowProfile();
-    loadPosts();
+    fetchGroupInfo(); // 그룹 정보를 불러옴
 }
-
-var postCheck = false;
-
-function postOnOff() {
-    var postWrite = document.getElementById("postWrite");
-    var groupContainer = document.getElementById("groupContainer");
-
-    if (!postCheck) {
-        postWrite.style.display = "block";
-        groupContainer.style.display = "none";
-        postCheck = true;
-    } else {
-        postWrite.style.display = "none";
-        groupContainer.style.display = "block";
-        postCheck = false;
-    }
-}
-
-const blogBtn = document.getElementById("blogBtn");
-const notionBtn = document.getElementById("notionBtn");
-
-blogBtn.addEventListener("click", function() {
-    blogBtn.classList.add("active");
-    notionBtn.classList.remove("active");
-});
-
-notionBtn.addEventListener("click", function() {
-    notionBtn.classList.add("active");
-    blogBtn.classList.remove("active");
-});
 
 let currentUserID = '';
 let groupOwnerID = '';
@@ -149,27 +119,12 @@ async function fetchGroupInfo() {
     }
 }
 
-document.getElementById('logout').addEventListener('click', async function() {
-    try {
-        const response = await fetch('/logout');
-        if (!response.ok) {
-            throw new Error('로그아웃에 실패했습니다.');
-        }
-
-        const result = await response.json();
-        if (result.success) {
-            window.location.href = '/';
-        } else {
-            throw new Error('로그아웃에 실패했습니다.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-});
-
 function renderGroupInfo(data) {
     const memberListContainer = document.querySelector('.memberListContainer');
     memberListContainer.innerHTML = '';
+
+    const titleContainer = document.querySelector('.titleContainer');
+    titleContainer.textContent = data.groupName; // 그룹 이름 출력
 
     const { currentUser, groupOwner, members } = data;
     currentUserID = currentUser.user_ID;
@@ -381,7 +336,6 @@ async function checkLike(postID) {
     }
 }
 
-
 function renderPosts(posts) {
     const groupContainer = document.getElementById('groupContainer');
     groupContainer.innerHTML = '';
@@ -477,7 +431,6 @@ function renderComments(postID, comments) {
     });
 }
 
-
 async function submitComment(postID) {
     const commentInput = document.getElementById(`commentInput-${postID}`);
     const content = commentInput.value;
@@ -559,7 +512,6 @@ async function toggleLike(postID) {
         console.error('Error:', error);
     }
 }
-
 
 window.onload = async function() {
     await fetchUserInfo();
@@ -669,6 +621,54 @@ function ShowProfile() {
         profileNameWrapper.style.border='';
     });
 }
+
+document.getElementById('logout').addEventListener('click', async function() {
+    try {
+        const response = await fetch('/logout');
+        if (!response.ok) {
+            throw new Error('로그아웃에 실패했습니다.');
+        }
+
+        const result = await response.json();
+        if (result.success) {
+            window.location.href = '/';
+        } else {
+            throw new Error('로그아웃에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+var postCheck = false;
+
+function postOnOff() {
+    var postWrite = document.getElementById("postWrite");
+    var groupContainer = document.getElementById("groupContainer");
+
+    if (!postCheck) {
+        postWrite.style.display = "block";
+        groupContainer.style.display = "none";
+        postCheck = true;
+    } else {
+        postWrite.style.display = "none";
+        groupContainer.style.display = "block";
+        postCheck = false;
+    }
+}
+
+const blogBtn = document.getElementById("blogBtn");
+const notionBtn = document.getElementById("notionBtn");
+
+blogBtn.addEventListener("click", function() {
+    blogBtn.classList.add("active");
+    notionBtn.classList.remove("active");
+});
+
+notionBtn.addEventListener("click", function() {
+    notionBtn.classList.add("active");
+    blogBtn.classList.remove("active");
+});
 
 </script>
 <script src="../src/index.js"></script>
