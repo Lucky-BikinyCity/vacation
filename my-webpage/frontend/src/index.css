@@ -1135,11 +1135,13 @@ html,body {
     height:690px;
     overflow-y: auto;
     & .comment{
+        font-size: 1.2em;
         position: relative;
         left:50%;
         transform: translateX(-50%);
         width:98%;
         height:auto;
+        color:#3b3b3b;
         margin-top: 20px;
         margin-bottom: 20px;
         & .commentHeader{
@@ -1150,6 +1152,9 @@ html,body {
             & .commentWriter{
                 width:100px;
             }
+            & .commentPostDate{
+                color:#7c7c7c ;
+            }
         }
         & .commentContent{
             width:100%;
@@ -1157,10 +1162,15 @@ html,body {
             box-sizing: border-box;
         }
         & .delComment{
-            position: relative;
-            left:95%;
+            position: absolute;
+            right:0;
             border:0;
             background: 0;
+            color:#AFAFAF;
+            cursor: pointer;
+            &:hover{
+                color:var(--default_black_color);
+            }
         }
     }
 }
