@@ -329,7 +329,7 @@ app.post('/api/search-user', async (req, res) => {
   }
 });
 
-
+// 유저 초대
 app.post('/api/invite-user', async (req, res) => {
   const { user_ID } = req.body;
   const group_ID = req.session.groupId;
@@ -337,20 +337,37 @@ app.post('/api/invite-user', async (req, res) => {
   console.log('Received invite request:', { user_ID, group_ID });
 
   if (!user_ID || !group_ID) {
-    console.log('Missing user_ID or group_ID');
-    return res.status(400).json({ message: 'user_ID and group_ID are required' });
+      console.log('Missing user_ID or group_ID');
+      return res.status(400).json({ message: 'user_ID and group_ID are required' });
   }
 
   try {
-    // Invite user logic here, e.g., inserting into UserGroup table
-    const [results] = await pool.query('INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)', [user_ID, group_ID]);
-    console.log('Invite user results:', results);
-    res.json({ message: 'User invited successfully' });
+      const connection = await pool.getConnection();
+      
+      // 현재 그룹의 최대 인원과 현재 인원을 가져옴
+      const [groupResults] = await connection.query('SELECT max_members, current_members FROM `Group` WHERE group_ID = ?', [group_ID]);
+      const { max_members, current_members } = groupResults[0];
+
+      if (current_members >= max_members) {
+          connection.release();
+          return res.status(400).json({ message: '그룹의 최대 인원을 초과할 수 없습니다.' });
+      }
+
+      // 유저를 그룹에 초대
+      const [results] = await connection.query('INSERT INTO UserGroup (user_ID, group_ID) VALUES (?, ?)', [user_ID, group_ID]);
+      
+      // 그룹의 현재 인원을 1 증가시킴
+      await connection.query('UPDATE `Group` SET current_members = current_members + 1 WHERE group_ID = ?', [group_ID]);
+
+      console.log('Invite user results:', results);
+      connection.release();
+      res.json({ message: 'User invited successfully' });
   } catch (error) {
-    console.error('Database query error:', error);
-    res.status(500).json({ message: 'Database query error' });
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
   }
 });
+
 
 // 그룹 정보 가져오기 API
 app.get('/api/group-info', async (req, res) => {
@@ -420,6 +437,9 @@ app.post('/api/kick-user', async (req, res) => {
       const connection = await pool.getConnection();
       console.log('Removing user from UserGroup');
       await connection.query('DELETE FROM UserGroup WHERE user_ID = ? AND group_ID = ?', [user_ID, group_ID]);
+      
+      // 그룹의 현재 인원을 1 감소시킴
+      await connection.query('UPDATE `Group` SET current_members = current_members - 1 WHERE group_ID = ?', [group_ID]);
 
       connection.release();
 
@@ -429,6 +449,7 @@ app.post('/api/kick-user', async (req, res) => {
       res.status(500).json({ message: 'Database query error' });
   }
 });
+
 
 // 게시글 작성 처리
 app.post('/api/submit-post', async (req, res) => {
@@ -471,6 +492,52 @@ app.get('/api/group-posts', isAuthenticated, async (req, res) => {
       res.status(500).json({ message: 'Database query error' });
   }
 });
+
+// 특정 게시글의 댓글 가져오기
+app.get('/api/post-comments', isAuthenticated, async (req, res) => {
+  const { post_ID } = req.query;
+
+  try {
+      const query = 'SELECT * FROM PostComment WHERE post_ID = ? ORDER BY posting_time ASC';
+      const [results] = await pool.query(query, [post_ID]);
+
+      res.json(results);
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+// 댓글 추가하기
+app.post('/api/submit-comment', isAuthenticated, async (req, res) => {
+  const { post_ID, user_ID, content, posting_time } = req.body;
+
+  try {
+      const query = 'INSERT INTO PostComment (post_ID, user_ID, content, posting_time) VALUES (?, ?, ?, ?)';
+      const [result] = await pool.query(query, [post_ID, user_ID, content, posting_time]);
+
+      res.json({ message: '댓글이 추가되었습니다.' });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+// 댓글 삭제하기
+app.post('/api/delete-comment', isAuthenticated, async (req, res) => {
+  const { comment_ID } = req.body;
+
+  try {
+      const query = 'DELETE FROM PostComment WHERE comment_ID = ?';
+      const [result] = await pool.query(query, [comment_ID]);
+
+      res.json({ message: '댓글이 삭제되었습니다.' });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
 
 
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
