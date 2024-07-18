@@ -46,10 +46,28 @@
         <div id="sidebar" class="sidebar">
             <img id="closeSidebar" src="../imgs/icon/close.png" alt="">
             <div class="titleContainer">TITLE</div>
-            <div class="memberListContainer"></div>
+            <div class="memberListContainer">
+                <!--자기 자신-->
+                <!-- <div class="memberList myself">
+                    <img src="../imgs/icon/user.png" alt="">
+                    <div class="member">
+                        <span id="myname">username</span>
+                        <div>(나)</div>
+                    </div>
+                    <button id="post"><img src="../imgs/icon/post.png" alt=""></button> 
+                </div> -->
+
+                <!-- 다른 멤버-->
+                <!-- <div class="memberList">
+                    <img src="../imgs/icon/user.png" alt="">
+                    <span id="membername" class="member">username</span>
+                    <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> 
+                </div> -->
+            </div>
 
             <div class="hideMemberList"></div> <!--단순히 멤버리스트 가리기 용-->
             <div class="addUserContainer">
+                <!--사이드바 유저 검색 input창-->
                 <div id="searchUserContainer" class="searchUserContainer">
                     <div class="inputContainer">
                         <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
@@ -68,6 +86,7 @@
 
         <button id="buttonSidebar" class="buttonSidebar"><img src="../imgs/icon/menu.png" alt=""></button>
 
+        <!--포스트링크-->
         <div id="postWrite" class="postWrite">
             <div class="postContainer">
                 <div class="postUnderline">
@@ -82,411 +101,276 @@
             </div>
         </div>
 
+        <!--블로그나 노션 나타내는 공간-->
         <div id="groupContainer" class="groupContainer">
-            <!-- 게시물이 여기에 추가됩니다 -->
+            <!--게시물-->
+            <div class="boardContainer">
+                <!--iframe-->
+                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
+                <!--댓글 틀-->
+                <div class="commentContainer">
+                    <!--댓글 목록-->
+                    <button id="delPost" class="delPost"><img src="../imgs/icon/delete.png" alt=""></button>
+                    <div class="commentList">
+                        <div id="comment" class="comment">
+                            <div class="commentHeader">
+                                <div id="commentWriter" class="commentWriter">user_name</div>
+                                <div id="commentPostDate" class="commentPostDate">2024/07/18</div>
+                            </div>
+                            <div class="commentContent">우리 아직 안 한게 모가 있지?? 댓글 틀 만들기?? 웅 마쟈 졍답 ㅎㅎ</div>
+                            <button id="delComment" class="delComment">[삭제]</button>
+                        </div>
+                    </div>
+
+                    <!--댓글 입력 틀-->
+                    <div class="commentFooter">
+                        <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
+                        <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button> -->
+                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button>
+                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                        <div class="commentStructure">
+                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
+                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/send.png" alt=""></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--게시물-->
+            <div class="boardContainer">
+                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
+                <div class="commentContainer">
+                    <div></div>
+                    <div class="commentFooter">
+                        <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
+                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
+                        <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button> -->
+                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                        <div class="commentStructure">
+                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
+                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
+<script src="../src/index.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function(){
-    GroupBody();
-});
+    var postCheck = false;
 
-function GroupBody(){
-    openSearchUser();
-    SidebarOnOff();
-    ShowProfile();
-    loadPosts();
-}
+    //포스트 링크 on off
+    function postOnOff() {
+        var postWrite = document.getElementById("postWrite");
+        var groupContainer = document.getElementById("groupContainer");
 
-var postCheck = false;
-
-function postOnOff() {
-    var postWrite = document.getElementById("postWrite");
-    var groupContainer = document.getElementById("groupContainer");
-
-    if (!postCheck) {
-        postWrite.style.display = "block";
-        groupContainer.style.display = "none";
-        postCheck = true;
-    } else {
-        postWrite.style.display = "none";
-        groupContainer.style.display = "block";
-        postCheck = false;
-    }
-}
-
-const blogBtn = document.getElementById("blogBtn");
-const notionBtn = document.getElementById("notionBtn");
-
-blogBtn.addEventListener("click", function() {
-    blogBtn.classList.add("active");
-    notionBtn.classList.remove("active");
-});
-
-notionBtn.addEventListener("click", function() {
-    notionBtn.classList.add("active");
-    blogBtn.classList.remove("active");
-});
-
-let currentUserID = '';
-let groupOwnerID = '';
-let groupID = '';
-
-async function fetchGroupInfo() {
-    try {
-        const response = await fetch('/api/group-info');
-        if (!response.ok) {
-            throw new Error('Failed to fetch group info');
-        }
-        const data = await response.json();
-        groupID = data.groupID;
-        renderGroupInfo(data);
-        loadPosts(); // 그룹 정보를 가져온 후 게시글 로드
-    } catch (error) {
-        console.error('Error fetching group info:', error);
-    }
-}
-
-document.getElementById('logout').addEventListener('click', async function() {
-    try {
-        const response = await fetch('/logout');
-        if (!response.ok) {
-            throw new Error('로그아웃에 실패했습니다.');
-        }
-
-        const result = await response.json();
-        if (result.success) {
-            window.location.href = '/';
+        if (!postCheck) {
+            postWrite.style.display = "block";
+            groupContainer.style.display = "none";
+            postCheck = true;
         } else {
-            throw new Error('로그아웃에 실패했습니다.');
+            postWrite.style.display = "none";
+            groupContainer.style.display = "block";
+            postCheck = false;
         }
-    } catch (error) {
-        console.error('Error:', error);
     }
-});
 
-function renderGroupInfo(data) {
-    const memberListContainer = document.querySelector('.memberListContainer');
-    memberListContainer.innerHTML = '';
+        const blogBtn = document.getElementById("blogBtn");
+        const notionBtn = document.getElementById("notionBtn");
 
-    const { currentUser, groupOwner, members } = data;
-    currentUserID = currentUser.user_ID;
-    groupOwnerID = groupOwner.user_ID;
+        blogBtn.addEventListener("click", function() {
+            blogBtn.classList.add("active");
+            notionBtn.classList.remove("active");
+        });
 
-    const currentUserElement = document.createElement('div');
-    currentUserElement.className = 'memberList myself';
-    currentUserElement.innerHTML = `
-        <img src="../imgs/icon/user.png" alt="">
-        <div class="member">
-            <span id="myname">${currentUser.user_name}</span>
-            <div>(나)</div>
-        </div>
-        <button id="openPost" onclick="postOnOff()"><img src="../imgs/icon/post.png" alt=""></button>
-    `;
-    memberListContainer.appendChild(currentUserElement);
+        notionBtn.addEventListener("click", function() {
+            notionBtn.classList.add("active");
+            blogBtn.classList.remove("active");
+        });
 
-    if (currentUser.user_ID !== groupOwner.user_ID) {
-        const groupOwnerElement = document.createElement('div');
-        groupOwnerElement.className = 'memberList';
-        groupOwnerElement.innerHTML = `
+    let currentUserID = '';
+    let groupOwnerID = '';
+    let groupID = ''; // 전역 변수로 groupID를 추가합니다.
+
+    async function fetchGroupInfo() {
+        try {
+            const response = await fetch('/api/group-info');
+            if (!response.ok) {
+                throw new Error('Failed to fetch group info');
+            }
+            const data = await response.json();
+            groupID = data.groupID; // groupID를 전역 변수에 저장합니다.
+            renderGroupInfo(data);
+        } catch (error) {
+            console.error('Error fetching group info:', error);
+        }
+    }
+
+    document.getElementById('logout').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/logout');
+                if (!response.ok) {
+                    throw new Error('로그아웃에 실패했습니다.');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    window.location.href = '/';
+                } else {
+                    throw new Error('로그아웃에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+    function renderGroupInfo(data) {
+        const memberListContainer = document.querySelector('.memberListContainer');
+        memberListContainer.innerHTML = '';
+
+        const { currentUser, groupOwner, members } = data;
+        currentUserID = currentUser.user_ID;
+        groupOwnerID = groupOwner.user_ID;
+
+        // 현재 사용자 정보 출력
+        const currentUserElement = document.createElement('div');
+        currentUserElement.className = 'memberList myself';
+        currentUserElement.innerHTML = `
             <img src="../imgs/icon/user.png" alt="">
-            <span id="membername" class="member">${groupOwner.user_name}</span>
+            <div class="member">
+                <span id="myname">${currentUser.user_name}</span>
+                <div>(나)</div>
+            </div>
+            <button id="openPost" onclick="postOnOff()"><img src="../imgs/icon/post.png" alt=""></button> <!--포스트 버튼-->
         `;
-        memberListContainer.appendChild(groupOwnerElement);
-    }
+        memberListContainer.appendChild(currentUserElement);
 
-    members.forEach(member => {
-        if (member.user_ID !== currentUser.user_ID && member.user_ID !== groupOwner.user_ID) {
-            const memberElement = document.createElement('div');
-            memberElement.className = 'memberList';
-            memberElement.innerHTML = `
-                <img src="../imgs/icon/user.png" alt="">
-                <span id="membername" class="member">${member.user_name}</span>
-                ${groupOwnerID === currentUserID ? `<button class="kickButton" onclick="kickUser('${member.user_ID}')"><img src="../imgs/icon/close.png" alt=""></button>` : ''}
+        // 그룹장 정보 출력 (그룹장이 현재 사용자가 아닌 경우에만)
+        if (currentUser.user_ID !== groupOwner.user_ID) {
+            const groupOwnerElement = document.createElement('div');
+            groupOwnerElement.className = 'memberList';
+            groupOwnerElement.innerHTML = `
+                <img src="../imgs/icon/captain.png" alt="">
+                <span id="membername" class="member">${groupOwner.user_name}</span>
             `;
-            memberListContainer.appendChild(memberElement);
+            memberListContainer.appendChild(groupOwnerElement);
         }
-    });
-}
 
-async function kickUser(userID) {
-    try {
-        const response = await fetch('/api/kick-user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_ID: userID, group_ID: groupID, groupOwnerID: groupOwnerID })
+        // 그룹 멤버 정보 출력
+        members.forEach(member => {
+            if (member.user_ID !== currentUser.user_ID && member.user_ID !== groupOwner.user_ID) {  // 현재 사용자와 그룹장은 제외
+                const memberElement = document.createElement('div');
+                memberElement.className = 'memberList';
+                memberElement.innerHTML = `
+                    <img src="../imgs/icon/user.png" alt="">
+                    <span id="membername" class="member">${member.user_name}</span>
+                    ${groupOwnerID === currentUserID ? `<button class="kickButton" onclick="kickUser('${member.user_ID}')"><img src="../imgs/icon/close.png" alt=""></button>` : ''}
+                `;
+                memberListContainer.appendChild(memberElement);
+            }
         });
+    }
 
-        const result = await response.json();
+    async function kickUser(userID) {
+        try {
+            const response = await fetch('/api/kick-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_ID: userID, group_ID: groupID, groupOwnerID: groupOwnerID })
+            });
 
-        if (response.ok) {
-            alert(result.message);
-            fetchGroupInfo();
-        } else {
-            alert(result.message);
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+                fetchGroupInfo(); // 사용자 추방 후 그룹 정보를 다시 가져옵니다.
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
         }
-    } catch (error) {
-        console.error('Error:', error);
     }
-}
 
-async function searchUser() {
-    const userID = document.getElementById('searchUser').value;
-    const searchName = document.getElementById('searchName');
+    async function searchUser() {
+        const userID = document.getElementById('searchUser').value;
+        const searchName = document.getElementById('searchName');
 
-    console.log('Searching for user:', userID);
+        console.log('Searching for user:', userID); // 디버깅용 로그
 
-    try {
-        const response = await fetch('/api/search-user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_ID: userID })
-        });
+        try {
+            const response = await fetch('/api/search-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_ID: userID })
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (response.ok) {
-            searchName.textContent = `${result.user_name} (${result.user_ID})`;
-            document.querySelector('.searchResultContainer').style.display = 'block';
-        } else {
-            alert(result.message);
+            if (response.ok) {
+                searchName.textContent = `${result.user_name} (${result.user_ID})`;
+                document.querySelector('.searchResultContainer').style.display = 'block';
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
         }
-    } catch (error) {
-        console.error('Error:', error);
     }
-}
 
-async function inviteUser() {
-    const searchName = document.getElementById('searchName').textContent;
-    const userID = searchName.split('(')[1].slice(0, -1);
+    async function inviteUser() {
+        const searchName = document.getElementById('searchName').textContent;
+        const userID = searchName.split('(')[1].slice(0, -1);
 
-    console.log('Inviting user:', userID);
+        console.log('Inviting user:', userID); // 디버깅용 로그
 
-    try {
-        const response = await fetch('/api/invite-user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ user_ID: userID })
-        });
+        try {
+            const response = await fetch('/api/invite-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_ID: userID })
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        if (response.ok) {
-            alert(result.message);
-            fetchGroupInfo();
-        } else {
-            alert(result.message);
+            if (response.ok) {
+                alert(result.message);
+                fetchGroupInfo(); // 사용자 초대 후 그룹 정보를 다시 가져옵니다.
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
         }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-function formatDateForMySQL(date) {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    const seconds = String(d.getSeconds()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-}
-
-async function submitPost() {
-    const embedLink = document.getElementById("embedLink").value;
-    let postType = '';
-    
-    if (blogBtn.classList.contains("active")) {
-        postType = 'blog';
-    } else if (notionBtn.classList.contains("active")) {
-        postType = 'notion';
     }
 
-    const postData = {
-        link: embedLink,
-        posting_time: formatDateForMySQL(new Date()), // 날짜를 MySQL 형식으로 변환
-        group_ID: groupID,
-        user_ID: currentUserID,
-        post_type: postType
+    // 페이지 로드 시 그룹 정보를 가져옵니다.
+    window.onload = async function() {
+        await fetchUserInfo(); // 사용자 정보를 먼저 가져옵니다.
+        fetchGroupInfo(); // 그룹 정보를 가져옵니다.
     };
 
-    console.log('Submitting post:', postData);
-
-    try {
-        const response = await fetch('/api/submit-post', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(postData)
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert(result.message);
-            postOnOff();
-            fetchGroupInfo();
-        } else {
-            alert(result.message);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-
-async function loadPosts() {
-    try {
-        const response = await fetch(`/api/group-posts?group_ID=${groupID}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch posts');
-        }
-        const posts = await response.json();
-        renderPosts(posts);
-    } catch (error) {
-        console.error('Error fetching posts:', error);
-    }
-}
-
-function renderPosts(posts) {
-    const groupContainer = document.getElementById('groupContainer');
-    groupContainer.innerHTML = '';
-
-    posts.forEach(post => {
-        const postElement = document.createElement('div');
-        postElement.className = 'boardContainer';
-
-        if (post.post_type === 'blog') {
-            postElement.innerHTML = `
-                <iframe class="board" src="${post.link}" frameborder="0"></iframe>
-            `;
-        } else if (post.post_type === 'notion') {
-            postElement.innerHTML = `
-                <div class="notionLink"><a href="${post.link}" target="_blank">${post.link}</a></div>
-            `;
-        }
-
-        groupContainer.appendChild(postElement);
-    });
-}
-
-window.onload = async function() {
-    await fetchUserInfo();
-    fetchGroupInfo();
-};
-
-async function fetchUserInfo() {
-    try {
-        const response = await fetch('/api/main');
-        if (!response.ok) {
-            throw new Error('사용자 정보를 가져오지 못했습니다.');
-        }
-        const data = await response.json();
-        document.getElementById('profileName').textContent = data.user_name;
-        document.getElementById('group_count').textContent = data.group_count;
-        document.getElementById('like_count').textContent = data.like_count;
-    } catch (error) {
-        console.error('Error fetching user info:', error);
-    }
-}
-
-document.getElementById('submitPost').addEventListener('click', submitPost);
-
-function openSearchUser() {
-    var check = false;
-    const searchUser = document.querySelector('.searchUserContainer');
-    const searchResult = document.querySelector('.searchResultContainer');
-
-    document.getElementById('addmember').addEventListener('click', function() {
-        if (check) {
-            searchUser.style.height = '0';
-            searchResult.style.display = 'none';
-            check = false;
-        } else {
-            searchUser.style.height = '260px';
-            setTimeout(() => {
-                searchResult.style.display = 'block';
-            }, 100);
-            check = true;
-        }
-    });
-}
-
-function SidebarOnOff() {
-    var openBtn = document.getElementById("buttonSidebar");
-    var closeBtn = document.getElementById("closeSidebar");
-    var sidebar = document.getElementById("sidebar");
-    var check = false;
-
-    function checkScreenSize() {
-        return window.innerWidth >= 1000;
-    }
-
-    openBtn.addEventListener("click", function() {
-        sidebar.style.transition="all 0.25s";
-        if (checkScreenSize()) {
-            return;
-        }
-
-        sidebar.style.transform = "translateX(0)";
-        openBtn.style.display = "none";
-        check = true;
-    });
-
-    closeBtn.addEventListener("click",function(){
-        sidebar.style.transition="all 0.25s";
-        if (checkScreenSize()) {
-            return;
-        }
-
-        sidebar.style.transform = "translateX(-100%)";
-        openBtn.style.display = "block";
-        check = false;
-    });
-
-    window.addEventListener("resize", function() {
-        if (checkScreenSize()) {
-            sidebar.style.transform = "translateX(0)";
-            sidebar.style.transition="all 0.25s";
-            closeBtn.style.display="none";
-        }else{
-            closeBtn.style.display="block";
-            sidebar.style.transition="all 0s";
-            if(!check){
-                sidebar.style.transform = "translateX(-100%)";
+    async function fetchUserInfo() {
+        try {
+            const response = await fetch('/api/main');
+            if (!response.ok) {
+                throw new Error('사용자 정보를 가져오지 못했습니다.');
             }
+            const data = await response.json();
+            document.getElementById('profileName').textContent = data.user_name;
+            document.getElementById('group_count').textContent = data.group_count;
+            document.getElementById('like_count').textContent = data.like_count;
+        } catch (error) {
+            console.error('Error fetching user info:', error);
         }
-    });
-}
-
-function ShowProfile() {
-    const profileNameWrapper = document.querySelector('.profileNameWrapper');
-    const profileInfo = document.querySelector('.profileInfo');
-    const profileWrapper = document.querySelector('.profileWrapper');
-
-    profileWrapper.addEventListener('mouseenter', () => {
-        profileInfo.style.display = 'block';
-        profileWrapper.style.backgroundColor = 'white';
-        profileWrapper.style.boxShadow = '1px 4px 4px #c4c4c4';
-        profileNameWrapper.style.borderBottom='0.5px solid #d8d8d8';
-    });
-
-    profileWrapper.addEventListener('mouseleave', () => {
-        profileInfo.style.display = 'none';
-        profileWrapper.style.backgroundColor = '';
-        profileWrapper.style.boxShadow = '';
-        profileNameWrapper.style.border='';
-    });
-}
+    }
 
 </script>
-<script src="../src/index.js"></script>
+
 </html>
