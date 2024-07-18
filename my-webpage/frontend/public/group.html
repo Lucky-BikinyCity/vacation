@@ -46,28 +46,10 @@
         <div id="sidebar" class="sidebar">
             <img id="closeSidebar" src="../imgs/icon/close.png" alt="">
             <div class="titleContainer">TITLE</div>
-            <div class="memberListContainer">
-                <!--자기 자신-->
-                <!-- <div class="memberList myself">
-                    <img src="../imgs/icon/user.png" alt="">
-                    <div class="member">
-                        <span id="myname">username</span>
-                        <div>(나)</div>
-                    </div>
-                    <button id="post"><img src="../imgs/icon/post.png" alt=""></button> 
-                </div> -->
-
-                <!-- 다른 멤버-->
-                <!-- <div class="memberList">
-                    <img src="../imgs/icon/user.png" alt="">
-                    <span id="membername" class="member">username</span>
-                    <button id="kick"><img src="../imgs/icon/close.png" alt=""></button> 
-                </div> -->
-            </div>
+            <div class="memberListContainer"></div>
 
             <div class="hideMemberList"></div> <!--단순히 멤버리스트 가리기 용-->
             <div class="addUserContainer">
-                <!--사이드바 유저 검색 input창-->
                 <div id="searchUserContainer" class="searchUserContainer">
                     <div class="inputContainer">
                         <input id="searchUser" class="searchUser" type="text" placeholder="유저 검색">
@@ -86,7 +68,6 @@
 
         <button id="buttonSidebar" class="buttonSidebar"><img src="../imgs/icon/menu.png" alt=""></button>
 
-        <!--포스트링크-->
         <div id="postWrite" class="postWrite">
             <div class="postContainer">
                 <div class="postUnderline">
@@ -101,63 +82,13 @@
             </div>
         </div>
 
-        <!--블로그나 노션 나타내는 공간-->
         <div id="groupContainer" class="groupContainer">
-            <!--게시물-->
-            <div class="boardContainer">
-                <!--iframe-->
-                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
-                <!--댓글 틀-->
-                <div class="commentContainer">
-                    <!--댓글 목록-->
-                    <button id="delPost" class="delPost"><img src="../imgs/icon/delete.png" alt=""></button>
-                    <div class="commentList">
-                        <div id="comment" class="comment">
-                            <div class="commentHeader">
-                                <div id="commentWriter" class="commentWriter">user_name</div>
-                                <div id="commentPostDate" class="commentPostDate">2024/07/18</div>
-                            </div>
-                            <div class="commentContent">우리 아직 안 한게 모가 있지?? 댓글 틀 만들기?? 웅 마쟈 졍답 ㅎㅎ</div>
-                            <button id="delComment" class="delComment">[삭제]</button>
-                        </div>
-                    </div>
-
-                    <!--댓글 입력 틀-->
-                    <div class="commentFooter">
-                        <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
-                        <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button> -->
-                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button>
-                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
-                        <div class="commentStructure">
-                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
-                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/send.png" alt=""></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--게시물-->
-            <div class="boardContainer">
-                <iframe class="board" src="https://www.notion.so/1ac3fd10dbde488c84035a48448bc168?pvs=4" frameborder="0"></iframe>
-                <div class="commentContainer">
-                    <div></div>
-                    <div class="commentFooter">
-                        <!--좋아요 안눌렀으면 img heart, 좋아요 눌렀으면 img heart_fill로 된 걸로 하기-->
-                        <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart.png" alt=""></button>
-                        <!-- <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button> -->
-                        <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
-                        <div class="commentStructure">
-                            <input id="comment" class="commentInput" type="text" placeholder="댓글">
-                            <button id="sendComment" class="sendComment btnCommentFooter"><img src="../imgs/icon/add-user.png" alt=""></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- 게시물이 여기에 추가됩니다 -->
         </div>
     </div>
 </body>
-<script src="../src/index.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function(){
+    document.addEventListener('DOMContentLoaded', function(){
     GroupBody();
 });
 
@@ -443,8 +374,115 @@ function renderPosts(posts) {
             `;
         }
 
+        const commentContainer = document.createElement('div');
+        commentContainer.className = 'commentContainer';
+        commentContainer.innerHTML = `
+            <div class="commentList" id="commentList-${post.post_ID}"></div>
+            <div class="commentFooter">
+                <button id="like" class="like btnCommentFooter"><img src="../imgs/icon/heart_fill.png" alt=""></button>
+                <img class="commentImg imgInComment" src="../imgs/icon/comment.png" alt="">
+                <div class="commentStructure">
+                    <input id="commentInput-${post.post_ID}" class="commentInput" type="text" placeholder="댓글">
+                    <button onclick="submitComment('${post.post_ID}')" class="sendComment btnCommentFooter"><img src="../imgs/icon/send.png" alt=""></button>
+                </div>
+            </div>
+        `;
+
+        postElement.appendChild(commentContainer);
         groupContainer.appendChild(postElement);
+
+        loadComments(post.post_ID); // 댓글 로드
     });
+}
+
+async function loadComments(postID) {
+    try {
+        const response = await fetch(`/api/post-comments?post_ID=${postID}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch comments');
+        }
+        const comments = await response.json();
+        renderComments(postID, comments);
+    } catch (error) {
+        console.error('Error fetching comments:', error);
+    }
+}
+
+function renderComments(postID, comments) {
+    const commentList = document.getElementById(`commentList-${postID}`);
+    commentList.innerHTML = '';
+
+    comments.forEach(comment => {
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment';
+        commentElement.innerHTML = `
+            <div class="commentHeader">
+                <div class="commentWriter">${comment.user_ID}</div>
+                <div class="commentPostDate">${comment.posting_time}</div>
+            </div>
+            <div class="commentContent">${comment.content}</div>
+            ${currentUserID === comment.user_ID ? `<button onclick="deleteComment(${comment.comment_ID}, ${postID})" class="delComment">[삭제]</button>` : ''}
+        `;
+        commentList.appendChild(commentElement);
+    });
+}
+
+async function submitComment(postID) {
+    const commentInput = document.getElementById(`commentInput-${postID}`);
+    const content = commentInput.value;
+
+    const commentData = {
+        post_ID: postID,
+        user_ID: currentUserID,
+        content: content,
+        posting_time: formatDateForMySQL(new Date())
+    };
+
+    console.log('Submitting comment:', commentData);
+
+    try {
+        const response = await fetch('/api/submit-comment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(commentData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+            loadComments(postID); // 댓글 작성 후 댓글 리스트를 다시 로드합니다.
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function deleteComment(commentID, postID) {
+    try {
+        const response = await fetch('/api/delete-comment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ comment_ID: commentID })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message);
+            loadComments(postID); // 댓글 삭제 후 댓글 리스트를 다시 로드합니다.
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 window.onload = async function() {
@@ -555,5 +593,7 @@ function ShowProfile() {
         profileNameWrapper.style.border='';
     });
 }
+
 </script>
+<script src="../src/index.js"></script>
 </html>
