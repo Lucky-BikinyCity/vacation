@@ -275,11 +275,18 @@ app.post('/api/exit-group/:groupId', async (req, res) => {
   console.log('그룹 탈퇴 요청:', { groupId, userId });
 
   try {
-    const [result] = await pool.query('DELETE FROM UserGroup WHERE group_ID = ? AND user_ID = ?', [groupId, userId]);
+    const connection = await pool.getConnection();
+    
+    const [result] = await connection.query('DELETE FROM UserGroup WHERE group_ID = ? AND user_ID = ?', [groupId, userId]);
 
     if (result.affectedRows > 0) {
+      // 그룹의 현재 인원을 1 감소시킴
+      await connection.query('UPDATE `Group` SET current_members = current_members - 1 WHERE group_ID = ?', [groupId]);
+
+      connection.release();
       res.json({ success: true, message: '그룹에서 탈퇴하였습니다.' });
     } else {
+      connection.release();
       res.status(403).json({ success: false, message: '그룹 탈퇴에 실패했습니다.' });
     }
   } catch (error) {
