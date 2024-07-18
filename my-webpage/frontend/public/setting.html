@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 수정</title>
+    <link rel="stylesheet" href="../src/index.css">
+</head>
+<body id="signUpBody" class="dragUnable">
+    <div class="loginPageContainer">
+        <img src="../imgs/web-icons/logo1-B.png" alt="Logo" class="logo">
+        <form class="signupForm" id="profileForm">
+            <div class="inputWrapper">
+                <img src="../imgs/icon/lock.png" alt="">
+                <input id="password" type="password" placeholder="비밀번호" class="koreanFont">
+                <input id="showPwdInSignUp" type="checkbox">
+                <label class="labelOfshowPwdInSignUp" for="showPwdInSignUp">
+                    <img id="imgOfLabelOfshowPwdInSignUp" src="../imgs/icon/hideCode.png" alt="">
+                </label>
+            </div>
+            <div class="inputWrapper">
+                <img src="../imgs/icon/nickname.png" alt="">
+                <input id="username" type="text" placeholder="닉네임" class="koreanFont">
+            </div>
+            <button type="submit" class="submitButton koreanFont">회원정보 수정</button>
+        </form>
+        <div id="message"></div> <!-- 메시지를 표시할 요소 추가 -->
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/api/user-info');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user info');
+                }
+                const data = await response.json();
+                document.getElementById('username').value = data.user_name;
+                document.getElementById('password').value = data.password; // 이 부분은 보안상 실제 비밀번호를 보여주지 않는 것이 좋습니다.
+            } catch (error) {
+                console.error('Error fetching user info:', error);
+            }
+        });
+
+        document.getElementById('profileForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const userName = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const userData = {
+                user_name: userName,
+                password: password
+            };
+
+            try {
+                const response = await fetch('/api/update-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('message').textContent = '회원정보가 성공적으로 수정되었습니다.';
+                } else {
+                    document.getElementById('message').textContent = result.message || '회원정보 수정에 실패했습니다.';
+                }
+            } catch (error) {
+                console.error('Error updating user info:', error);
+                document.getElementById('message').textContent = '회원정보 수정 중 오류가 발생했습니다.';
+            }
+        });
+    </script>
+</body>
+</html>

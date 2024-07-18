@@ -630,6 +630,36 @@ app.post('/api/delete-comment', isAuthenticated, async (req, res) => {
   }
 });
 
+app.get('/api/user-info', isAuthenticated, async (req, res) => {
+  const user_ID = req.session.user_ID;
+
+  try {
+      const [user] = await pool.query('SELECT user_name, password FROM User WHERE user_ID = ?', [user_ID]);
+      if (user.length > 0) {
+          res.json(user[0]);
+      } else {
+          res.status(404).json({ message: 'User not found' });
+      }
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+app.post('/api/update-user', isAuthenticated, async (req, res) => {
+  const user_ID = req.session.user_ID;
+  const { user_name, password } = req.body;
+
+  try {
+      await pool.query('UPDATE User SET user_name = ?, password = ? WHERE user_ID = ?', [user_name, password, user_ID]);
+      res.json({ message: 'User info updated successfully' });
+  } catch (error) {
+      console.error('Database query error:', error);
+      res.status(500).json({ message: 'Database query error' });
+  }
+});
+
+
 // 서버 호출 정보 - 몇 번 포트에서 실행되었습니다.
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

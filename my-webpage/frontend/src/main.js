@@ -230,3 +230,7 @@ async function setGroupSessionAndRedirect(event) {
         alert('An error occurred while setting the group session.');
     }
 }
+
+document.getElementById('reviseProfile').addEventListener('click', function() {
+    window.location.href = './setting.html';
+});
