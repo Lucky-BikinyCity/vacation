@@ -351,11 +351,31 @@ html,body {
     }
 }
 
+#reviseProfile{
+    border:0;
+    padding:0;
+    background: 0;
+    width:auto;
+    height:auto;
+    font-size: 0.9em;
+    cursor: pointer;
+    & div{
+        margin-left: 20px;
+    }
+    margin-top: 13px;
+    margin-bottom: 13px;
+}
+
 .profileInfo{
     display: none;
     position: relative;
     width:165px;
     height:auto;
+    &>hr{
+        border:0;
+        height:0.5px;
+        background: #d3d3d3;
+    }
     &>.containerInProfileInfo{
         display: flex;
         justify-content: space-between;
