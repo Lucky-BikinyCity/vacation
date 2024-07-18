@@ -93,7 +93,7 @@ function renderGroupInfo(data) {
             memberElement.innerHTML = `
                 <img src="../imgs/icon/user.png" alt="">
                 <span id="membername" class="member">${member.user_name}</span>
-                ${groupOwnerID === currentUserID ? `<button class="kickButton" onclick="kickUser('${member.user_ID}')"><img src="../imgs/icon/close.png" alt=""></button>` : ''}
+                ${groupOwnerID === currentUserID ? `<button class="kickButton" onclick="showKickConfirm('${member.user_ID}')"><img src="../imgs/icon/close.png" alt=""></button>` : ''}
             `;
             memberElement.addEventListener('click', () => {
                 filterPostsByUser(member.user_ID);
@@ -107,3 +107,86 @@ function renderGroupInfo(data) {
     });
 }
 
+function showKickConfirm(userId) {
+    const confirmContainer = document.createElement('div');
+    confirmContainer.className = 'confirmContainer';
+    confirmContainer.innerHTML = `
+        <div class="confirm">
+            <img src="../imgs/icon/delete_user.png" alt="">
+            <button class="no" onclick="closeKickConfirm()">아니오</button>
+            <button class="yes" onclick="kickUser('${userId}')">네</button>
+        </div>
+    `;
+    document.body.appendChild(confirmContainer);
+}
+
+function closeKickConfirm() {
+    console.log('closeKickConfirm 호출됨');
+    const confirmElement = document.querySelector('.confirm');
+    if (confirmElement) {
+        console.log('확인 요소 제거');
+        confirmElement.remove();
+    } else {
+        console.log('확인 요소를 찾을 수 없음');
+    }
+}
+
+async function kickUser(userId) {
+    console.log('kickUser 시작');
+    try {
+        const response = await fetch(`/api/kick-user/${groupID}/${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const result = await response.json();
+            console.error(result.message || 'Failed to kick user');
+            alert(result.message || 'Failed to kick user');
+            return;
+        }
+
+        const result = await response.json();
+        alert(result.message || 'User kicked successfully');
+        console.log('kickUser 성공, closeKickConfirm 호출');
+        closeKickConfirm(); // 성공적으로 삭제한 후 창을 닫음
+        window.location.reload(); // 창을 새로고침
+    } catch (error) {
+        console.error('Error kicking user:', error);
+        alert('An error occurred while kicking the user.');
+        closeKickConfirm(); // 오류가 발생해도 창을 닫음
+    }
+    console.log('kickUser 끝');
+}
+
+async function setGroupSessionAndRedirect(event) {
+    event.preventDefault();
+
+    const groupId = event.currentTarget.dataset.groupId;
+    if (!groupId) {
+        console.error('Group ID not found');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/set-group-session', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ groupId })
+        });
+
+        if (response.ok) {
+            window.location.href = './group.html';
+        } else {
+            const result = await response.json();
+            alert(result.message || 'Failed to set group session');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while setting the group session.');
+    }
+}

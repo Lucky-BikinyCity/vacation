@@ -124,7 +124,13 @@ async function renderPosts(posts) {
             ${postContent}
             <div class="commentContainer">
             <button id="closeComment" class="closeComment"><img src="../imgs/icon/close.png"></button>
-                ${currentUserID === post.user_ID ? `<button onclick="deletePost('${post.post_ID}')" id="delPost" class="delPost"><img src="../imgs/icon/delete.png" alt="Delete"></button>` : ''}
+                ${currentUserID === post.user_ID ? `
+                <button onclick="showDeleteConfirm('${post.post_ID}')" id="delPost" class="delPost"><img src="../imgs/icon/delete.png" alt="Delete"></button>
+                <div class="confirm" id="confirm-${post.post_ID}" style="display:none;">
+                    <img src="../imgs/icon/delete_contents.png" alt="">
+                    <button class="no" onclick="hideDeleteConfirm('${post.post_ID}')">아니오</button>
+                    <button class="yes" onclick="deletePost('${post.post_ID}')">네</button>
+                </div>` : ''}
                 <div class="commentList" id="commentList-${post.post_ID}"></div>
                 <div class="commentFooter">
                     <button id="like-${post.post_ID}" class="like btnCommentFooter" onclick="toggleLike('${post.post_ID}')"><img src="../imgs/icon/${likeIcon}" alt="Like"></button>
@@ -134,7 +140,6 @@ async function renderPosts(posts) {
                         <button onclick="submitComment('${post.post_ID}')" class="sendComment btnCommentFooter"><img src="../imgs/icon/send.png" alt="Send"></button>
                     </div>
                 </div>
-                
             </div>
         `;
 
@@ -145,6 +150,15 @@ async function renderPosts(posts) {
         closeCommentToggleFunctionality();
     });
 }
+
+function showDeleteConfirm(postID) {
+    document.getElementById(`confirm-${postID}`).style.display = 'block';
+}
+
+function hideDeleteConfirm(postID) {
+    document.getElementById(`confirm-${postID}`).style.display = 'none';
+}
+
 
 function addCommentToggleFunctionality() {
     const openCommentButtons = document.querySelectorAll('.openComment');
