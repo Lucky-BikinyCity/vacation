@@ -11,12 +11,12 @@ create table `User`(
 );
 
 create table `Group`(
-    group_IDX int unsigned not null auto_increment,
+    group_ID int unsigned not null auto_increment,
     group_name varchar(50) not null,
     max_members int unsigned default 2,
     current_members int unsigned default 2,
     user_ID varchar(50) not null,
-    primary key (group_IDX),
+    primary key (group_ID),
     foreign key (user_ID) references `User`(user_ID) on delete cascade,
     check (max_members between 2 and 15),
     check (current_members <= 15)
@@ -24,40 +24,39 @@ create table `Group`(
 
 CREATE TABLE UserGroup (
     user_ID varchar(50) NOT NULL,
-    group_IDX int unsigned NOT NULL,
-    PRIMARY KEY(user_ID, group_IDX),
+    group_ID int unsigned NOT NULL,
+    PRIMARY KEY(user_ID, group_ID),
     FOREIGN KEY (user_ID) REFERENCES `User` (user_ID) ON DELETE CASCADE,
-    FOREIGN KEY (group_IDX) REFERENCES `Group` (group_IDX) ON DELETE CASCADE
+    FOREIGN KEY (group_ID) REFERENCES `Group` (group_ID) ON DELETE CASCADE
 );
 
 create table Post(
-    post_IDX int unsigned not null auto_increment,
+    post_ID int unsigned not null auto_increment,
     link varchar(2048) not null,
     posting_time timestamp default current_timestamp,
-    group_IDX int unsigned not null,
-    writer_ID varchar(50) not null,
-    primary key (post_IDX),
-    foreign key (group_IDX) references `Group`(group_IDX) on delete cascade,
-    foreign key (writer_ID) references `User`(user_ID) on delete cascade
+    group_ID int unsigned not null,
+    user_ID varchar(50) not null,
+    primary key (post_ID),
+    foreign key (group_ID) references `Group`(group_ID) on delete cascade,
+    foreign key (user_ID) references `User`(user_ID) on delete cascade
 );
 
 create table PostLike(
-    post_IDX int unsigned auto_increment,
+    post_ID int unsigned auto_increment,
     user_ID varchar(50),
     writer_ID varchar(50),
-    primary key(post_IDX, user_ID, writer_ID),
-    foreign key (post_IDX) references Post (post_IDX) on delete cascade,
+    foreign key (post_ID) references Post (group_ID) on delete cascade,
     foreign key (user_ID) references `User`(user_ID) on delete cascade,
-    foreign key (writer_ID) references Post (writer_ID) on delete cascade
+    foreign key (writer_ID) references Post (user_ID) on delete cascade
 );
 
 create table PostComment(
-    comment_IDX int unsigned auto_increment,
+    comment_ID int unsigned auto_increment,
     content varchar(1000),
     posting_time timestamp default current_timestamp,
-    post_IDX int unsigned,
+    post_ID int unsigned,
     user_ID varchar(50),
-    primary key (comment_IDX),
-    foreign key (post_IDX) references Post (post_IDX) on delete cascade,
+    primary key (comment_ID),
+    foreign key (post_ID) references Post(group_ID) on delete cascade,
     foreign key (user_ID) references `User`(user_ID) on delete cascade
 );
