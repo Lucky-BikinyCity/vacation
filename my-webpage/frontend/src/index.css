@@ -1255,26 +1255,29 @@ html,body {
 div.board{
     &:hover{
         .imgInBoard{
-            width:20%;
+            width:110px;
         }
     }
-    & div{
-        display: flex;
-        align-items: center;
-        position:absolute; 
-        top:50%; 
-        left:60%; 
-        transform:translate(-50%,-50%);
-        & .imgInBoard{
-            width:18%; 
-            transition: all 0.25s;
-        }
-        & span{
-            margin-left: 20px;
-            text-align: center;
-            font-size: 2em;
-            transition: all 0.25s;
-        }
+}
+
+.notionContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position:relative;
+    width: 80%; 
+    top:50%; 
+    left:50%; 
+    transform:translate(-50%,-50%);
+    & .imgInBoard{
+        width:100px; 
+        transition: all 0.25s;
+    }
+    & span{
+        margin-left: 20px;
+        text-align: center;
+        font-size: 2em;
+        transition: all 0.25s;
     }
 }
 

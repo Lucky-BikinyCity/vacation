@@ -109,7 +109,7 @@ async function renderPosts(posts) {
         } else if (post.post_type === 'notion') {
             postContent = `
                 <div class="board" style="cursor:pointer;" onclick="location.href='${post.link}';">
-                    <div>
+                    <div class="notionContainer">
                         <img class="imgInBoard" src="../imgs/icon/notion.png" alt="Notion">
                         <span>${post.title}</span>
                     </div>
