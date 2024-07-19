@@ -13,3 +13,4 @@
 김성빈 - eating2
 
 실행 파일 -  app.js
+실행 명령어 -  npm start
