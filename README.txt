@@ -12,5 +12,12 @@
 최미령 - ggiggoggiggo
 김성빈 - eating2
 
+깃허브
+김태희 - thee1201
+이성민 - KINGSEGU
+최미령 - chlafud11
+김성빈 - eating2
+
+
 실행 파일 -  app.js
 실행 명령어 -  npm start
